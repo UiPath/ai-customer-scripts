@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 
 <#   
 
@@ -86,7 +86,7 @@ $CLIENT_APP_NODES_STRING='
     </ClientApplications>
 </Collection>'
 
-# get orchestrator cert values 
+# get orchestrator cert values
 $thumbrint = $null
 $RawBase64 = $null
 $orchestratorhostname = $null
@@ -107,7 +107,7 @@ Get-ChildItem -Path IIS:SSLBindings | ForEach-Object -Process `
     }
 }
 
-# validations of input 
+# validations of input
 if($orcname)
 {
     if ($orcname.StartsWith("http://") -or $orcname.StartsWith("https://"))
@@ -117,6 +117,7 @@ if($orcname)
     }
     $orchestratorhostname = $orcname
 }
+
 if($aifip.StartsWith("http://") -or $aifip.StartsWith("https://"))
 {
     echo "aifip should not start with http or https"
@@ -159,7 +160,7 @@ function AifabricFixedConfig
     $xml.Save($file.FullName)
 }
 
-# iisreset
+# Reset IIS to reload values
 function Retry-IISRESET
 {
     param (

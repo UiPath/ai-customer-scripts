@@ -9,7 +9,7 @@
 .NOTES   
     Name: ./createDatabases.ps1
     Author: AIFabric Team
-    Pre-Requisites: script has to be executed throuh powershell in Administrator mode & before running script set execution policty to RemoteSigned by running "Set-ExecutionPolicy RemoteSigned"
+    Pre-Requisites: script has to be executed throuh powershell in Administrator mode & before running script set execution policy to RemoteSigned by running "Set-ExecutionPolicy RemoteSigned"
 .EXAMPLE 
     If SQL Server can be accessed through Windows Authentication then:
     ./createDatabases.ps1 -sqlinstance "DESKTOP-LOUPTI1\SQLEXPRESS" -windowsAuthentication "Y" 
