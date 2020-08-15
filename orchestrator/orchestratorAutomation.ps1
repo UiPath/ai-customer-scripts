@@ -25,22 +25,38 @@ Param (
    [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName)]
    [string] $aifip,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
-   [string] $aifport
+   [string] $aifport,
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $domainBasedAccess
+
 )
 
 Import-Module 'WebAdministration'
-    if(!$config)
-    {   
+    if(!$config){   
         $config = "C:\Program Files (x86)\UiPath\Orchestrator\web.config"
     }
-    if(!$aifport)
-    {   
+
+    if(!$aifport){   
         $aifport = "31390"
+    }
+
+    if($domainBasedAccess.Length -gt 0){
+        $domainBasedAccess = $domainBasedAccess.ToString()
+    } else {
+        $domainBasedAccess = "false"
     }
 
 echo "Path to web.config: "$config
 
 Copy-Item $config -Destination ("$config.original."+(Get-Date -Format "MMddyyyy.HH.mm.ss"))
+
+
+if($domainBasedAccess -eq "true"){
+   $hostName = $aifip
+} else{
+   $hostName = "$($aifip):$($aifport)"    
+}
+
 
 #AiFabric Settings template
 $STATIC_NODES_STRING='
@@ -56,11 +72,11 @@ $STATIC_NODES_STRING='
     <add key="AiFabric.FeatureEnabledByDefault" value="true" />
     <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:31443" />
     <add key="AiFabric.MLPackagingInstructionsUrl" value="something" />
-    <add key="AiFabric.MLServiceUrl" value="https://{{aifip}}:{{aifport}}" />
-    <add key="AiFabric.MLSkillUrl" value="https://{{aifip}}:{{aifport}}/ai-deployer" />
-    <add key="AiFabric.MLPackageUrl" value="https://{{aifip}}:{{aifport}}/ai-pkgmanager" />
-    <add key="AiFabric.MLLogUrl" value="https://{{aifip}}:{{aifport}}/ai-helper" />
-    <add key="AiFabric.MLTrainUrl" value="https://{{aifip}}:{{aifport}}/ai-trainer" />
+    <add key="AiFabric.MLServiceUrl" value="https://{{hostName}}" />
+    <add key="AiFabric.MLSkillUrl" value="https://{{hostName}}/ai-deployer" />
+    <add key="AiFabric.MLPackageUrl" value="https://{{hostName}}/ai-pkgmanager" />
+    <add key="AiFabric.MLLogUrl" value="https://{{hostName}}/ai-helper" />
+    <add key="AiFabric.MLTrainUrl" value="https://{{hostName}}/ai-trainer" />
     <add key="AiFabric.AccountId" value="host" />
     <add key="IDP.Scope" value="[&quot;AIFabric&quot;,&quot;Orchestrator&quot;]" />
     <add key="IDP.CurrentTokenThumbprint" value="{{thumbprint}}" />
@@ -124,12 +140,13 @@ if($aifip.StartsWith("http://") -or $aifip.StartsWith("https://"))
     throw "Invalid aifip input provided: $aifip"   
 }
 
+
 # set nodes value
+$STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{hostName}}",$hostName);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{aifip}}",$aifip);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{thumbprint}}",$thumbprint);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{cert}}",$RawBase64);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{orchestratorhostname}}",$orchestratorhostname);
-$STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{aifport}}",$aifport);
 $STATIC_NODES = [xml]$STATIC_NODES_STRING
 $CLIENT_APP_NODES = [xml]$CLIENT_APP_NODES_STRING
 
