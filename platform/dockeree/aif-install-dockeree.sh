@@ -2,6 +2,16 @@
 #
 #
 
+# execute function
+execute() {
+  bash $1
+  if [ $? -ne 0 ];
+  then
+    echo "[ERROR]: Bootstrap installation failed. Exiting !!!"
+    exit 1
+  fi
+}
+
 # Function to load env.sh
 load_env() {
   
@@ -29,7 +39,7 @@ read -p 'UCP username : ' ucpuser
 #Ask for UCP password
 read -sp 'UCP password : ' ucppassword
 
-export UCP_HOST=$(echo -e "${ucphost}" | tr -d '[:space:]' | tr -d 'https://' | tr -d 'http://');
+export UCP_HOST=$ucphost;
 export UCP_USERNAME=$ucpuser;
 export UCP_PASSWORD=$ucppassword;
 
@@ -46,31 +56,58 @@ docker rmi -f uipath/docker-installation:latest
 
 cd /tmp/aifabric_installation
 
+# Total steps
+total_steps=8
+current_step=1
+
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
+
 #os_validation
-bash os-check.sh
+execute os-check.sh
+current_step=$(( current_step + 1 ))
+
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
 
 #lvm validation
-bash lvm-check.sh
+execute lvm-check.sh
+current_step=$(( current_step + 1 ))
 
 #storage validation
 #bash storage-check.sh
 
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
+
 #kubectl installed or not
-bash kubectl-install.sh
+execute kubectl-install.sh
+current_step=$(( current_step + 1 ))
+
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
 
 get_ucp_input;
+current_step=$(( current_step + 1 ))
+
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 5s ----------->"
 
 # download ucp_bundle
-bash docker-ucp-client-bundle-download.sh
+execute docker-ucp-client-bundle-download.sh
+current_step=$(( current_step + 1 ))
+
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
 
 load_env;
+current_step=$(( current_step + 1 ))
 
 cd rook
 
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 5m ----------->"
+
 # install ceph
-bash rook_ceph_installer.sh
+execute rook_ceph_installer.sh
+current_step=$(( current_step + 1 ))
 
 cd ..
 
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 5m ----------->"
+
 #install kotsadmin
-bash kotsadmin-ui-embedded-install.sh
+execute kotsadmin-ui-embedded-install.sh
