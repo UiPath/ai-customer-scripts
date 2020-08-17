@@ -6,7 +6,7 @@ function install_gpu() {
     sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
 
         sudo apt update
-        sudo apt install cuda
+        sudo apt-get -y install cuda
 
         echo "################################# Validate NVIDIA-SMI #####################################"
         nvidia-smi
