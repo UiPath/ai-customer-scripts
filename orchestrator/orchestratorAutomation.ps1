@@ -26,6 +26,8 @@ Param (
    [string] $aifip,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $aifport
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $storageport
 )
 
 Import-Module 'WebAdministration'
@@ -36,6 +38,10 @@ Import-Module 'WebAdministration'
     if(!$aifport)
     {   
         $aifport = "31390"
+    }
+    if(!$storageport)
+    {
+        $storageport = "31443"
     }
 
 echo "Path to web.config: "$config
@@ -54,8 +60,8 @@ $STATIC_NODES_STRING='
     <add key="AiFabric.Logs" value="false" />
     <add key="AiFabric.ModuleEnabled" value="true" />
     <add key="AiFabric.FeatureEnabledByDefault" value="true" />
-    <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:31443" />
-    <add key="AiFabric.MLPackagingInstructionsUrl" value="something" />
+    <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:{{storageport}}" />
+    <add key="AiFabric.MLPackagingInstructionsUrl" value="https://docs.uipath.com/ai-fabric/docs/building-ml-packages" />
     <add key="AiFabric.MLServiceUrl" value="https://{{aifip}}:{{aifport}}" />
     <add key="AiFabric.MLSkillUrl" value="https://{{aifip}}:{{aifport}}/ai-deployer" />
     <add key="AiFabric.MLPackageUrl" value="https://{{aifip}}:{{aifport}}/ai-pkgmanager" />
@@ -130,6 +136,7 @@ $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{thumbprint}}",$thumbprint
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{cert}}",$RawBase64);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{orchestratorhostname}}",$orchestratorhostname);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{aifport}}",$aifport);
+$STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{storageport}}",$storageport);
 $STATIC_NODES = [xml]$STATIC_NODES_STRING
 $CLIENT_APP_NODES = [xml]$CLIENT_APP_NODES_STRING
 
