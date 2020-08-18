@@ -61,7 +61,7 @@ $STATIC_NODES_STRING='
     <add key="AiFabric.ModuleEnabled" value="true" />
     <add key="AiFabric.FeatureEnabledByDefault" value="true" />
     <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:{{storageport}}" />
-    <add key="AiFabric.MLPackagingInstructionsUrl" value="something" />
+    <add key="AiFabric.MLPackagingInstructionsUrl" value="https://docs.uipath.com/ai-fabric/docs/building-ml-packages" />
     <add key="AiFabric.MLServiceUrl" value="https://{{aifip}}:{{aifport}}" />
     <add key="AiFabric.MLSkillUrl" value="https://{{aifip}}:{{aifport}}/ai-deployer" />
     <add key="AiFabric.MLPackageUrl" value="https://{{aifip}}:{{aifport}}/ai-pkgmanager" />
