@@ -26,6 +26,8 @@ Param (
    [string] $aifip,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $aifport
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $cephport
 )
 
 Import-Module 'WebAdministration'
@@ -36,6 +38,10 @@ Import-Module 'WebAdministration'
     if(!$aifport)
     {   
         $aifport = "31390"
+    }
+    if(!$cephport)
+    {
+        $cephport = "31443"
     }
 
 echo "Path to web.config: "$config
@@ -54,7 +60,7 @@ $STATIC_NODES_STRING='
     <add key="AiFabric.Logs" value="false" />
     <add key="AiFabric.ModuleEnabled" value="true" />
     <add key="AiFabric.FeatureEnabledByDefault" value="true" />
-    <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:31443" />
+    <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:{{cephport}}" />
     <add key="AiFabric.MLPackagingInstructionsUrl" value="something" />
     <add key="AiFabric.MLServiceUrl" value="https://{{aifip}}:{{aifport}}" />
     <add key="AiFabric.MLSkillUrl" value="https://{{aifip}}:{{aifport}}/ai-deployer" />
@@ -130,6 +136,7 @@ $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{thumbprint}}",$thumbprint
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{cert}}",$RawBase64);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{orchestratorhostname}}",$orchestratorhostname);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{aifport}}",$aifport);
+$STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{cephport}}",$cephport);
 $STATIC_NODES = [xml]$STATIC_NODES_STRING
 $CLIENT_APP_NODES = [xml]$CLIENT_APP_NODES_STRING
 
