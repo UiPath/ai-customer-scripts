@@ -25,7 +25,7 @@ Param (
    [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName)]
    [string] $aifip,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
-   [string] $aifport
+   [string] $aifport,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $storageport
 )
