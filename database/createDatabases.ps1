@@ -4,7 +4,7 @@
 .SYNOPSIS   
    Create Databases Required for AIFabric
 .DESCRIPTION 
-   Create Databases required by AIFabric i.e ai_helper, ai_pkgmanager, ai_deployer & ai_trainer & the script also creates an user which has db_owner privileges on all these 4 databases 
+   Create Databases required by AIFabric i.e ai_helper, ai_pkgmanager, ai_deployer, ai_trainer & ai_appmanager & the script also creates an user which has db_owner privileges on all these 5 databases 
    and the username and password that are generated are both logged to console as well as stored as an file in the current directory from where the script execution is triggered.
 .NOTES   
     Name: ./createDatabases.ps1
@@ -164,6 +164,7 @@ executeQuery master $createDatabaseQuery.Replace("{{DB}}", "ai_helper$suffix")
 executeQuery master $createDatabaseQuery.Replace("{{DB}}", "ai_deployer$suffix")
 executeQuery master $createDatabaseQuery.Replace("{{DB}}", "ai_pkgmanager$suffix")
 executeQuery master $createDatabaseQuery.Replace("{{DB}}", "ai_trainer$suffix")
+executeQuery master $createDatabaseQuery.Replace("{{DB}}", "ai_appmanager$suffix")
 
 
 #Execute Grants
@@ -171,3 +172,4 @@ executeQuery "ai_helper$suffix" $grantcommand
 executeQuery "ai_deployer$suffix" $grantcommand
 executeQuery "ai_pkgmanager$suffix" $grantcommand
 executeQuery "ai_trainer$suffix" $grantcommand
+executeQuery "ai_appmanager$suffix" $grantcommand
