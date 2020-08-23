@@ -15,6 +15,9 @@
     If orchestrator is hosted at orchestrator.uipath.com and aifabric is available at ww.xx.yy.zz, command to run would be 
     ./orchestratorAutomation.ps1 -aifip ww.xx.yy.zz -orcname orchestrator.uipath.com
 
+    If ai-app is accessed via domain instead of IP:PORT combo, then enable domainBasedAccess to true
+    .\orchestratorAutomation.ps1 -aifip "aif-sahil-aks.westeurope.cloudapp.azure.com" -orcname "aifabricdevorch.northeurope.cloudapp.azure.com" -domainBasedAccess "true"
+
 #>
 
 Param (
@@ -27,8 +30,9 @@ Param (
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $aifport,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
-   [string] $domainBasedAccess
-
+   [string] $domainBasedAccess,
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $storageport
 )
 
 Import-Module 'WebAdministration'
@@ -38,6 +42,10 @@ Import-Module 'WebAdministration'
 
     if(!$aifport){   
         $aifport = "31390"
+    }
+
+    if(!$storageport){
+        $storageport = "31443"
     }
 
     if($domainBasedAccess.Length -gt 0){
@@ -70,13 +78,13 @@ $STATIC_NODES_STRING='
     <add key="AiFabric.Logs" value="false" />
     <add key="AiFabric.ModuleEnabled" value="true" />
     <add key="AiFabric.FeatureEnabledByDefault" value="true" />
-    <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:31443" />
     <add key="AiFabric.MLPackagingInstructionsUrl" value="something" />
     <add key="AiFabric.MLServiceUrl" value="https://{{hostName}}" />
     <add key="AiFabric.MLSkillUrl" value="https://{{hostName}}/ai-deployer" />
     <add key="AiFabric.MLPackageUrl" value="https://{{hostName}}/ai-pkgmanager" />
     <add key="AiFabric.MLLogUrl" value="https://{{hostName}}/ai-helper" />
     <add key="AiFabric.MLTrainUrl" value="https://{{hostName}}/ai-trainer" />
+    <add key="AiFabric.ModelStorageUrl" value="https://{{aifip}}:{{storageport}}" />
     <add key="AiFabric.AccountId" value="host" />
     <add key="IDP.Scope" value="[&quot;AIFabric&quot;,&quot;Orchestrator&quot;]" />
     <add key="IDP.CurrentTokenThumbprint" value="{{thumbprint}}" />
@@ -147,6 +155,7 @@ $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{aifip}}",$aifip);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{thumbprint}}",$thumbprint);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{cert}}",$RawBase64);
 $STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{orchestratorhostname}}",$orchestratorhostname);
+$STATIC_NODES_STRING = $STATIC_NODES_STRING.Replace("{{storageport}}",$storageport);
 $STATIC_NODES = [xml]$STATIC_NODES_STRING
 $CLIENT_APP_NODES = [xml]$CLIENT_APP_NODES_STRING
 
