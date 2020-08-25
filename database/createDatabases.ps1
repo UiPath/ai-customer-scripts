@@ -21,7 +21,10 @@
     ./createDatabases.ps1 -sqlinstance "DESKTOP-LOUPTI1\SQLEXPRESS" -windowsAuthentication "N" -dbuser "aifadmin"
 
     If you wish to generate DB Names with suffixes, this is just for testing purpose:
-    ./createDatabases.ps1 -sqlinstance "DESKTOP-LOUPTI1\SQLEXPRESS" -windowsAuthentication "N" -dbuser "aifadmin" -suffix "_tbd"
+    ./createDatabases.ps1 -sqlinstance "DESKTOP-LOUPTI1\SQLEXPRESS" -windowsAuthentication "N" -dbuser "aifadmin" -dbpass "admin@123" -suffix "_tbd"
+
+    If user supplied password has to be used instead of script autogenerating the same:
+    ./createDatabases.ps1 -sqlinstance "DESKTOP-LOUPTI1\SQLEXPRESS" -windowsAuthentication "N" -dbuser "aifadmin" -dbpass "admin@123"
 #>
 
 Param (
@@ -31,6 +34,8 @@ Param (
    [string] $windowsAuthentication,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $dbuser,
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $dbpass,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $suffix
 )
@@ -135,7 +140,13 @@ ALTER ROLE [db_owner] ADD MEMBER $dbuser
 GO
 "
 
-$unsecurepassword = generatePassword
+#If user supplied the pass use it, otherwise auto generate the pass
+if($dbpass.Length -gt 0){
+    $unsecurepassword = $dbpass.ToString()
+} else {
+    $unsecurepassword = generatePassword
+}
+
 $sqlcommand = $sqlcommand.Replace("{{pwd}}",$unsecurepassword)
 
 #Create Login

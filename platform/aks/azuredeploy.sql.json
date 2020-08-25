@@ -1,0 +1,204 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverName": {
+            "type": "string",
+            "defaultValue": "[uniqueString('sql', resourceGroup().id)]",
+            "metadata": {
+                "description": "The name of the SQL logical server."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "administratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The administrator username of the SQL logical server."
+            }
+        },
+        "administratorLoginPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The administrator password of the SQL logical server."
+            }
+        },
+        "allowAzureIPs": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Allow Azure services to access server."
+            }
+        },
+        "connectionType": {
+            "defaultValue": "Default",
+            "allowedValues": [
+                "Default",
+                "Redirect",
+                "Proxy"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "SQL logical server connection type."
+            }
+        },
+        "sqlDatabaseTier": {
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Standard",
+                "Premium"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "SQL Database sku size."
+            }
+        },
+        "sqlDatabaseSize": {
+            "defaultValue": "S2",
+            "allowedValues": [
+                "S1",
+                "S2",
+                "S3"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "SQL Database sku size."
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2018-06-01-preview",
+            "name": "[parameters('serverName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "condition": "[parameters('allowAzureIPs')]",
+                    "type": "firewallRules",
+                    "apiVersion": "2018-06-01-preview",
+                    "name": "AllowAllWindowsAzureIps",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    }
+                },
+                {
+                    "type": "connectionPolicies",
+                    "apiVersion": "2014-04-01",
+                    "name": "Default",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "connectionType": "[parameters('connectionType')]"
+                    }
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "name": "ai_trainer",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "requestedServiceObjectiveName": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS"
+                    },
+                    "sku": {
+                        "name": "[parameters('sqlDatabaseSize')]",
+                        "tier": "[parameters('sqlDatabaseTier')]"
+                    }
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "name": "ai_deployer",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "requestedServiceObjectiveName": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS"
+                    },
+                    "sku": {
+                        "name": "[parameters('sqlDatabaseSize')]",
+                        "tier": "[parameters('sqlDatabaseTier')]"
+                    }
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "name": "ai_helper",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "requestedServiceObjectiveName": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS"
+                    },
+                    "sku": {
+                        "name": "[parameters('sqlDatabaseSize')]",
+                        "tier": "[parameters('sqlDatabaseTier')]"
+                    }
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "name": "ai_pkgmanager",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "requestedServiceObjectiveName": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS"
+                    },
+                    "sku": {
+                        "name": "[parameters('sqlDatabaseSize')]",
+                        "tier": "[parameters('sqlDatabaseTier')]"
+                    }
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "name": "ai_appmanager",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "requestedServiceObjectiveName": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS"
+                    },
+                    "sku": {
+                        "name": "[parameters('sqlDatabaseSize')]",
+                        "tier": "[parameters('sqlDatabaseTier')]"
+                    }
+                }
+            ]
+        }
+    ]
+}
