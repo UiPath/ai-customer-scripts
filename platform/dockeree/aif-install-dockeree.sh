@@ -57,7 +57,7 @@ docker rmi -f uipath/docker-installation:latest
 cd /tmp/aifabric_installation
 
 # Total steps
-total_steps=8
+total_steps=9
 current_step=1
 
 echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
@@ -95,6 +95,12 @@ current_step=$(( current_step + 1 ))
 echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
 
 load_env;
+current_step=$(( current_step + 1 ))
+
+echo "<----------- Total steps: ${total_steps} Current step: ${current_step}  Estimated time: 2s ----------->"
+
+#kubernetes node validation
+execute kubernetes-node-check-dockeree.sh
 current_step=$(( current_step + 1 ))
 
 cd rook
