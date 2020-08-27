@@ -1,0 +1,21 @@
+{
+  "changeLog": "",
+  "cpu": 0,
+  "description": "This model returns a list of entities recognized in text. The 18 types of named entities recognized use the same output class as in [OntoNotes5|https://catalog.ldc.upenn.edu/LDC2013T19] which is commonly used for benchamrking this task in academia. Please see AI Fabric documentation for detailed explanation of these 18 output classes. The model is based on the paper \"Approaching nested named entity recognition with parallel LSTM-CRFs\" by Borchmann et al, 2018. It achieves an F1 score of 93.18 on the dataset Conll-2003. The implementation is Open-Sourced by the following license: https://github.com/flairNLP/flair/blob/master/LICENSE",
+  "displayName": "NamedEntityRecognition",
+  "gpu": 0,
+  "inputDescription": "Text in English from which entities will be extracted.",
+  "inputType": "JSON",
+  "memory": 0,
+  "mlPackageLanguage": "PYTHON36",
+  "name": "NamedEntityRecognition",
+  "outputDescription": "List of named entities in the text. Each elemnt in the list has the text that was recognized, the starting and ending positions (character-wise) of the text, the type of named entity and the confidence in that prediction. For example:\n```\n[\n  {\n    \"text\": \"George Washington\",\n    \"start_pos\": 0,\n    \"end_pos\": 17,\n    \"type\": \"PER\",\n    \"confidence\": 0.96469810605049133\n  },\n  {\n    \"text\": \"New York City\",\n    \"start_pos\": 26,\n    \"end_pos\": 39,\n    \"type\": \"LOC\",\n    \"confidence\": 0.944470226764679\n  },\n  {\n    \"text\": \"Congress\",\n    \"start_pos\": 51,\n    \"end_pos\": 59,\n    \"type\": \"ORG\",\n    \"confidence\": 0.99666249752044678\n  }\n]\n```",
+  "processorType": "CPU",
+  "projectId": "[project-id]",  
+  "retrainable": false,
+  "stagingUri": "[staging-uri]",
+  "projectName": "Language Analysis",
+  "projectDescription": "Models for analyzing text including language detection, sentiment analysis, and named-entity recognition.",
+  "tenantName": "Open-Source Packages",
+  "imagePath": "registry.replicated.com/aif-core/namedentityrecognition:1"
+}
