@@ -45,14 +45,23 @@ export UCP_PASSWORD=$ucppassword;
 
 }
 
-docker create -ti --name aifabric_installer uipath/docker-installation:latest bash
+docker create -ti --name aifabric_installer uipath/docker-installation:v20.9.1 bash
 
 docker cp aifabric_installer:/ /tmp/aifabric_installation
 
 docker rm -f aifabric_installer
 
 #Remove the image
-docker rmi -f uipath/docker-installation:latest
+docker rmi -f uipath/docker-installation:v20.9.1
+
+. /etc/os-release
+export OS_PLATFORM=ubuntu
+if [ "${NAME}" == "Red Hat Enterprise Linux Server" ];
+then
+  export OS_PLATFORM=rhel
+fi
+
+echo $OS_PLATFORM
 
 cd /tmp/aifabric_installation
 
