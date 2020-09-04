@@ -8,7 +8,7 @@
   "inputType": "JSON",
   "memory": 0,
   "mlPackageLanguage": "PYTHON36_DU",
-  "name": "IndianInvoices",
+  "name": "InvoicesIndia",
   "outputDescription": "Please refer to the documentation of the Activity used to query the ML Skill.",
   "processorType": "GPU",
   "projectId": "[project-id]",  
