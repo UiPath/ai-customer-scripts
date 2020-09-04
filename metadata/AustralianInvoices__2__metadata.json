@@ -1,5 +1,5 @@
 {
-  "changeLog": "v20.8 release",
+  "changeLog": "Release v2020.8",
   "cpu": 0,
   "description": "Machine Learning model for extracting commonly occurring data points from Australian Invoices, including header fields and line items. Please see more details including supported languages and link to Activities guide in the About Licensing -> Document Understanding API Key section of the UiPath Automation Cloud Guide here: https://docs.uipath.com/automation-cloud/docs/about-licensing#section-document-understanding-api-key",
   "displayName": "AustralianInvoices",
