@@ -11,7 +11,7 @@ execute() {
 }
 
 #Check if lvm is installed
-execute ../scripts/lvm-checks.sh
+execute ../scripts/lvm-check.sh
 #OS Check
 execute ../scripts/os-check.sh
 #Check if RAW disks are available
