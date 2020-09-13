@@ -17,4 +17,4 @@ execute ../scripts/os-check.sh
 #Check if RAW disks are available
 execute ../scripts/storage-check.sh
 #Install Kubernetes
-execute ../scripts/install-curl.sh
+execute ../scripts/install-kurl.sh
