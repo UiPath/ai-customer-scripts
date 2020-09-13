@@ -11,10 +11,10 @@ execute() {
 }
 
 #Check if lvm is installed
-execute ./scripts/lvm-checks.sh
+execute ../scripts/lvm-checks.sh
 #OS Check
-execute ./scripts/os-check.sh
+execute ../scripts/os-check.sh
 #Check if RAW disks are available
-execute ./scripts/storage-check.sh
+execute ../scripts/storage-check.sh
 #Install Kubernetes
-execute ./scripts/install-curl.sh
+execute ../scripts/install-curl.sh
