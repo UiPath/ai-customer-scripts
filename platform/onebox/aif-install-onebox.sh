@@ -18,3 +18,5 @@ execute ../scripts/os-check.sh
 execute ../scripts/storage-check.sh
 #Install Kubernetes
 execute ../scripts/install-kurl.sh
+#Create service account
+execute ../scripts/create-serviceaccount.sh
