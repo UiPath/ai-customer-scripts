@@ -21,7 +21,10 @@ do
   then
     echo "Successfully Generated Diagnostics Report"
     kubectl -n $NAMESPACE logs ${latest_run} | sed -ne '/-Analysis Start-/,/-Analysis End-/p'
+    # Dumping the logs to a file
+    kubectl -n $NAMESPACE logs ${latest_run} > aifabric-diagnostics-latest.log
     exit 0
   fi
+  counter=$((counter+1))
   WAIT_MESSAGE="${WAIT_MESSAGE}.."
 done
