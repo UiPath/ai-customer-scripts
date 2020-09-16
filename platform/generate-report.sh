@@ -20,9 +20,12 @@ do
   if [ "${status}" = "Completed" ];
   then
     echo "Successfully Generated Diagnostics Report"
+    printf "Report Generated on %s\n" "$(date)"
     kubectl -n $NAMESPACE logs ${latest_run} | sed -ne '/-Analysis Start-/,/-Analysis End-/p'
     # Dumping the logs to a file
     kubectl -n $NAMESPACE logs ${latest_run} > aifabric-diagnostics-latest.log
+    # Append time of report generation as well.
+    printf "**Report Generated on %s\n" "$(date)" >> aifabric-diagnostics-latest.log
     exit 0
   fi
   counter=$((counter+1))
