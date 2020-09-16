@@ -1,5 +1,5 @@
 kubectl -n aifabric delete job diagnostics-job
-kubectl -n aifabric create job diagnostics-job --from cronjob/diagnostics-tool
+kubectl -n aifabric create job diagnostics-job --from cronjob/ai-diagnostics-tool
 
 counter=0;
 NAMESPACE=aifabric
