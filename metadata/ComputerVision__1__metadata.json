@@ -17,5 +17,5 @@
   "projectName": "UiPath Document Understanding",
   "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
-  "imagePath": "registry.replicated.com/aif-core/computerVision:1"
+  "imagePath": "registry.replicated.com/aif-core/computervision:1"
 }
