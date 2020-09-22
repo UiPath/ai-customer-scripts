@@ -98,8 +98,8 @@ echo "Please perform following steps to clean up everything -
 
 rm -rf /var/lib/rook
 
-2. On all nodes run following commands for every device used by rook. You can check the disks used by running lsblk and checking if there is an lvm ceph-***** on that disk.
-Do this foe all disks, by changing name of the disk on first line.
+2. On all nodes run following commands for every disk used by rook. You can check the disks used by running 'lsblk' and checking if there is 'lvm ceph-*****' written with that disk.
+Do this for all disks, by changing name of the disk on first line, (/dev/sdc, /dev/sdb etc..)
 
 DISK="/dev/sdc"
 sgdisk --zap-all \$DISK
@@ -107,7 +107,7 @@ dd if=/dev/zero of="\$DISK" bs=1M count=100 oflag=direct,dsync
 blkdiscard \$DISK
 
 3. After above is done for all disks on all nodes.
-Run following command on each node where ceph devices were created.
+Run following command on each node where ceph devices(disks) were created.
 
 ls /dev/mapper/ceph-* | xargs -I% -- dmsetup remove %
 rm -rf /dev/ceph-*"
