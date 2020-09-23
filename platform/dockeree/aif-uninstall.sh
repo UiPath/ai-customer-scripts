@@ -54,12 +54,6 @@ kubectl delete ns aif-core
 
 # Ceph uninstall
 echo "Uninstalling Ceph from Cluster"
-kubectl delete -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/block_storage_class.yaml
-
-kubectl delete -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/block_storage.yaml
-
-kubectl delete -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/object_storage_class.yaml
-
 kubectl delete -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/object.yaml
 
 kubectl delete -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/cluster-test.yaml
