@@ -105,21 +105,3 @@ Run following command on each node where ceph devices(disks) were created.
 
 ls /dev/mapper/ceph-* | xargs -I% -- dmsetup remove %
 rm -rf /dev/ceph-*"
-
-##################################################################################################################################
-# Run the command on all nodes
-# rm -rf /var/lib/rook
-#
-# On all nodes run following commands for every device used by rook byt running lsblk and changing the disk name on first line.
-#
-# DISK="/dev/sdb"
-# sgdisk --zap-all $DISK
-# dd if=/dev/zero of="$DISK" bs=1M count=100 oflag=direct,dsync
-# blkdiscard $DISK
-# 
-# After above is done for all disks on all nodes.
-# Run following command on each node where ceph devices were created.
-#
-# ls /dev/mapper/ceph-* | xargs -I% -- dmsetup remove %
-# rm -rf /dev/ceph-*
-###################################################################################################################################
