@@ -108,11 +108,6 @@ main() {
     check_nvidia=$(sudo lshw -C display|grep NVIDIA)
 
     if [[ "$check_nvidia" == *"NVIDIA"* ]]; then
-        agree="Y"
-    fi
-
-    if [ "$agree" == "Y" ]
-    then
         install_gpu
     else
         echo "####### GPU not installed in the setup ###########"
