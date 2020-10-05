@@ -18,6 +18,10 @@
     If ai-app is accessed via domain instead of IP:PORT combo, then enable domainBasedAccess to true
     .\orchestratorAutomation.ps1 -aifip "aif-sahil-aks.westeurope.cloudapp.azure.com" -orcname "aifabricdevorch.northeurope.cloudapp.azure.com" -domainBasedAccess "true"
 
+    If Orchestrator Installation Path has to be specified,
+    ./orchestratorAutomation.ps1 -aifip ww.xx.yy.zz -orcname orchestrator.uipath.com -config "C:\Program Files (x86)\UiPath\Orchestrator"
+
+
 #>
 
 Param (
@@ -35,26 +39,50 @@ Param (
    [string] $storageport
 )
 
-Import-Module 'WebAdministration'
-    if(!$config){   
-        $config = "C:\Program Files (x86)\UiPath\Orchestrator\web.config"
-    }
+Import-Module 'WebAdministration' 
+    
 
-    if(!$aifport){   
-        $aifport = "31390"
-    }
+if(!$config){   
+    $config = "C:\Program Files (x86)\UiPath\Orchestrator"
+} 
 
-    if(!$storageport){
-        $storageport = "31443"
-    }
+#if path does not end with \ add it
+if( $config -notmatch '\\$' ){
+    $config += '\'
+}
 
-    if($domainBasedAccess.Length -gt 0){
-        $domainBasedAccess = $domainBasedAccess.ToString()
-    } else {
-        $domainBasedAccess = "false"
-    }
+$dll_config = $config + 'UiPath.Orchestrator.dll.config'
 
-echo "Path to web.config: "$config
+#Fetching Orchestrator version
+if(Test-Path $dll_config){
+    $orchestrator_version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($config + 'UiPath.Orchestrator.web.dll').FileVersion
+    echo "Orchestrator version : $orchestrator_version"
+}
+
+if(Test-Path $dll_config){
+    $config = $config + 'UiPath.Orchestrator.dll.config'
+    $configFile = 'UiPath.Orchestrator.dll.config'
+} else{
+    $config = $config + 'web.config'
+    $configFile = 'web.config'
+}
+
+
+if(!$aifport){   
+    $aifport = "31390"
+}
+
+if(!$storageport){
+    $storageport = "31443"
+}
+
+if($domainBasedAccess.Length -gt 0){
+    $domainBasedAccess = $domainBasedAccess.ToString()
+} else {
+    $domainBasedAccess = "false"
+}
+
+echo "Path to Web config: "$config
 
 Copy-Item $config -Destination ("$config.original."+(Get-Date -Format "MMddyyyy.HH.mm.ss"))
 
@@ -120,11 +148,13 @@ Get-ChildItem -Path IIS:SSLBindings | ForEach-Object -Process `
     {
         $_.Sites
         $sname = $_.Sites.Value
-        if($config.Trim().ToLower().Equals((Get-WebFilePath "IIS:\Sites\$sname\web.config").ToString().Trim().ToLower()))
+        echo "SiteName: $sname"
+        if($config.Trim().ToLower().Equals((Get-WebFilePath "IIS:\Sites\$sname\$configFile").ToString().Trim().ToLower()))
         {
             $certificate = Get-ChildItem -Path CERT:LocalMachine/My |
                 Where-Object -Property Thumbprint -EQ -Value $_.Thumbprint
             $thumbprint = $certificate.Thumbprint.ToLower()
+            echo "thumprint is $thumbprint"
             $RawBase64 = [System.Convert]::ToBase64String($certificate.GetRawCertData())
             $orchestratorhostname = ((Get-WebBinding -Name $sname) | where{$_.protocol -eq "https"}).bindingInformation.Split(":")[-1]
         }
@@ -175,14 +205,17 @@ function AifabricFixedConfig
         $xml.SelectNodes("configuration/appSettings/add[@key='$key']") | %{$xml.configuration.appSettings.RemoveChild($_)}
         $xml.configuration.appSettings.AppendChild($xml.ImportNode($node.Node,1))
     }
-    if($xml.SelectNodes("configuration/configSections/section[@name='ClientApplications']").Count -eq 0)# | %{$xml.configuration.configSections.RemoveChild($xml.ImportNode($additionalSection.Node,1))}
-    {
-        $xml.configuration.configSections.AppendChild($xml.ImportNode($additionalSection.Node,1))
+
+    #if DDL does not exist then orch version is 20.4 or less than that
+    if(!(Test-Path $dll_config)){
+        if($xml.SelectNodes("configuration/configSections/section[@name='ClientApplications']").Count -eq 0){
+            $xml.configuration.configSections.AppendChild($xml.ImportNode($additionalSection.Node,1))
+        }
+        if($xml.SelectNodes("configuration/ClientApplications").Count -eq 0){
+            $xml.configuration.AppendChild($xml.ImportNode($ClientApplicationsSection.Node,1))
+        }
     }
-    if($xml.SelectNodes("configuration/ClientApplications").Count -eq 0)
-    {
-        $xml.configuration.AppendChild($xml.ImportNode($ClientApplicationsSection.Node,1))
-    }
+
     $xml.Save($file.FullName)
 }
 
