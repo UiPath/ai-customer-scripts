@@ -67,6 +67,12 @@ if(Test-Path $dll_config){
     $configFile = 'web.config'
 }
 
+#Check for the existence of config file
+if(-not (Test-Path $config)){
+	throw "$config File does not Exists. Please make sure that the Orchestrator installation folder is correct !"
+	exit
+}
+
 
 if(!$aifport){   
     $aifport = "31390"
