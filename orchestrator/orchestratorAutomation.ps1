@@ -16,7 +16,7 @@
     ./orchestratorAutomation.ps1 -aifip ww.xx.yy.zz -orcname orchestrator.uipath.com
 
     If ai-app is accessed via domain instead of IP:PORT combo, then enable domainBasedAccess to true
-    .\orchestratorAutomation.ps1 -aifip "aif-sahil-aks.westeurope.cloudapp.azure.com" -orcname "aifabricdevorch.northeurope.cloudapp.azure.com" -domainBasedAccess "true"
+    .\orchestratorAutomation.ps1 -aifip "aif-sahil-aks.westeurope.cloudapp.azure.com" -orcname "aifabricdevorch.northeurope.cloudapp.azure.com" -portlessAccess "true"
 
     If Orchestrator Installation Path has to be specified,
     ./orchestratorAutomation.ps1 -aifip ww.xx.yy.zz -orcname orchestrator.uipath.com -config "C:\Program Files (x86)\UiPath\Orchestrator"
@@ -34,7 +34,7 @@ Param (
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $aifport,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
-   [string] $domainBasedAccess,
+   [string] $portlessAccess,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $storageport
 )
@@ -82,10 +82,10 @@ if(!$storageport){
     $storageport = "31443"
 }
 
-if($domainBasedAccess.Length -gt 0){
-    $domainBasedAccess = $domainBasedAccess.ToString()
+if($portlessAccess.Length -gt 0){
+    $portlessAccess = $portlessAccess.ToString()
 } else {
-    $domainBasedAccess = "false"
+    $portlessAccess = "false"
 }
 
 echo "Path to Web config: "$config
@@ -93,7 +93,7 @@ echo "Path to Web config: "$config
 Copy-Item $config -Destination ("$config.original."+(Get-Date -Format "MMddyyyy.HH.mm.ss"))
 
 
-if($domainBasedAccess -eq "true"){
+if($portlessAccess -eq "true"){
    $hostName = $aifip
 } else{
    $hostName = "$($aifip):$($aifport)"    
