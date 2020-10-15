@@ -175,7 +175,7 @@ if($orcname)
         echo "orcname should not start with http or https"
         throw "Invalid orcname input provided: $orcname"
     }
-    $orchestratorhostname = $orcname
+    $orchestratorhostname = $orcname.ToLower()
 }
 
 if($aifip.StartsWith("http://") -or $aifip.StartsWith("https://"))
