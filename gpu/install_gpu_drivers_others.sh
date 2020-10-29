@@ -22,7 +22,6 @@ function install_gpu() {
       sudo apt-get update && sudo apt-get install -y nvidia-docker2
     elif [[ ("${os}" = "centos" || "${os}" = "rhel") && "${major_version}" = "7" ]];
     then
-      #Install GPU Drivers for RHEL and CentOS 7.x
       sudo yum clean all
       sudo yum install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r)
       sudo yum install -y http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm
@@ -147,7 +146,7 @@ function validate_gpu_updated() {
 }
 
 if [ "$EUID" -ne 0 ]
-  then echo "Please run script as root"
+  then echo "Please run as root"
   exit
 fi
 
