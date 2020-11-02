@@ -1,5 +1,5 @@
 {
-  "changeLog": "Release v2020.8",
+  "changeLog": "Release v2020.10",
   "cpu": 0,
   "description": "This Package provides the Handwriting recognition capability required by the Intelligent Form Extractor Package. Deploying this ML Package is required prior to deploying the Intelligent Form Extractor Package. For detailed instructions about the steps required to correctly configure and deploy the Intelligent Form Extractor, see the Out-of-the-box Packages documentation for AI Fabric here: https://docs.uipath.com/ai-fabric/docs/uipath-document-understanding",
   "displayName": "HandwritingRecognition",
