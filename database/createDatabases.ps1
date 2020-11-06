@@ -41,7 +41,7 @@ Param (
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $sapass,  
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
-   [string] $suffix
+   [string] $suffix,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $singleDatabase
 )
