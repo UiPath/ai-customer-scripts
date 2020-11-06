@@ -128,8 +128,8 @@ if(!(Get-Module -ListAvailable -Name SqlServer)){
 	Install-Module -Name SqlServer -AllowClobber -Confirm:$False -Force
 }
 
-if ($IsWindows)
-{
+# this seems to hold true from WINXP onward
+if ($env:OS -eq "Windows_NT") {
     Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\.NetFramework\\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
     Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
 }
