@@ -37,16 +37,22 @@ Param (
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $dbpass,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $sauser,
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [string] $sapass,  
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $suffix,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $singleDatabase
 )
 
-
 if($windowsAuthentication.Length -eq 0){
     write-host "since windowsAuthentication flag is not set, defaulting to SQL server authentication"
     $windowsAuthentication = "N"
 }
+
+$username = $sauser
+$password = $sapass
 
 if($singleDatabase.Length -eq 0){
     write-host "creating multiple databases"
@@ -56,10 +62,12 @@ if($singleDatabase.Length -eq 0){
 if($windowsAuthentication -eq "Y"){
   echo "Authenticating via Windows Authentication(i.e Using Integrated Auth)"    
 } elseif($windowsAuthentication -eq "N"){
-    $sqlCredentials = Get-Credential
-    #Password Validation
-    $username = $sqlCredentials.username
-    $password = $sqlCredentials.GetNetworkCredential().password
+    if (($username.Length -eq 0) -or ($password.Length -eq 0)){
+        $sqlCredentials = Get-Credential
+        #Password Validation
+        $username = $sqlCredentials.username
+        $password = $sqlCredentials.GetNetworkCredential().password
+    } 
 
     if(($username.Length -eq 0) -or ($password.Length -eq 0)){
     write-host "SQL Server Auth Enabled and credentials are not supplied so exiting the program" -ForegroundColor Red
@@ -104,7 +112,7 @@ function executeQuery($database, $query){
         Invoke-Sqlcmd -ServerInstance $sqlinstance -Database $database -Query $query -ErrorAction Stop -Verbose
         write-host $query "Succeded" -ForegroundColor Yellow
         } else{
-        Invoke-Sqlcmd -ServerInstance $sqlinstance -Database $database -Credential $sqlCredentials -Query $query -ErrorAction Stop -Verbose
+        Invoke-Sqlcmd -ServerInstance $sqlinstance -Database $database -username $username -password $password -Query $query -ErrorAction Stop -Verbose
         write-host $query "Succeded" -ForegroundColor Yellow
         }
      } catch {
@@ -114,15 +122,17 @@ function executeQuery($database, $query){
 }
 
 #Install modules required
-$installed = Test-Path -Path 'C:\Program Files\WindowsPowerShell\Modules\SqlServer'
-if(!$installed){
+if(!(Get-Module -ListAvailable -Name SqlServer)){
     echo "Installing required module..."
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	Install-Module -Name SqlServer -AllowClobber -Confirm:$False -Force
 }
 
-Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\.NetFramework\\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
-Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
+# this seems to hold true from WINXP onward
+if ($env:OS -eq "Windows_NT") {
+    Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\.NetFramework\\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
+    Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
+}
 
 #formulate logins for single Database
 $helper_login_user=$dbuser+"_helper"
