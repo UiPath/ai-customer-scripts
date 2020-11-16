@@ -9,38 +9,38 @@ function install_gpu() {
     if [[ "${os}" = "ubuntu" && "${major_version}" = "18" ]];
     then
       curl -O https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
-      sudo dpkg -i cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
-      sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+      dpkg -i cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+      apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
 
-      sudo apt update
-      sudo apt-get -y install cuda jq
+      apt update
+      apt-get -y install cuda jq
 
       #Install nvidia-docker for Ubuntu
       distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-      curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-      curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-      sudo apt-get update && sudo apt-get install -y nvidia-docker2
+      curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
+      curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+      apt-get update && apt-get install -y nvidia-docker2
     elif [[ ("${os}" = "centos" || "${os}" = "rhel") && "${major_version}" = "7" ]];
     then
       #Install GPU Drivers for RHEL and CentOS 7.x
-      sudo yum clean all
-      sudo yum install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r)
-      sudo yum install -y http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm
-      sudo yum install -y epel-release
-      sudo yum clean all
-      sudo yum install -y cuda 
-      sudo yum install -y jq 
+      yum clean all
+      yum install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r)
+      yum install -y http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-repo-rhel7-10.0.130-1.x86_64.rpm
+      yum install -y epel-release
+      yum clean all
+      yum install -y cuda 
+      yum install -y jq 
 
       #Install nvidia toolkit
-      sudo yum clean expire-cache
-      sudo yum install nvidia-container-toolkit -y
+      yum clean expire-cache
+      yum install nvidia-container-toolkit -y
 
       #Install Nvidia docker2
       distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-        && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.repo | sudo tee /etc/yum.repos.d/nvidia-docker.repo
-      sudo yum install -y dnf
-      sudo dnf clean expire-cache --refresh
-      sudo dnf install -y nvidia-docker2
+        && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.repo | tee /etc/yum.repos.d/nvidia-docker.repo
+      yum install -y dnf
+      dnf clean expire-cache --refresh
+      dnf install -y nvidia-docker2
     else
       echo "###########################################"
       echo "The script does not support installing GPU drivers for distribution $distribution"
@@ -56,11 +56,11 @@ function install_gpu() {
     fi
 
     # backup json, this will be used for merging with updated json in the later step
-    sudo bash -c 'echo "{\"default-runtime\": \"nvidia\", \"exec-opts\": [\"native.cgroupdriver=systemd\"]}" > /etc/docker/daemon_old_bkp.json'
+    bash -c 'echo "{\"default-runtime\": \"nvidia\", \"exec-opts\": [\"native.cgroupdriver=systemd\"]}" > /etc/docker/daemon_old_bkp.json'
     # if you installed the nvidia-docker2 package, it already registers the runtime within the docker daemon.json
     # https://github.com/NVIDIA/nvidia-container-runtime
     # Before the restart the docker.json will have this entry "exec-opts": ["native.cgroupdriver=systemd"] which gets overridden https://github.com/NVIDIA/nvidia-docker/issues/1346 
-    sudo systemctl restart docker
+    systemctl restart docker
     edit_and_restart_docker_config
 
     #Verfiy if kubectl commands are all running fine 
@@ -69,7 +69,7 @@ function install_gpu() {
     validate_kubectl_up
 
     #At this point, a working setup can be tested by running a base CUDA container
-    cuda_health_check=$(sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi | grep "NVIDIA-SMI")
+    cuda_health_check=$(docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi | grep "NVIDIA-SMI")
 
     if [[ "$cuda_health_check" == *"NVIDIA-SMI"* ]];
     then
@@ -91,10 +91,12 @@ function install_gpu() {
 
 function edit_and_restart_docker_config(){
     echo "################## Updating docker configuration ######################"
-    sudo cat /etc/docker/daemon.json > /etc/docker/daemon_original_bkp.json
-    sudo jq -s '.[0] * .[1]' /etc/docker/daemon.json /etc/docker/daemon_old_bkp.json > /etc/docker/daemon_merged.json
-    sudo mv /etc/docker/daemon_merged.json /etc/docker/daemon.json
-    sudo systemctl restart docker
+    cat /etc/docker/daemon.json > /etc/docker/daemon_original_bkp.json
+    jq -s '.[0] * .[1]' /etc/docker/daemon.json /etc/docker/daemon_old_bkp.json > /etc/docker/daemon_merged.json
+    mv /etc/docker/daemon_merged.json /etc/docker/daemon.json
+    systemctl restart docker
+    sleep 15
+    systemctl restart kubelet
 }
 
 function validate_kubectl_up() {
@@ -113,7 +115,6 @@ function validate_kubectl_up() {
 
     if [ $count == 50 ]; then
         echo "Kubectl Failed to come up"
-        swapoff -a
         exit
     fi
 }
@@ -141,7 +142,6 @@ function validate_gpu_updated() {
 
     if [ $count == 50 ]; then
         echo "################## Failed to install gpu ####################"
-        swapoff -a
         exit
     fi
 }
@@ -151,8 +151,11 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-sudo lshw -C display
-check_nvidia=$(sudo lshw -C display|grep NVIDIA)
+echo "Disabling swap off"
+swapoff -a
+
+lshw -C display
+check_nvidia=$(lshw -C display|grep NVIDIA)
 if [[ "$check_nvidia" == *"NVIDIA"* ]]; then
     agree="Y"
 fi
