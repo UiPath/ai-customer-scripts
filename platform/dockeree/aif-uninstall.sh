@@ -6,8 +6,6 @@ curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | 
 echo "Uninstalling AIFabric Services"
 helm delete oob-scheduler-crd
 
-helm delete docker-image-deletion-scheduler-crd
-
 helm delete oob-installer-crd
 
 helm -n aifabric delete cronjob
