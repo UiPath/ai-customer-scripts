@@ -17,5 +17,6 @@
   "projectName": "Tabular Data",
   "projectDescription": "Models for analyzing tabular data including classification and regression ML Packages",
   "tenantName": "Open-Source Packages",
+  "minAIFabricVersion": "v20.10.1",
   "imagePath": "registry.replicated.com/aif-core/tpotautomlclassification:1"
 }
