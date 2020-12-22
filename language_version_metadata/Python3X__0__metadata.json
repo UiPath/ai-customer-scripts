@@ -1,0 +1,9 @@
+[{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON3X",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-python36:0.4-AIF",
+        "runtimeImage": ""
+}]

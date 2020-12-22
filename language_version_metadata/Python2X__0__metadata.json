@@ -1,0 +1,10 @@
+[{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON2X",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-python27:0.1-AIF",
+        "runtimeImage": ""
+}]
+

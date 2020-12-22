@@ -1,0 +1,9 @@
+[{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "MOJO_PIPELINE",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-java-build:0.1-AIF",
+        "runtimeImage": "uipath/uipath-core-s2i-java-runtime:0.1-AIF"
+}]

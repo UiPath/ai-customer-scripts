@@ -1,0 +1,36 @@
+[{
+        "version": 1,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON37_DU",
+        "languageGroup": "DU",
+        "baseImage": "uipathmlcontainerregistry.azurecr.io/aifabric_base_image:20.11.0-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 1,
+        "imageType": "SERVING",
+        "processor": "GPU",
+        "mlPackageLanguage": "PYTHON37_DU",
+        "languageGroup": "DU",
+        "baseImage": "uipathmlcontainerregistry.azurecr.io/aifabric_base_image:20.11.0-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 1,
+        "imageType": "TRAINING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON37_DU",
+        "languageGroup": "DU",
+        "baseImage": "uipathmlcontainerregistry.azurecr.io/aifabric_base_image:20.11.0-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 1,
+        "imageType": "TRAINING",
+        "processor": "GPU",
+        "mlPackageLanguage": "PYTHON37_DU",
+        "languageGroup": "DU",
+        "baseImage": "uipathmlcontainerregistry.azurecr.io/aifabric_base_image:20.11.0-AIF",
+        "runtimeImage": ""
+}]

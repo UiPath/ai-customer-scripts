@@ -1,0 +1,18 @@
+[{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON36_CV",
+        "languageGroup": "CV",
+        "baseImage": "uipath/uipath-core-s2i-python3-cv-gpu:0.2-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "GPU",
+        "mlPackageLanguage": "PYTHON36_CV",
+        "languageGroup": "CV",
+        "baseImage": "uipath/uipath-core-s2i-python3-cv-gpu:0.2-AIF",
+        "runtimeImage": ""
+}]
