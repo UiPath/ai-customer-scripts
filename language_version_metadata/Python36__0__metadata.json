@@ -1,0 +1,36 @@
+[{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON36",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-python36:0.4-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 0,
+        "imageType": "SERVING",
+        "processor": "GPU",
+        "mlPackageLanguage": "PYTHON36",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-python3-tf-gpu:0.4-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 0,
+        "imageType": "TRAINING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON36",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-python36:0.4-AIF",
+        "runtimeImage": ""
+},
+{
+        "version": 0,
+        "imageType": "TRAINING",
+        "processor": "GPU",
+        "mlPackageLanguage": "PYTHON36",
+        "languageGroup": "DEFAULT",
+        "baseImage": "uipath/uipath-core-s2i-python3-tf-gpu:0.4-AIF",
+        "runtimeImage": ""
+}]
