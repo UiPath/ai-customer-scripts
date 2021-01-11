@@ -482,6 +482,9 @@ fi
 # Validate input provided by end user
 function validate_input() {
 
+# Validate file path
+valiadte_file_path $ML_PACKAGE_IMPORT_INPUT_FILE
+
 readonly INGRESS_HOST_OR_FQDN=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.hostOrFQDN != null) | .hostOrFQDN')
 readonly PROJECT_NAME=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.projectName != null) | .projectName')
 readonly ML_PACKAGE_NAME=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.mlPackageName != null) | .mlPackageName')
