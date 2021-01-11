@@ -1,5 +1,5 @@
 [{
-        "version": 0,
+        "version": 1,
         "imageType": "SERVING",
         "processor": "CPU",
         "mlPackageLanguage": "PYTHON27",
@@ -8,7 +8,7 @@
         "runtimeImage": ""
 },
 {
-        "version": 0,
+        "version": 1,
         "imageType": "TRAINING",
         "processor": "CPU",
         "mlPackageLanguage": "PYTHON27",
