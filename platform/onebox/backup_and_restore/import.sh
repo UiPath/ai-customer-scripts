@@ -466,7 +466,6 @@ then
 fi
 }
 
-
 # Validate dependecny module
 # $1 - Name of the dependecny module
 # $2 - Command to validate module

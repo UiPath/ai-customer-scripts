@@ -67,7 +67,7 @@ fi
 function get_signed_url() {
 local signing_method=$1
 local encoded_url=$2
-generated_signed_url=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST"'/ai-pkgmanager/v1/signedURL?contentType=application/x-zip-compressed&mlPackageName='"$blob_path"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+generated_signed_url=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?contentType=application/x-zip-compressed&mlPackageName='"$blob_path"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$generated_signed_url" ];
@@ -96,7 +96,7 @@ blob_path=$account_id/$tenant_id/$project_id/$1/$ml_package_version_id/$2
 function fetch_ml_package_versions_by_ml_package_id() {
 local ml_package_id=$1
 local project_id=$2
-readonly mlpackage_versions_of_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+readonly mlpackage_versions_of_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$mlpackage_versions_of_ml_package" ];
@@ -111,7 +111,7 @@ validate_response_from_api $resp_code "200" "Successfully fetched ML package ver
 # S1 - Project Id under which ML packages is present
 function fetch_ml_packages() {
 local project_id=$1
-ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&project_id='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&project_id='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_packages" ];
@@ -124,7 +124,7 @@ validate_response_from_api $resp_code "200" "Successfully fetched ML packages" "
 
 # Find all projects
 function fetch_projects() {
-projects=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST"'/ai-pkgmanager/v1/projects?pageSize='"$PAGE_SIZE"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+projects=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects?pageSize='"$PAGE_SIZE"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$projects" ];
