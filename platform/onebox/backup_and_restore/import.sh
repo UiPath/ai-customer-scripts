@@ -458,7 +458,7 @@ fi
 
 # Validate file provided by user exists or not, It may be relative path or absolute path
 # $1 - File path
-function valiadte_file_path() {
+function validate_file_path() {
 if [ ! -f "$1" ];
 then
   echo "$red $(date) $1 file does not exist, Please check ... Exiting"
@@ -483,7 +483,7 @@ fi
 function validate_input() {
 
 # Validate file path
-valiadte_file_path $ML_PACKAGE_IMPORT_INPUT_FILE
+validate_file_path $ML_PACKAGE_IMPORT_INPUT_FILE
 
 readonly INGRESS_HOST_OR_FQDN=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.hostOrFQDN != null) | .hostOrFQDN')
 readonly PROJECT_NAME=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.projectName != null) | .projectName')
@@ -499,8 +499,8 @@ then
   exit 1
 fi
 
-valiadte_file_path $ML_PACKAGE_ZIP_FILE_PATH
-valiadte_file_path $ML_PACKAGE_METADATA_FILE_PATH
+validate_file_path $ML_PACKAGE_ZIP_FILE_PATH
+validate_file_path $ML_PACKAGE_METADATA_FILE_PATH
 
 echo "$(date) Successfully validated user input"
 }

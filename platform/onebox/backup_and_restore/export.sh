@@ -241,11 +241,21 @@ echo "$yellow Successfully saved ML package version $ML_PACKAGE_VERSION metadata
 download_ml_package_using_signedUrl $signed_url $ml_package_zip_file_name
 }
 
+# Validate file provided by user exists or not, It may be relative path or absolute path
+# $1 - File path
+function validate_file_path() {
+if [ ! -f "$1" ];
+then
+  echo "$red $(date) $1 file does not exist, Please check ... Exiting"
+  exit 1
+fi
+}
+
 # Validate input provided by end user
 function validate_input() {
 
 # Validate file path
-valiadte_file_path $ML_PACKAGE_EXPORT_INPUT_FILE
+validate_file_path $ML_PACKAGE_EXPORT_INPUT_FILE
 
 readonly INGRESS_HOST_OR_FQDN=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.hostOrFQDN != null) | .hostOrFQDN')
 readonly PROJECT_NAME=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.projectName != null) | .projectName')
