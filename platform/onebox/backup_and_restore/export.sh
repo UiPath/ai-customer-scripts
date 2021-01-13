@@ -1,11 +1,10 @@
 #!/bin/bash
 
 : '
-This scipt will download ML package from target environment expect cloned Packages. User format
-for script is described as
+This scipt will download ML package from target environment, expect cloned packages.
 # $1 - ML package export json file path
 
-[ Structure of ML Package import file]
+[ Structure of ML Package import file with exact key name ]
   - hostOrFQDN:  Public end point from where backend service can be accessible
   - projectName: Project Name to which ML package will be imported
   - mlPackageName: Name of ML package to which new version will be uploaded if exits, otherwise new ML package by same name
@@ -19,7 +18,7 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
-echo "$green $(date) Starting exporting of ML Package: $2 for version: $3 under project $1 $default"
+echo "$green $(date) Starting export of ML Package $default"
 
 readonly PAGE_SIZE=10000
 readonly ML_PACKAGE_EXPORT_INPUT_FILE=$1
@@ -67,7 +66,7 @@ fi
 function get_signed_url() {
 local signing_method=$1
 local encoded_url=$2
-generated_signed_url=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?contentType=application/x-zip-compressed&mlPackageName='"$blob_path"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+generated_signed_url=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?mlPackageName='"$blob_path"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$generated_signed_url" ];
@@ -75,7 +74,7 @@ then
   resp_code=$(echo "$generated_signed_url" | jq -r 'select(.respCode != null) | .respCode')
 fi
 
-validate_response_from_api $resp_code "200" "Signed Url generated successfully for blob path: $blob_path, signing method: $1, encoded url: $2" "$red Failed to generate signed url for blob path $1, signing method $2 ... Exiting !!!"
+validate_response_from_api $resp_code "200" "Signed url generated successfully for blob path: $blob_path, signing method: $1, encoded url: $2" "$red Failed to generate signed url for blob path $1, signing method $2 ... Exiting !!!"
 }
 
 # Generate ML package blob path
@@ -104,14 +103,14 @@ then
   resp_code=$(echo "$mlpackage_versions_of_ml_package" | jq -r 'select(.respCode != null) | .respCode')
 fi
 
-validate_response_from_api $resp_code "200" "Successfully fetched ML package versions for ML package $ML_PACKAGE_NAME" "$red Failed to fetch ML package versions for ML package with id $ml_package_id ... Exiting"
+validate_response_from_api $resp_code "200" "Successfully fetched ML package versions for ML package $ML_PACKAGE_NAME" "$red Failed to fetch ML package versions for ML package $ML_PACKAGE_NAME ... Exiting"
 }
 
 # Fetch list of all ML packages
 # S1 - Project Id under which ML packages is present
 function fetch_ml_packages() {
 local project_id=$1
-ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&project_id='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_packages" ];
@@ -148,7 +147,7 @@ if [ ! -z "$project" ];
 then
   echo "$(date) Project by name $PROJECT_NAME fetched successfully"
 else
-  echo "$red $(date) Failed to project by name $PROJECT_NAME, Please check Project Name ... Exiting"
+  echo "$red $(date) Failed to find project by name $PROJECT_NAME, Please check Project Name ... Exiting"
   exit 1
 fi
 
@@ -156,7 +155,7 @@ local project_id=$(echo "$project" | jq -r 'select(.id != null) | .id')
 
 if [ -z "$project_id" ];
 then
-  echo "$red $(date) Failed to extract Project id from list of projects ... Exiting"
+  echo "$red $(date) Failed to extract project id from list of projects ... Exiting"
   exit 1
 fi
 
@@ -170,7 +169,7 @@ if [ ! -z "$ml_package" ];
 then
   echo "$(date) ML package by name $ML_PACKAGE_NAME fetched successfully"
 else
-  echo "$red $(date) Failed to find ML Package by name $ML_PACKAGE_NAME, Please check ML Package Name ... Exiting"
+  echo "$red $(date) Failed to find ML Package by name $ML_PACKAGE_NAME, Please check ML Package name ... Exiting"
   exit 1
 fi
 
@@ -197,7 +196,7 @@ if [ ! -z "$ml_package_version" ];
 then
   echo "$(date) ML package verison $ML_PACKAGE_VERSION fetched successfully"
 else
-  echo "$red $(date) Failed to fetch ML Package version $ML_PACKAGE_VERSION for ML package $ML_PACKAGE_NAME in status [UNDEPLOYED, DEPLOYED, DEPLOYING] ... Exiting"
+  echo "$red $(date) Failed to fetch ML Package version $ML_PACKAGE_VERSION for ML package $ML_PACKAGE_NAME in status [UNDEPLOYED, DEPLOYED, DEPLOYING] in project $PROJECT_NAME... Exiting"
   exit 1
 fi
 
@@ -206,7 +205,7 @@ local ml_package_version_content_uri=$(echo "$ml_package_version" | jq 'select(.
 
 if [ -z "$ml_package_version_content_uri" ];
 then
-echo "$red $(date) We can only download versions and trained versions, not cloned version, please verify ML package version ... Exiting !!!"
+echo "$red $(date) We can only download version and trained packages, not cloned version, please verify ML package version ... Exiting !!!"
 exit 1
 fi
 
@@ -221,7 +220,6 @@ generate_ml_package_blobPath $ml_package_id $ml_package_zip_file_name
 
 # Get Signed url
 get_signed_url GET false
-
 
 signed_url=$(echo "$generated_signed_url" | jq -r 'select(.data != null) | .data' | jq -r 'select(.url != null) | .url')
 
@@ -293,7 +291,7 @@ echo "$(date) Successfully validated required dependecies"
 
 # Create directory
 function create_directory() {
-dir_name=$(date +%Y-%m-%d:%H:%M:%S:%3N)
+dir_name=${ML_PACKAGE_NAME}_v${ML_PACKAGE_VERSION}_$(date +%s)
 mkdir -p $dir_name
 cd $dir_name
 }

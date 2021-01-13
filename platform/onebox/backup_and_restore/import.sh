@@ -1,10 +1,10 @@
 #!/bin/bash
 
 : '
-This scipt will upload ML package to target environment. User format for script is described as
+This scipt will upload ML package to target environment.
 # $1 - ML package import json file path
 
-[ Structure of ML Package import file]
+[ Structure of ML Package import json file along with exact key name]
   - hostOrFQDN:  Public end point from where backend service can be accessible
   - projectName: Project Name to which ML package will be imported
   - mlPackageName: Name of ML package to which new version will be uploaded if exits, otherwise new ML package by same name
@@ -30,7 +30,7 @@ source_ml_package_version_id=""
 readonly ML_PACKAGE_IMPORT_INPUT_FILE=$1
 readonly PAGE_SIZE=10000
 
-echo "$green $(date) Starting importing of ML Package: $2 under project: $1 $default"
+echo "$green $(date) Starting import of ML Package $default"
 
 # Validate API response
 # $1 - Api response code
@@ -43,7 +43,7 @@ then
   echo "$(date) $3"
 elif [ "$1" = "DEFAULT" ];
 then
-  echo "$red $(date) Please validate access token or internet. If fine check curl status code ... Exiting"
+  echo "$red $(date) Please validate access token or internet. If fine check returned curl status code ... Exiting"
   exit 1
 else
   echo "$(date) $4"
@@ -63,7 +63,6 @@ then
 fi
 
 validate_response_from_api $resp_code "201" "$green Successfully created ML package $ML_PACKAGE_NAME  $default" "$red Failed to create ML package ... Exiting !!!"
-
 }
 
 # Create public ML package version
@@ -83,7 +82,6 @@ then
 fi
 
 validate_response_from_api $resp_code "201" "$green Successfully created ML package version v$major_package_version.$minor_package_version for ML package $ML_PACKAGE_NAME $default" "$red Failed to create ML package version ... Exiting !!!"
-
 }
 
 # Create ML package version metadata
@@ -115,7 +113,7 @@ then
   resp_code=$(echo "$ml_package_creation" | jq -r 'select(.respCode != null) | .respCode')
 fi
 
-validate_response_from_api $resp_code "201" "$green Successfully created ML package" "$red Failed create ML package version ... Exiting !!!"
+validate_response_from_api $resp_code "201" "$green Successfully created ML package" "$red Failed to create ML package version ... Exiting !!!"
 }
 
 # Validate if last command executed successfully
@@ -204,7 +202,7 @@ validate_response_from_api $resp_code "200" "Signed Url generated successfully f
 # $1 - Project Id under which ML packages are present
 function fetch_ml_packages() {
 local project_id=$1
-ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&project_id='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_packages" ];
@@ -358,7 +356,7 @@ then
   then
     echo "$(date) ML package metadata belong to public package"
 
-    local is_ml_package_also_public=$(cat $ml_package | jq -r -e '.sourcePackageName?')
+    local is_ml_package_also_public=$(echo $ml_package | jq -r -e '.sourcePackageName?')
 
     if [ "$is_ml_package_also_public" = null ];
     then
