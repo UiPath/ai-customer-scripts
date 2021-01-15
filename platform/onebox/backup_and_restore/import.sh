@@ -6,6 +6,7 @@ This scipt will upload ML package to target environment.
 
 [ Structure of ML Package import json file along with exact key name]
   - hostOrFQDN:  Public end point from where backend service can be accessible
+  - tenantName:  Name of tenant where ML package import will be carried out
   - projectName: Project Name to which ML package will be imported
   - mlPackageName: Name of ML package to which new version will be uploaded if exits, otherwise new ML package by same name
   - mlPackageMajorVersionForPrivatePackage: Used to upload new minor version like 3.X. Used for private packages only. Default value should be zero
@@ -54,7 +55,7 @@ fi
 # Create public ML package
 function create_public_ml_package_metadata() {
 echo "$(date) Creating public ML package metadata for ML package $ML_PACKAGE_NAME in project $PROJECT_NAME"
-local create_public_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/clone' -H 'accept: application/json, text/plain, */*' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
+local create_public_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/clone' -H 'tenant-id: '"$TENANT_ID"'' -H 'accept: application/json, text/plain, */*' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$create_public_ml_package" ];
@@ -70,7 +71,7 @@ validate_response_from_api $resp_code "201" "$green Successfully created ML pack
 function create_public_ml_package_version_metadata() {
 local ml_package_id=$1
 echo "$(date) Creating public ML package version metadata for ML package $ML_PACKAGE_NAME in project $PROJECT_NAME"
-local create_public_ml_package_version=$(curl -k --silent --fail --show-error  'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions/clone' -H 'accept: application/json, text/plain, */*' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' \
+local create_public_ml_package_version=$(curl -k --silent --fail --show-error  'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions/clone' -H 'tenant-id: '"$TENANT_ID"'' -H 'accept: application/json, text/plain, */*' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' \
   -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
 
 local resp_code=DEFAULT
@@ -89,7 +90,7 @@ validate_response_from_api $resp_code "201" "$green Successfully created ML pack
 function create_ml_package_version_metadata() {
 echo "$(date) Creating new ML package version for ML package $ML_PACKAGE_NAME in project $PROJECT_NAME"
 local ml_package_id=$1
-local ml_package_version_creation=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
+local ml_package_version_creation=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_package_version_creation" ];
@@ -105,7 +106,7 @@ validate_response_from_api $resp_code "201" "$green Successfully created ML pack
 # Create ML package metadata
 function create_ml_package_metadata() {
 echo "$(date) Creating new ML package $ML_PACKAGE_NAME in project $PROJECT_NAME"
-local ml_package_creation=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages' -H 'content-type: application/json;charset=UTF-8' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' --data-binary ''"$extractedMetadata"'')
+local ml_package_creation=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages' -H 'tenant-id: '"$TENANT_ID"'' -H 'content-type: application/json;charset=UTF-8' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' --data-binary ''"$extractedMetadata"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_package_creation" ];
@@ -187,7 +188,7 @@ local ml_package_file=$3
 local ml_package_zip_path=$(echo $ml_package_file | sed 's/\\/\//g')
 local blob_name=${ml_package_zip_path##*/}
 
-generated_signed_url=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?contentType=application/x-zip-compressed&mlPackageName='"$blob_name"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+generated_signed_url=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?contentType=application/x-zip-compressed&mlPackageName='"$blob_name"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$generated_signed_url" ];
@@ -202,7 +203,7 @@ validate_response_from_api $resp_code "200" "Signed Url generated successfully f
 # $1 - Project Id under which ML packages are present
 function fetch_ml_packages() {
 local project_id=$1
-ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_packages" ];
@@ -215,7 +216,7 @@ validate_response_from_api $resp_code "200" "Successfully fetched ML packages" "
 
 # Find all projects
 function fetch_projects() {
-projects=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects?pageSize='"$PAGE_SIZE"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+projects=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects?pageSize='"$PAGE_SIZE"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$projects" ];
@@ -238,7 +239,7 @@ local minor_ml_package_version=0
 
 echo "$(date) Extracting additional metadata for public package $public_ml_package_name with version $major_ml_package_version.$minor_ml_package_version from target environment"
 
-local public_projects=$(curl -k  --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects/public?pageSize='"$PAGE_SIZE"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+local public_projects=$(curl -k  --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects/public?pageSize='"$PAGE_SIZE"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$public_projects" ];
@@ -256,7 +257,7 @@ do
   local mlPackage_owned_by_projectId=$(echo "$public_project" | jq -r 'select(.id != null) | .id')
   local project_name=$(echo "$public_project" | jq -r 'select(.name != null) | .name')
 
-  local public_ml_packages_under_public_project=$(curl -k  --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&status=DEPLOYING,DEPLOYED,UNDEPLOYED&mlPackageOwnedByAccountId='"$mlPackage_owned_by_accountId"'&mlPackageOwnedByTenantId='"$mlPackage_owned_by_tenantId"'&mlPackageOwnedByProjectId='"$mlPackage_owned_by_projectId"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  local public_ml_packages_under_public_project=$(curl -k  --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&status=DEPLOYING,DEPLOYED,UNDEPLOYED&mlPackageOwnedByAccountId='"$mlPackage_owned_by_accountId"'&mlPackageOwnedByTenantId='"$mlPackage_owned_by_tenantId"'&mlPackageOwnedByProjectId='"$mlPackage_owned_by_projectId"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
   local resp_code=DEFAULT
   if [ ! -z "$public_ml_packages_under_public_project" ];
@@ -273,7 +274,7 @@ do
     echo "$(date) ML Package with name $public_ml_package_name found"
     local public_ml_package_id=$(echo "$public_ml_package" | jq -r 'select(.id != null) | .id')
 
-    local public_ml_package_version_under_public_project=$(curl -k  --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$public_ml_package_id"'??pageSize='"$PAGE_SIZE"'&status=PURGED,VALIDATION_FAILED,VALIDATING,THREAT_DETECTED&mlPackageOwnedByAccountId='"$mlPackage_owned_by_accountId"'&mlPackageOwnedByTenantId='"$mlPackage_owned_by_tenantId"'&mlPackageOwnedByProjectId='"$mlPackage_owned_by_projectId"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+    local public_ml_package_version_under_public_project=$(curl -k  --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$public_ml_package_id"'??pageSize='"$PAGE_SIZE"'&status=PURGED,VALIDATION_FAILED,VALIDATING,THREAT_DETECTED&mlPackageOwnedByAccountId='"$mlPackage_owned_by_accountId"'&mlPackageOwnedByTenantId='"$mlPackage_owned_by_tenantId"'&mlPackageOwnedByProjectId='"$mlPackage_owned_by_projectId"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
     local resp_code=DEFAULT
     if [ ! -z "$public_ml_package_version_under_public_project" ];
@@ -304,6 +305,9 @@ done
 }
 
 function upload_ml_package() {
+
+# Fetch tenant details
+get_tenant_details
 
 # Fetch Projects
 fetch_projects
@@ -430,6 +434,28 @@ else
 fi
 }
 
+# Get details of tenant by name
+function get_tenant_details() {
+local aif_tenant_details=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/tenant/tenantdetails?tenantName='"$TENANT_NAME"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+
+local resp_code=DEFAULT
+if [ ! -z "$aif_tenant_details" ];
+then
+  resp_code=$(echo "$aif_tenant_details" | jq -r 'select(.respCode != null) | .respCode')
+fi
+
+validate_response_from_api $resp_code "200" "Successfully fetched tenant details for tenant $TENANT_NAME" "$red Failed to fetch tenant details for tenant $TENANT_NAME ... Exiting"
+
+# Extract tenant Id
+TENANT_ID=$(echo "$aif_tenant_details" | jq -r 'select(.data.provisionedTenantId != null) | .data.provisionedTenantId')
+
+if [ -z "$TENANT_ID" ];
+then
+  echo "$red $(date) Failed to extract tenant id... Exiting"
+  exit 1
+fi
+}
+
 # Valiate if ML package name is unique acros all projects in target environment
 # $1 - ML package name
 function validate_unique_ml_package_name() {
@@ -483,6 +509,7 @@ function validate_input() {
 validate_file_path $ML_PACKAGE_IMPORT_INPUT_FILE
 
 readonly INGRESS_HOST_OR_FQDN=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.hostOrFQDN != null) | .hostOrFQDN')
+readonly TENANT_NAME=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.tenantName != null) | .tenantName')
 readonly PROJECT_NAME=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.projectName != null) | .projectName')
 readonly ML_PACKAGE_NAME=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.mlPackageName != null) | .mlPackageName')
 readonly ML_PACKAGE_MAJOR_VERSION_FOR_PRIVATE_PACKAGE=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.mlPackageMajorVersionForPrivatePackage != null) | .mlPackageMajorVersionForPrivatePackage')
@@ -490,7 +517,7 @@ readonly ACCESS_TOKEN=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.acces
 readonly ML_PACKAGE_ZIP_FILE_PATH=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.mlPackageZipFilePath != null) | .mlPackageZipFilePath')
 readonly ML_PACKAGE_METADATA_FILE_PATH=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.mlPackageMetadataFilePath != null) | .mlPackageMetadataFilePath')
 
-if [[ -z $INGRESS_HOST_OR_FQDN || -z $PROJECT_NAME || -z $ML_PACKAGE_NAME || -z $ML_PACKAGE_MAJOR_VERSION_FOR_PRIVATE_PACKAGE || -z $ACCESS_TOKEN || -z $ML_PACKAGE_ZIP_FILE_PATH || -z $ML_PACKAGE_METADATA_FILE_PATH ]];
+if [[ -z $INGRESS_HOST_OR_FQDN || -z $PROJECT_NAME || -z $ML_PACKAGE_NAME || -z $ML_PACKAGE_MAJOR_VERSION_FOR_PRIVATE_PACKAGE || -z $ACCESS_TOKEN || -z $ML_PACKAGE_ZIP_FILE_PATH || -z $ML_PACKAGE_METADATA_FILE_PATH || -z TENANT_NAME ]];
 then
   echo "$red $(date) Input is invalid or missing, Please check ... Exiting"
   exit 1

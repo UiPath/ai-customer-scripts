@@ -6,6 +6,7 @@ This scipt will download ML package from target environment, expect cloned packa
 
 [ Structure of ML Package import file with exact key name ]
   - hostOrFQDN:  Public end point from where backend service can be accessible
+  - tenantName:  Name of tenant where ML package import will be carried out
   - projectName: Project Name to which ML package will be imported
   - mlPackageName: Name of ML package to which new version will be uploaded if exits, otherwise new ML package by same name
   - mlPackageVersion: Version number which will be downloaded. It should be in format like 3.2 or 3.1 etc
@@ -66,7 +67,7 @@ fi
 function get_signed_url() {
 local signing_method=$1
 local encoded_url=$2
-generated_signed_url=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?mlPackageName='"$blob_path"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+generated_signed_url=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/signedURL?mlPackageName='"$blob_path"'&signingMethod='"$signing_method"'&encodedUrl='"$encoded_url"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$generated_signed_url" ];
@@ -95,7 +96,7 @@ blob_path=$account_id/$tenant_id/$project_id/$1/$ml_package_version_id/$2
 function fetch_ml_package_versions_by_ml_package_id() {
 local ml_package_id=$1
 local project_id=$2
-readonly mlpackage_versions_of_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+readonly mlpackage_versions_of_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$mlpackage_versions_of_ml_package" ];
@@ -107,10 +108,10 @@ validate_response_from_api $resp_code "200" "Successfully fetched ML package ver
 }
 
 # Fetch list of all ML packages
-# S1 - Project Id under which ML packages is present
+# $1 - Project Id under which ML packages is present
 function fetch_ml_packages() {
 local project_id=$1
-ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ml_packages=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages?pageSize='"$PAGE_SIZE"'&sortBy=createdOn&sortOrder=DESC&projectId='"$project_id"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$ml_packages" ];
@@ -123,7 +124,7 @@ validate_response_from_api $resp_code "200" "Successfully fetched ML packages" "
 
 # Find all projects
 function fetch_projects() {
-projects=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects?pageSize='"$PAGE_SIZE"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+projects=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/projects?pageSize='"$PAGE_SIZE"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
 local resp_code=DEFAULT
 if [ ! -z "$projects" ];
@@ -136,6 +137,9 @@ validate_response_from_api $resp_code "200" "Successfully fetched projects" "$re
 
 # Download ML package
 function download_ml_package() {
+
+# Fetch tenant details
+get_tenant_details
 
 # Fetch Projects
 fetch_projects
@@ -239,6 +243,27 @@ echo "$yellow Successfully saved ML package version $ML_PACKAGE_VERSION metadata
 download_ml_package_using_signedUrl $signed_url $ml_package_zip_file_name
 }
 
+# Get details of tenant by name
+function get_tenant_details() {
+local aif_tenant_details=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/tenant/tenantdetails?tenantName='"$TENANT_NAME"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+
+local resp_code=DEFAULT
+if [ ! -z "$aif_tenant_details" ];
+then
+  resp_code=$(echo "$aif_tenant_details" | jq -r 'select(.respCode != null) | .respCode')
+fi
+validate_response_from_api $resp_code "200" "Successfully fetched tenant details for tenant $TENANT_NAME" "$red Failed to fetch tenant details for tenant $TENANT_NAME ... Exiting"
+
+# Extract tenant Id
+TENANT_ID=$(echo "$aif_tenant_details" | jq -r 'select(.data.provisionedTenantId != null) | .data.provisionedTenantId')
+
+if [ -z "$TENANT_ID" ];
+then
+  echo "$red $(date) Failed to extract tenant id... Exiting"
+  exit 1
+fi
+}
+
 # Validate file provided by user exists or not, It may be relative path or absolute path
 # $1 - File path
 function validate_file_path() {
@@ -256,12 +281,13 @@ function validate_input() {
 validate_file_path $ML_PACKAGE_EXPORT_INPUT_FILE
 
 readonly INGRESS_HOST_OR_FQDN=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.hostOrFQDN != null) | .hostOrFQDN')
+readonly TENANT_NAME=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.tenantName != null) | .tenantName')
 readonly PROJECT_NAME=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.projectName != null) | .projectName')
 readonly ML_PACKAGE_NAME=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.mlPackageName != null) | .mlPackageName')
 readonly ML_PACKAGE_VERSION=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.mlPackageVersion != null) | .mlPackageVersion')
 readonly ACCESS_TOKEN=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.accessToken != null) | .accessToken')
 
-if [[ -z $INGRESS_HOST_OR_FQDN || -z $PROJECT_NAME || -z $ML_PACKAGE_NAME || -z $ML_PACKAGE_VERSION || -z $ACCESS_TOKEN ]];
+if [[ -z $INGRESS_HOST_OR_FQDN || -z $PROJECT_NAME || -z $ML_PACKAGE_NAME || -z $ML_PACKAGE_VERSION || -z $ACCESS_TOKEN || -z TENANT_NAME ]];
 then
   echo "$red $(date) Input is invalid or missing, Please check ... Exiting"
   exit 1
