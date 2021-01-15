@@ -1,9 +1,9 @@
 {
   "changeLog": "",
-  "cpu": 0,
+  "cpu": 1,
   "description": "Generic Machine Learning package for document classification. Use this package to create custom document classification Machine Learning models.",
   "displayName": "DocumentClassifier",
-  "gpu": 1,
+  "gpu": 0,
   "inputDescription": "ML Skills deployed using this ML Package can be integrated into RPA workflows using the Machine Learning Classifier activity in the Official feed. File formats accepted include pdf, tiff, jpg or png files. The activity also requires an API Key input which you need to obtain from your UiPath Automation Cloud account, in the Licenses -> Other Services view",
   "inputType": "JSON",
   "memory": 0,
