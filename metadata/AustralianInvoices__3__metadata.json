@@ -17,5 +17,6 @@
     "projectName":  "UiPath Document Understanding",
     "projectDescription":  "UiPath models to classify and extract information from images and pdfs.",
     "tenantName":  "UiPath",
+    "minAIFabricVersion": "v20.7.1",
     "imagePath":  "registry.replicated.com/aif-core/australianinvoices:3"
 }
