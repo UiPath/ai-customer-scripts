@@ -46,11 +46,11 @@ function validate_response_from_api() {
   if [ $1 = $2 ]; then
     echo "$(date) $3"
   elif [ "$1" = "DEFAULT" ]; then
-    echo "$red $(date) Please validate access token or internet. If fine check returned curl status code ... Exiting"
+    echo "$red $(date) Please validate access token or internet. If fine check returned curl status code ... Exiting $default"
     deregister_client
     exit 1
   else
-    echo "$(date) $4"
+    echo "$(date) $4 $default"
     deregister_client
     exit 1
   fi
@@ -121,7 +121,7 @@ function create_ml_package_metadata() {
 # $1- Error message
 function validate_last_command_executed_succesfully() {
   if [ $? -ne 0 ]; then
-    echo "$red $(date) $1"
+    echo "$red $(date) $1 $default"
     deregister_client
     exit 1
   fi
@@ -159,7 +159,7 @@ function upload_ml_package_using_signed_url() {
   signed_url=$(echo "$generated_signed_url" | jq -r 'select(.data != null) | .data' | jq -r 'select(.url != null) | .url')
 
   if [ -z "$signed_url" ]; then
-    echo "$red $(date) Failed to extract signed url ... Exiting"
+    echo "$red $(date) Failed to extract signed url ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -306,7 +306,7 @@ function upload_ml_package() {
   if [ ! -z "$project" ]; then
     echo "$(date) Project by name $PROJECT_NAME fetched successfully"
   else
-    echo "$red $(date) Failed to project by name $PROJECT_NAME, Please check Project Name ... Exiting"
+    echo "$red $(date) Failed to project by name $PROJECT_NAME, Please check Project Name ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -314,7 +314,7 @@ function upload_ml_package() {
   local project_id=$(echo "$project" | jq -r 'select(.id != null) | .id')
 
   if [ -z "$project_id" ]; then
-    echo "$red $(date) Failed to extract Project id from list of projects ... Exiting"
+    echo "$red $(date) Failed to extract Project id from list of projects ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -332,7 +332,7 @@ function upload_ml_package() {
     ml_package_id=$(echo "$ml_package" | jq -r 'select(.id != null) | .id')
 
     if [ -z "$ml_package_id" ]; then
-      echo "$red $(date) Failed to extract ML package id from list of ML Packages ... Exiting"
+      echo "$red $(date) Failed to extract ML package id from list of ML Packages ... Exiting $default"
       deregister_client
       exit 1
     fi
@@ -349,7 +349,7 @@ function upload_ml_package() {
       local is_ml_package_also_public=$(echo $ml_package | jq -r -e '.sourcePackageName?')
 
       if [ "$is_ml_package_also_public" = null ]; then
-        echo "$red $(date) ML package should also be public for public packge metadata, please check metadata file ... Exiting ....."
+        echo "$red $(date) ML package should also be public for public packge metadata, please check metadata file ... Exiting $default"
         deregister_client
         exit 1
       fi
@@ -371,7 +371,7 @@ function upload_ml_package() {
       local is_ml_package_not_public=$(echo $ml_package | jq -r -e '.sourcePackageName?')
 
       if [ "$is_ml_package_not_public" != null ]; then
-        echo "$red $(date) ML package metadata should also be public for public package, please check metadata file ... Exiting ....."
+        echo "$red $(date) ML package metadata should also be public for public package, please check metadata file ... Exiting $default"
         deregister_client
         exit 1
       fi
@@ -434,7 +434,7 @@ function get_tenant_details() {
   TENANT_ID=$(echo "$aif_tenant_details" | jq -r 'select(.data.provisionedTenantId != null) | .data.provisionedTenantId')
 
   if [ -z "$TENANT_ID" ]; then
-    echo "$red $(date) Failed to extract tenant id... Exiting"
+    echo "$red $(date) Failed to extract tenant id... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -474,7 +474,7 @@ function fetch_identity_server_token_to_register_client() {
   CLIENT_INSTALLTION_TOKEN=$(curl --silent --fail --show-error -k -H "X-XSRF-TOKEN: $token" -b $cookie_file_new "$tokenUrl" -H "Content-Type: application/json")
 
   if [ -z "$CLIENT_INSTALLTION_TOKEN" ]; then
-    echo "$(date) $red Failed to generate token to register client ... Existing "
+    echo "$(date) $red Failed to generate token to register client ... Existing $default"
     exit 1
   fi
 
@@ -494,7 +494,7 @@ function fetch_identity_server_access_token() {
   )
 
   if [ -z "$access_token_response" ]; then
-    echo "$(date) $red Failed to generate access token to call backend server ... Existing "
+    echo "$(date) $red Failed to generate access token to call backend server ... Existing $default"
     deregister_client
     exit 1
   fi
@@ -502,7 +502,7 @@ function fetch_identity_server_access_token() {
   ACCESS_TOKEN=$(echo "$access_token_response" | jq -r 'select(.access_token != null) | .access_token')
 
   if [ -z "$ACCESS_TOKEN" ]; then
-    echo "$(date) $red Failed to extract access token ... Existing "
+    echo "$(date) $red Failed to extract access token ... Existing $default"
     deregister_client
     exit 1
   fi
@@ -531,7 +531,7 @@ function register_client_and_fetch_access_token() {
   local client_creation_response=$(curl -k --silent --fail --show-error --raw -X POST "https://${IDENTITY_SERVER_ENDPOINT}/identity/api/Client" -H "Connection: keep-alive" -H "accept: text/plain" -H "Authorization: Bearer ${CLIENT_INSTALLTION_TOKEN}" -H "Content-Type: application/json-patch+json" -H "Accept-Encoding: gzip, deflate, br" -H "Accept-Language: en-US,en;q=0.9" -d "{\"clientId\":\"${IS_AIFABRIC_CLIENT_ID}\",\"clientName\":\"${IS_AIFABRIC_CLIENT_NAME}\",\"clientSecrets\":[\"${IS_AIFABRIC_CLIENT_SECRET}\"],\"requireConsent\":false,\"requireClientSecret\": true,\"allowOfflineAccess\":true,\"alwaysSendClientClaims\":true,\"allowAccessTokensViaBrowser\":true,\"allowOfflineAccess\":true,\"alwaysIncludeUserClaimsInIdToken\":true,\"accessTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"identityTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"authorizationCodeLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"absoluteRefreshTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"slidingRefreshTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"RequireRequestObject\":true,\"Claims\":true,\"AlwaysIncludeUserClaimsInIdToken\":true,\"allowedGrantTypes\":[\"client_credentials\",\"authorization_code\"],\"allowedResponseTypes\":[\"id_token\"],\"allowedScopes\":[\"openid\",\"profile\",\"email\",\"AiFabric\",\"IdentityServerApi\",\"Orchestrator\",\"OrchestratorApiUserAccess\"]}")
 
   if [ -z "$client_creation_response" ]; then
-    echo "$(date) $red Failed to register client $IS_AIFABRIC_CLIENT_NAME with identity server $IDENTITY_SERVER_ENDPOINT ... Exiting"
+    echo "$(date) $red Failed to register client $IS_AIFABRIC_CLIENT_NAME with identity server $IDENTITY_SERVER_ENDPOINT ... Exiting $default"
     exit 1
   fi
 
@@ -545,10 +545,10 @@ function validate_unique_ml_package_name() {
 
   echo "$(date) Validating uniqueness of ML package name"
   local ml_package_name=$1
-  local is_unique_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/search?name='"$ml_package_name"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  local is_unique_ml_package=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/search?name='"$ml_package_name"'' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
   if [ -z "$is_unique_ml_package" ]; then
-    echo "$red $(date) ML package with name $1 alreday exits in target enviornment, can't create new ML package ... Exiting"
+    echo "$red $(date) ML package with name $1 alreday exits in target enviornment, can't create new ML package ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -557,7 +557,7 @@ function validate_unique_ml_package_name() {
 function validate_extracted_public_ml_package_metadata() {
 
   if [[ -z $source_ml_package_owned_by_accountId || -z $source_ml_package_owned_by_tenantId || -z $source_ml_package_owned_by_projectId || -z $source_ml_package_id || -z $source_ml_package_version_id ]]; then
-    echo "$red $(date) Some of ML package metadata is still empty after extration ... Exiting"
+    echo "$red $(date) Some of ML package metadata is still empty after extration ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -567,7 +567,7 @@ function validate_extracted_public_ml_package_metadata() {
 # $1 - File path
 function validate_file_path() {
   if [ ! -f "$1" ]; then
-    echo "$red $(date) $1 file does not exist, Please check ... Exiting"
+    echo "$red $(date) $1 file does not exist, Please check ... Exiting $default"
     exit 1
   fi
 }
@@ -578,7 +578,7 @@ function validate_file_path() {
 function validate_dependency() {
   list=$($2)
   if [ -z "$list" ]; then
-    echo "$red $(date) Please install ******** $1 ***********  ... Exiting"
+    echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
     exit 1
   fi
 }
@@ -602,7 +602,7 @@ function validate_input() {
   readonly ML_PACKAGE_METADATA_FILE_PATH=$(cat $ML_PACKAGE_IMPORT_INPUT_FILE | jq -r 'select(.mlPackageMetadataFilePath != null) | .mlPackageMetadataFilePath')
 
   if [[ -z $INGRESS_HOST_OR_FQDN || -z $PROJECT_NAME || -z $ML_PACKAGE_NAME || -z $ML_PACKAGE_MAJOR_VERSION_FOR_PRIVATE_PACKAGE || -z $ML_PACKAGE_ZIP_FILE_PATH || -z $ML_PACKAGE_METADATA_FILE_PATH || -z TENANT_NAME || -z IDENTITY_SERVER_ENDPOINT || -z HOST_TENANT_NAME || -z HOST_TENANT_USER_ID_OR_EMAIL || -z HOST_TENANT_PASSWORD ]]; then
-    echo "$red $(date) Input is invalid or missing, Please check ... Exiting"
+    echo "$red $(date) Input is invalid or missing, Please check ... Exiting $default"
     exit 1
   fi
 
@@ -634,4 +634,4 @@ upload_ml_package
 # Register client
 deregister_client
 
-echo "$green $(date) Successfully uploaded ML Package under project $PROJECT_NAME in target environment"
+echo "$green $(date) Successfully uploaded ML Package under project $PROJECT_NAME in target environment $default"

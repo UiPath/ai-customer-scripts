@@ -37,11 +37,11 @@ function validate_response_from_api() {
   if [ $1 = $2 ]; then
     echo "$(date) $3"
   elif [ "$1" = "DEFAULT" ]; then
-    echo "$red $(date) Please validate access token or check internet. If fine check curl status code ... Exiting"
+    echo "$red $(date) Please validate access token or check internet. If fine check curl status code ... Exiting $default"
     deregister_client
     exit 1
   else
-    echo "$4 $(date)"
+    echo "$4 $(date) $default"
     deregister_client
     exit 1
   fi
@@ -58,7 +58,7 @@ function download_ml_package_using_signedUrl() {
   curl --progress-bar -L -k -o $ml_package $signed_url
 
   if [ $? -ne 0 ]; then
-    echo "$red $(date) Failed to download ML package"
+    echo "$red $(date) Failed to download ML package $default"
     remove_directory
     deregister_client
     exit 1
@@ -149,7 +149,7 @@ function download_ml_package() {
   if [ ! -z "$project" ]; then
     echo "$(date) Project by name $PROJECT_NAME fetched successfully"
   else
-    echo "$red $(date) Failed to find project by name $PROJECT_NAME, Please check Project Name ... Exiting"
+    echo "$red $(date) Failed to find project by name $PROJECT_NAME, Please check Project Name ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -157,7 +157,7 @@ function download_ml_package() {
   local project_id=$(echo "$project" | jq -r 'select(.id != null) | .id')
 
   if [ -z "$project_id" ]; then
-    echo "$red $(date) Failed to extract project id from list of projects ... Exiting"
+    echo "$red $(date) Failed to extract project id from list of projects ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -171,7 +171,7 @@ function download_ml_package() {
   if [ ! -z "$ml_package" ]; then
     echo "$(date) ML package by name $ML_PACKAGE_NAME fetched successfully"
   else
-    echo "$red $(date) Failed to find ML Package by name $ML_PACKAGE_NAME, Please check ML Package name ... Exiting"
+    echo "$red $(date) Failed to find ML Package by name $ML_PACKAGE_NAME, Please check ML Package name ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -180,7 +180,7 @@ function download_ml_package() {
   ml_package_id=$(echo "$ml_package" | jq -r 'select(.id != null) | .id')
 
   if [ -z "$ml_package_id" ]; then
-    echo "$red $(date) Failed to extract ML package id from list of ML Packages ... Exiting"
+    echo "$red $(date) Failed to extract ML package id from list of ML Packages ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -198,7 +198,7 @@ function download_ml_package() {
   if [ ! -z "$ml_package_version" ]; then
     echo "$(date) ML package verison $ML_PACKAGE_VERSION fetched successfully"
   else
-    echo "$red $(date) Failed to fetch ML Package version $ML_PACKAGE_VERSION for ML package $ML_PACKAGE_NAME in status [UNDEPLOYED, DEPLOYED, DEPLOYING] in project $PROJECT_NAME... Exiting"
+    echo "$red $(date) Failed to fetch ML Package version $ML_PACKAGE_VERSION for ML package $ML_PACKAGE_NAME in status [UNDEPLOYED, DEPLOYED, DEPLOYING] in project $PROJECT_NAME... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -207,7 +207,7 @@ function download_ml_package() {
   local ml_package_version_content_uri=$(echo "$ml_package_version" | jq 'select(.contentUri != null) | .contentUri')
 
   if [ -z "$ml_package_version_content_uri" ]; then
-    echo "$red $(date) We can only download version and trained packages, not cloned version, please verify ML package version ... Exiting !!!"
+    echo "$red $(date) We can only download version and trained packages, not cloned version, please verify ML package version ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -227,7 +227,7 @@ function download_ml_package() {
   signed_url=$(echo "$generated_signed_url" | jq -r 'select(.data != null) | .data' | jq -r 'select(.url != null) | .url')
 
   if [ -z "$signed_url" ]; then
-    echo "$red $(date) Failed to extract signed url ... Exiting"
+    echo "$red $(date) Failed to extract signed url ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -257,7 +257,7 @@ function get_tenant_details() {
   TENANT_ID=$(echo "$aif_tenant_details" | jq -r 'select(.data.provisionedTenantId != null) | .data.provisionedTenantId')
 
   if [ -z "$TENANT_ID" ]; then
-    echo "$red $(date) Failed to extract tenant id... Exiting"
+    echo "$red $(date) Failed to extract tenant id... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -297,7 +297,7 @@ function fetch_identity_server_token_to_register_client() {
   CLIENT_INSTALLTION_TOKEN=$(curl --silent --fail --show-error -k -H "X-XSRF-TOKEN: $token" -b $cookie_file_new "$tokenUrl" -H "Content-Type: application/json")
 
   if [ -z "$CLIENT_INSTALLTION_TOKEN" ]; then
-    echo "$(date) $red Failed to generate token to register client ... Existing "
+    echo "$(date) $red Failed to generate token to register client ... Existing $default"
     exit 1
   fi
 }
@@ -315,7 +315,7 @@ function fetch_identity_server_access_token() {
   )
 
   if [ -z "$access_token_response" ]; then
-    echo "$(date) $red Failed to generate access token to call backend server ... Existing "
+    echo "$(date) $red Failed to generate access token to call backend server ... Existing $default"
     deregister_client
     exit 1
   fi
@@ -323,7 +323,7 @@ function fetch_identity_server_access_token() {
   ACCESS_TOKEN=$(echo "$access_token_response" | jq -r 'select(.access_token != null) | .access_token')
 
   if [ -z "$ACCESS_TOKEN" ]; then
-    echo "$(date) $red Failed to extract access token ... Existing "
+    echo "$(date) $red Failed to extract access token ... Existing $default"
     deregister_client
     exit 1
   fi
@@ -352,7 +352,7 @@ function register_client_and_fetch_access_token() {
   client_creation_response=$(curl -k --silent --fail --show-error --raw -X POST "https://${IDENTITY_SERVER_ENDPOINT}/identity/api/Client" -H "Connection: keep-alive" -H "accept: text/plain" -H "Authorization: Bearer ${CLIENT_INSTALLTION_TOKEN}" -H "Content-Type: application/json-patch+json" -H "Accept-Encoding: gzip, deflate, br" -H "Accept-Language: en-US,en;q=0.9" -d "{\"clientId\":\"${IS_AIFABRIC_CLIENT_ID}\",\"clientName\":\"${IS_AIFABRIC_CLIENT_NAME}\",\"clientSecrets\":[\"${IS_AIFABRIC_CLIENT_SECRET}\"],\"requireConsent\":false,\"requireClientSecret\": true,\"allowOfflineAccess\":true,\"alwaysSendClientClaims\":true,\"allowAccessTokensViaBrowser\":true,\"allowOfflineAccess\":true,\"alwaysIncludeUserClaimsInIdToken\":true,\"accessTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"identityTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"authorizationCodeLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"absoluteRefreshTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"slidingRefreshTokenLifetime\":${ACCESS_TOKEN_LIFE_TIME},\"RequireRequestObject\":true,\"Claims\":true,\"AlwaysIncludeUserClaimsInIdToken\":true,\"allowedGrantTypes\":[\"client_credentials\",\"authorization_code\"],\"allowedResponseTypes\":[\"id_token\"],\"allowedScopes\":[\"openid\",\"profile\",\"email\",\"AiFabric\",\"IdentityServerApi\",\"Orchestrator\",\"OrchestratorApiUserAccess\"]}")
 
   if [ -z "$client_creation_response" ]; then
-    echo "$(date) $red Failed to register client $IS_AIFABRIC_CLIENT_NAME with identity server $IDENTITY_SERVER_ENDPOINT ... Exiting"
+    echo "$(date) $red Failed to register client $IS_AIFABRIC_CLIENT_NAME with identity server $IDENTITY_SERVER_ENDPOINT ... Exiting $default"
     exit 1
   fi
 
@@ -364,7 +364,7 @@ function register_client_and_fetch_access_token() {
 # $1 - File path
 function validate_file_path() {
   if [ ! -f "$1" ]; then
-    echo "$red $(date) $1 file does not exist, Please check ... Exiting"
+    echo "$red $(date) $1 file does not exist, Please check ... Exiting $default"
     exit 1
   fi
 }
@@ -386,7 +386,7 @@ function validate_input() {
   readonly HOST_TENANT_PASSWORD=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.hostTenantPassword != null) | .hostTenantPassword')
 
   if [[ -z $INGRESS_HOST_OR_FQDN || -z $PROJECT_NAME || -z $ML_PACKAGE_NAME || -z $ML_PACKAGE_VERSION || -z TENANT_NAME || -z IDENTITY_SERVER_ENDPOINT || -z HOST_TENANT_NAME || -z HOST_TENANT_USER_ID_OR_EMAIL || -z HOST_TENANT_PASSWORD ]]; then
-    echo "$red $(date) Input is invalid or missing, Please check ... Exiting"
+    echo "$red $(date) Input is invalid or missing, Please check ... Exiting $default"
     exit 1
   fi
 
@@ -399,7 +399,7 @@ function validate_input() {
 function validate_dependency() {
   list=$($2)
   if [ -z "$list" ]; then
-    echo "$red $(date) Please install ******** $1 ***********  ... Exiting"
+    echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
     exit 1
   fi
 }
@@ -438,4 +438,4 @@ download_ml_package
 # Register client
 deregister_client
 
-echo "$green $(date) Successfully downloaded $ML_PACKAGE_NAME V$ML_PACKAGE_VERSION in [$(pwd)] directory"
+echo "$green $(date) Successfully downloaded $ML_PACKAGE_NAME V$ML_PACKAGE_VERSION in [$(pwd)] directory $default"
