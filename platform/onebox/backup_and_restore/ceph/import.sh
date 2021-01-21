@@ -30,11 +30,12 @@ function initialize_variables() {
   # Validate file path
   validate_file_path $CREDENTIALS_FILE
 
-  readonly AWS_HOST=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_HOST != null) | .AWS_HOST')
-  readonly AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
-  readonly AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
-  readonly AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
+  export AWS_HOST=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_HOST != null) | .AWS_HOST')
+  export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
+  export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
+  export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
   readonly FOLDER=${BASE_PATH}/ceph/
+
 }
 
 function list_buckets() {
@@ -44,15 +45,21 @@ function list_buckets() {
 }
 
 function upload_blobs() {
-  while read line;
-  do echo "Response line: '${line}'"
-  	BUCKET_NAME=${line}
-  	# create bucket
-  	echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
-  	s3cmd mb --host=${AWS_HOST} --host-bucket=  s3://${BUCKET_NAME} --no-ssl
+  while read dir;
+  do echo "Processing directory: '${dir}'"
+    # aws doesn't allow underscores in bucket name
+  	BUCKET_NAME=${dir//_/-}
+  	# create bucket if not exists
+    local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate -q)
+    if [ ! -z "$check_bucket" ]; then
+  	  echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
+  	  s3cmd mb --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate
+    else
+      echo "$yellow $(date)  Bucket exists: ${BUCKET_NAME}, skipping $default"
+    fi
   	# sync folder to bucket
   	echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
-  	aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl sync ${BUCKET_NAME}/ s3://${BUCKET_NAME}
+  	aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${dir}/ s3://${BUCKET_NAME}
   	echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
   done <<< "$DIRS";
 }
