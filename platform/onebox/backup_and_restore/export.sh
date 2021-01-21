@@ -297,7 +297,7 @@ function fetch_identity_server_token_to_register_client() {
   CLIENT_INSTALLTION_TOKEN=$(curl --silent --fail --show-error -k -H "X-XSRF-TOKEN: $token" -b $cookie_file_new "$tokenUrl" -H "Content-Type: application/json")
 
   if [ -z "$CLIENT_INSTALLTION_TOKEN" ]; then
-    echo "$(date) $red Failed to generate token to register client ... Existing $default"
+    echo "$(date) $red Failed to generate token to register client ... Exiting $default"
     exit 1
   fi
 }
@@ -315,7 +315,7 @@ function fetch_identity_server_access_token() {
   )
 
   if [ -z "$access_token_response" ]; then
-    echo "$(date) $red Failed to generate access token to call backend server ... Existing $default"
+    echo "$(date) $red Failed to generate access token to call backend server ... Exiting $default"
     deregister_client
     exit 1
   fi
@@ -323,12 +323,12 @@ function fetch_identity_server_access_token() {
   ACCESS_TOKEN=$(echo "$access_token_response" | jq -r 'select(.access_token != null) | .access_token')
 
   if [ -z "$ACCESS_TOKEN" ]; then
-    echo "$(date) $red Failed to extract access token ... Existing $default"
+    echo "$(date) $red Failed to extract access token ... Exiting $default"
     deregister_client
     exit 1
   fi
 
-  echo "$(date) Successfully fetched access token to call backend server ... Existing "
+  echo "$(date) Successfully fetched access token to call backend server ... Exiting "
 }
 
 function deregister_client() {
