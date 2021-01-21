@@ -12,8 +12,8 @@ This backs up:
 
 ## Requirements
 The Machine where backup/restore runs needs the following:
-* Access to AIF machine 
-* aws s3, s3cmd, jq to be installed
+* Access to AIF machine (public ip address can be obtained via dig)
+* aws s3, s3cmd, jq to be installed, e.g. on Ubuntu ```sudo apt install -y jq awscli s3cmd```
 * User logged in with permission to run the script and access to above tools
 
 

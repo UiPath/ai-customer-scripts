@@ -52,7 +52,7 @@ function upload_blobs() {
   	s3cmd mb --host=${AWS_HOST} --host-bucket=  s3://${BUCKET_NAME} --no-ssl
   	# sync folder to bucket
   	echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
-  	aws s3 --endpoint-url http://${AWS_ENDPOINT} --no-verify-ssl sync ${BUCKET_NAME}/ s3://${BUCKET_NAME}
+  	aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl sync ${BUCKET_NAME}/ s3://${BUCKET_NAME}
   	echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
   done <<< "$DIRS";
 }

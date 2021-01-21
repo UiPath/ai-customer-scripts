@@ -8,7 +8,7 @@ Use it as it is [insecure] or transfer to some credsManager and then change back
 [Script Version -> 21.4]
 '
 function initialize_variables() {
-	OBJECT_GATEWAY_INTERNAL_HOST=$(kubectl -n istio-system get svc istio-ingressgateway -o jsonpath="{.spec.clusterIP}")
+	OBJECT_GATEWAY_INTERNAL_HOST=$(dig +short myip.opendns.com @resolver1.opendns.com)
 	OBJECT_GATEWAY_INTERNAL_PORT=31443
 	
 	STORAGE_ACCESS_KEY=$(kubectl -n aifabric get secret storage-secrets -o json | jq '.data.OBJECT_STORAGE_ACCESSKEY' | sed -e 's/^"//' -e 's/"$//' | base64 -d)

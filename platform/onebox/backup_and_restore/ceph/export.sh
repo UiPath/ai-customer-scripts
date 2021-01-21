@@ -30,15 +30,15 @@ function initialize_variables() {
   # Validate file path
   validate_file_path $CREDENTIALS_FILE
 
-  readonly AWS_HOST=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_HOST != null) | .AWS_HOST')
-  readonly AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
-  readonly AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
-  readonly AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
+  export AWS_HOST=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_HOST != null) | .AWS_HOST')
+  export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
+  export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
+  export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
   readonly FOLDER=${BASE_PATH}/ceph/
 }
 
 function list_buckets() {
-  temp_buckets=$(aws s3 --endpoint-url http://$AWS_ENDPOINT --no-verify-ssl ls)
+  temp_buckets=$(aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl ls)
   readonly BUCKETS=${temp_buckets}
 }
 
@@ -49,7 +49,7 @@ function download_blobs() {
     BUCKET_NAME=$(echo ${line}| cut -d" " -f3)
     echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
     mkdir -p ${FOLDER}${BUCKET_NAME}
-    aws s3 --endpoint-url http://$AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME} ${FOLDER}${BUCKET_NAME} --delete
+    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME} ${FOLDER}${BUCKET_NAME} --delete
     echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
   done <<< "$BUCKETS"
 }
