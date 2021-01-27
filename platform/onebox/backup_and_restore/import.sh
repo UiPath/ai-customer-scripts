@@ -92,7 +92,7 @@ function create_public_ml_package_version_metadata() {
 function create_ml_package_version_metadata() {
   echo "$(date) Creating new ML package version for ML package $ML_PACKAGE_NAME in project $PROJECT_NAME"
   local ml_package_id=$1
-  local ml_package_version_creation=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
+  local ml_package_version_creation=$(curl --silent --fail --show-error -k 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/mlpackages/'"$ml_package_id"'/versions?mlPackageCreationType=ML_PACKAGE_VERSION_IMPORT' -H 'tenant-id: '"$TENANT_ID"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'' -H 'content-type: application/json;charset=UTF-8' --data-binary ''"$extractedMetadata"'')
 
   local resp_code=DEFAULT
   if [ ! -z "$ml_package_version_creation" ]; then

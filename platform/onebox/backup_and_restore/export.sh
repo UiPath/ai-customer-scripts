@@ -244,7 +244,7 @@ function download_ml_package() {
 
 # Get details of tenant by name
 function get_tenant_details() {
-  echo "Fetching Tenant details for tenant $TENANT_NAME"
+  echo "$(date) Fetching Tenant details for tenant $TENANT_NAME"
   local aif_tenant_details=$(curl -k --silent --fail --show-error 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/tenant/tenantdetails?tenantName='"$TENANT_NAME"'' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
   local resp_code=DEFAULT
