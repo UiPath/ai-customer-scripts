@@ -2,7 +2,7 @@
 
 : '
 This scipt will export all data stored in blob storage from target environments.
-# $1 - json file with credentials
+# $1 - json file with credentials, change the script to work with own credential manager
 # $2 - path to export
 Script will generate folders like path/ceph/bucket1 path/ceph/bucket2 each containing data from 1 bucket
 [Script Version -> 21.4]

@@ -2,7 +2,8 @@
 
 : '
 This scipt will import all data stored at a path to blob storage in target environments.
-# $1 - path to export
+# $1 - json file with credentials, change the script to work with own credential manager
+# $2 - path to import from
 Script will look for folders like path/ceph/bucket1 path/ceph/bucket2 each containing data from 1 bucket and create bucket and upload
 [Script Version -> 21.4]
 '
