@@ -149,9 +149,9 @@ function create_package_upload_payload() {
   # Check if language version exist for older packages
   local isLanguageVersion=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq -r 'select(.languageVersion != null) | .languageVersion')
 
-  # Adding default language version if not exists for backward compatibility
-  if [ -z "$isLanguageVersion" ]; then
-    echo "$yellow $(date) Langugae version is null, adding 0 as default language version $default"
+  # Adding default language version for private packages if not exists for backward compatibility
+  if [[ -z "$isLanguageVersion" && "$is_public_package" == false ]]; then
+    echo "$yellow $(date) Langugae version is null for private packages, adding 0 as default language version $default"
     extractedMetadata=$(echo $extractedMetadata | jq -M ". + {languageVersion:"0"}")
   fi
 
