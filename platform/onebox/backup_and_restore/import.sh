@@ -134,16 +134,25 @@ function validate_last_command_executed_succesfully() {
 function create_package_upload_payload() {
   local project_id=$1
   local is_public_package=$2
-  local is_private_package_version_upload=$2
+  local is_private_package_version_upload=$3
 
   if [ "$is_public_package" = true ]; then
     extractedMetadata=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq '{description,displayName,inputDescription,mlPackageOwnedByAccountId,mlPackageOwnedByTenantId,mlPackageOwnedByProjectId,sourcePackageId,sourcePackageVersionId,name,outputDescription,settings,projectId,stagingUri}' | jq -M ". + {name:\"$ML_PACKAGE_NAME\",displayName:\"$ML_PACKAGE_NAME\",projectId:\"$project_id\",stagingUri:\"$signed_url\",mlPackageOwnedByAccountId:\"$source_ml_package_owned_by_accountId\",mlPackageOwnedByTenantId:\"$source_ml_package_owned_by_tenantId\",mlPackageOwnedByProjectId:\"$source_ml_package_owned_by_projectId\",sourcePackageId:\"$source_ml_package_id\",sourcePackageVersionId:\"$source_ml_package_version_id\"}")
   else
-    if [ "$is_public_package" = true ]; then
-      extractedMetadata=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq '{gpu,displayName,name,description,inputDescription,outputDescription,mlPackageLanguage,inputType,retrainable,changeLog,projectId,stagingUri}' | jq -M ". + {name:\"$ML_PACKAGE_NAME\", displayName:\"$ML_PACKAGE_NAME\",projectId:\"$project_id\",stagingUri:\"$signed_url\"}")
+    if [ "$is_private_package_version_upload" = false ]; then
+      extractedMetadata=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq '{gpu,displayName,name,description,inputDescription,outputDescription,mlPackageLanguage,inputType,languageVersion,retrainable,changeLog,projectId,stagingUri}' | jq -M ". + {name:\"$ML_PACKAGE_NAME\", displayName:\"$ML_PACKAGE_NAME\",projectId:\"$project_id\",stagingUri:\"$signed_url\"}")
     else
-      extractedMetadata=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq '{gpu,displayName,name,description,inputDescription,outputDescription,mlPackageLanguage,inputType,retrainable,changeLog,projectId,stagingUri}' | jq -M ". + {name:\"$ML_PACKAGE_NAME\", displayName:\"$ML_PACKAGE_NAME\",projectId:\"$project_id\",stagingUri:\"$signed_url\",version:\"$ML_PACKAGE_MAJOR_VERSION_FOR_PRIVATE_PACKAGE\"}")
+      extractedMetadata=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq '{gpu,displayName,name,description,inputDescription,outputDescription,mlPackageLanguage,inputType,languageVersion,retrainable,changeLog,projectId,stagingUri}' | jq -M ". + {name:\"$ML_PACKAGE_NAME\", displayName:\"$ML_PACKAGE_NAME\",projectId:\"$project_id\",stagingUri:\"$signed_url\",version:\"$ML_PACKAGE_MAJOR_VERSION_FOR_PRIVATE_PACKAGE\"}")
     fi
+  fi
+
+  # Check if language version exist for older packages
+  local isLanguageVersion=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq -r 'select(.languageVersion != null) | .languageVersion')
+
+  # Adding default language version for private packages if not exists for backward compatibility
+  if [[ -z "$isLanguageVersion" && "$is_public_package" == false ]]; then
+    echo "$yellow $(date) Langugae version is null for private packages, adding 0 as default language version $default"
+    extractedMetadata=$(echo $extractedMetadata | jq -M ". + {languageVersion:"0"}")
   fi
 
   validate_last_command_executed_succesfully "$red Failed to extract ML package metadata from $ML_PACKAGE_METADATA_FILE_PATH"
@@ -344,7 +353,7 @@ function upload_ml_package() {
     local is_public_package=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq -r -e '.sourcePackageName?')
 
     if [ "$is_public_package" != null ]; then
-      echo "$(date) ML package metadata belong to public package"
+      echo "$(date) ML package version metadata belong to public package"
 
       local is_ml_package_also_public=$(echo $ml_package | jq -r -e '.sourcePackageName?')
 
@@ -366,18 +375,18 @@ function upload_ml_package() {
       # Create public ML package
       create_public_ml_package_version_metadata $ml_package_id
     else
-      echo "$(date) ML package metadata belong to private package"
+      echo "$(date) ML package version metadata belong to private package"
 
       local is_ml_package_not_public=$(echo $ml_package | jq -r -e '.sourcePackageName?')
 
       if [ "$is_ml_package_not_public" != null ]; then
-        echo "$red $(date) ML package metadata should also be public for public package, please check metadata file ... Exiting $default"
+        echo "$red $(date) ML package metadata should also be non public for non public package, please check metadata file ... Exiting $default"
         deregister_client
         exit 1
       fi
 
       # create payload for package upload
-      create_package_upload_payload $project_id "false" "false"
+      create_package_upload_payload $project_id "false" "true"
 
       # Crate ML Package version package
       create_ml_package_version_metadata $ml_package_id
@@ -411,7 +420,7 @@ function upload_ml_package() {
       echo "$(date) ML package metadata belong to private package"
 
       # Create payload for ML package
-      create_package_upload_payload $project_id "false" "true"
+      create_package_upload_payload $project_id "false" "false"
 
       # Create ML package version metadata
       create_ml_package_metadata

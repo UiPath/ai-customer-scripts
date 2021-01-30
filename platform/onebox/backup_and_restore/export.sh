@@ -236,7 +236,7 @@ function download_ml_package() {
   create_directory
 
   echo $ml_package_version >$metadata_file_name.json
-  echo "$yellow Successfully saved ML package version $ML_PACKAGE_VERSION metadata json file with name $metadata_file_name in [$(pwd)] directory $default"
+  echo "$yellow $(date) Successfully saved ML package version $ML_PACKAGE_VERSION metadata json file with name $metadata_file_name in [$(pwd)] directory $default"
 
   # Download ML package using genearted signed url
   download_ml_package_using_signedUrl $signed_url $ml_package_zip_file_name
@@ -328,7 +328,7 @@ function fetch_identity_server_access_token() {
     exit 1
   fi
 
-  echo "$(date) Successfully fetched access token to call backend server ... Exiting "
+  echo "$(date) Successfully fetched access token to call backend server "
 }
 
 function deregister_client() {
