@@ -1,19 +1,19 @@
 #!/bin/bash
 
 : '
-This scipt will download ML package from target environment, expect cloned packages.
+This scipt will download ML package from target environment, expect cloned public packages.
 # $1 - ML package export json file path
 
-[ Structure of ML Package import file with exact key name ]
+[ Structure of ML Package export file with exact key name ]
   - hostOrFQDN:  Public end point from where backend service can be accessible
   - identityServerEndPoint: End point where identity server is hosted
   - hostTenantName: Host Tenant name registered in identity server
-  - hostTenantIdOrEmailId: Host tenant id or usetr Id
+  - hostTenantIdOrEmailId: Host tenant id or email Id
   - hostTenantPassword: Host tenant password
-  - tenantName:  Name of tenant where ML package import will be carried out
-  - projectName: Project Name to which ML package will be imported
-  - mlPackageName: Name of ML package to which new version will be uploaded if exits, otherwise new ML package by same name
-  - mlPackageVersion: Version number which will be downloaded. It should be in format like 3.2 or 3.1 etc
+  - tenantName:  Name of the tenant from where ML package export will be carried out
+  - projectName: Project Name from where ML package will be exported
+  - mlPackageName: Name of ML package which will be downloaded from target environment
+  - mlPackageVersion: ML package version number which will be downloaded. It should be in format like 3.2 or 3.1 etc
 [Script Version -> 20.10.1.2]
 '
 
