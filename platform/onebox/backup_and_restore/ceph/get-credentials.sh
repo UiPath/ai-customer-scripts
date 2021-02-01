@@ -9,7 +9,12 @@ Use it as it is [insecure] or transfer to some credsManager and then change back
 '
 function initialize_variables() {
 	# Gets private ip of machine so that it can be connected within the VM
-	OBJECT_GATEWAY_EXTERNAL_HOST=$(hostname -i)
+	# Seems to be set as localhost on some customer machines
+	#OBJECT_GATEWAY_EXTERNAL_HOST=$(hostname -i)
+	# Rajiv's suggestion
+	PRIVATE_ADDRESS=$(ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')
+    #This is needed on k8s 1.18.x as $PRIVATE_ADDRESS is found to have a newline
+    OBJECT_GATEWAY_EXTERNAL_HOST=$(echo "$PRIVATE_ADDRESS" | tr -d '\n')
 	OBJECT_GATEWAY_EXTERNAL_PORT=31443
 	
 	STORAGE_ACCESS_KEY=$(kubectl -n aifabric get secret storage-secrets -o json | jq '.data.OBJECT_STORAGE_ACCESSKEY' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
