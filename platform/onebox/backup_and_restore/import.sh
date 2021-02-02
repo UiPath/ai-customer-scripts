@@ -8,14 +8,14 @@ This scipt will upload ML package to target environment.
   - hostOrFQDN:  Public end point from where backend service can be accessible
   - identityServerEndPoint: End point where identity server is hosted
   - hostTenantName: Host Tenant name registered in identity server
-  - hostTenantIdOrEmailId: Host tenant id or usetr Id
+  - hostTenantIdOrEmailId: Host tenant id or email Id
   - hostTenantPassword: Host tenant password
   - tenantName:  Name of tenant where ML package import will be carried out
   - projectName: Project Name to which ML package will be imported
-  - mlPackageName: Name of ML package to which new version will be uploaded if exits, otherwise new ML package by same name
-  - mlPackageMajorVersionForPrivatePackage: Used to upload new minor version like 3.X. Used for private packages only. Default value should be zero
-  - mlPackageZipFilePath: ML package zip file path that will be uploaded to target environment
-  - mlPackageMetadataFilePath: ML package import metadata json file path
+  - mlPackageName: Name of ML package to which new version will be uploaded if exists, otherwise new ML package by same name will be created
+  - mlPackageMajorVersionForPrivatePackage: Used to upload new minor version like 3.X. Used for only private packages. Default value should be zero
+  - mlPackageZipFilePath: ML package zip file path with extension that will be uploaded to target environment
+  - mlPackageMetadataFilePath: ML package import metadata json file path with extension
 [Script Version -> 20.10.1.2]
 '
 
