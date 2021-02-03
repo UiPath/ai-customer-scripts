@@ -1,5 +1,5 @@
 {
-  "changeLog": "Release v2020.10",
+  "changeLog": "Release v2020.12.2",
   "cpu": 0,
   "description": "Machine Learning model for extracting text from Documents. Please see more details including supported languages and link to Activities guide in the About Licensing -> Document Understanding API Key section of the UiPath Automation Cloud Guide here: https://docs.uipath.com/automation-cloud/docs/about-licensing#section-document-understanding-api-key.",
   "displayName": "UiPathDocumentOCR",
@@ -17,7 +17,7 @@
   "projectName": "UiPath Document Understanding",
   "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
-  "minAIFabricVersion": "v20.7.1",
-  "languageVersion": 0,
-  "imagePath": "registry.replicated.com/aif-core/uipathdocumentocr:1"
+  "minAIFabricVersion": "v20.10.1.2",
+  "languageVersion": 1,
+  "imagePath": "registry.replicated.com/aif-core/uipathdocumentocr:2"
 }
