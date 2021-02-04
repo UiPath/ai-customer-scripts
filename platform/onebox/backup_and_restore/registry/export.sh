@@ -71,6 +71,17 @@ function get_image_list() {
 	sqlcmd -S tcp:${DB_CONN} -d ${DB_NAME} -U ${DB_USER} -P ${DB_PASSWORD} -i getimages.sql -o images.txt -h -1 -W
 }
 
+//TODO: use this
+formulate_docker_command() {
+    docker images registry
+    if [[ $? -ne 0 ]]; then
+        echo "sudo permission required for docker"
+        DOCKER_COMMAND="sudo docker"
+    else
+        DOCKER_COMMAND="docker"
+    fi
+}
+
 function docker_setup() {
 	# Mark docker registry as unauth => Adapt for other envs
 	echo "{\"insecure-registries\": [\"${REGISTRY_ENDPOINT}\"]}" > insecure.json
