@@ -66,7 +66,6 @@ function validate_input() {
   echo "$green $(date) Successfully validated user input $default"
 }
 
-//TODO: use this
 formulate_docker_command() {
     docker images registry
     if [[ $? -ne 0 ]]; then
@@ -86,7 +85,7 @@ function docker_setup() {
 	# Restart docker
 	sudo service docker restart
 	# Login to docker registry
-	sudo docker login ${REGISTRY_ENDPOINT} -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
+	${DOCKER_COMMAND} login ${REGISTRY_ENDPOINT} -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
 }
 
 function load_image() {
@@ -127,12 +126,15 @@ function load_images() {
 	done
 }
 
-
 validate_setup
 
 validate_input
+
+formulate_docker_command
 
 docker_setup
 
 ## import
 load_images
+
+

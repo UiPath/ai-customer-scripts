@@ -67,11 +67,10 @@ function validate_input() {
 }
 
 function get_image_list() {
-	# TODO: Check if it overrides images.txt
-	sqlcmd -S tcp:${DB_CONN} -d ${DB_NAME} -U ${DB_USER} -P ${DB_PASSWORD} -i getimages.sql -o images.txt -h -1 -W
+	# sqlcmd -S tcp:${DB_CONN} -d ${DB_NAME} -U ${DB_USER} -P ${DB_PASSWORD} -i getimages.sql -o images.txt -h -1 -W
+	sqlcmd -S tcp:${DB_CONN} -d ${DB_NAME} -U ${DB_USER} -P ${DB_PASSWORD} -o images.txt -h -1 -W -Q "set nocount on; select distinct mpi.image_uri from ml_package_images mpi inner join ml_skill_versions msv on msv.ml_package_version_id = mpi.version_id and  msv.processor = mpi.processor where msv.status in ('UPDATING', 'COMPLETED', 'VALIDATING_DEPLOYMENT') and mpi.status = 'ACTIVE'"
 }
 
-//TODO: use this
 formulate_docker_command() {
     docker images registry
     if [[ $? -ne 0 ]]; then
@@ -91,18 +90,18 @@ function docker_setup() {
 	# Restart docker
 	sudo service docker restart
 	# Login to docker registry
-	sudo docker login ${REGISTRY_ENDPOINT} -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
+	${DOCKER_COMMAND} login ${REGISTRY_ENDPOINT} -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
 }
 
 function save_image() {
-	sudo docker pull $1
+	${DOCKER_COMMAND} pull $1
 	if [ $? -ne 0 ];
 	then
 		echo "$red $(date) Not able to pull image for $1 $default"
 		exit 1
 	fi
 	set -o pipefail
-	sudo docker save $1 | gzip > $2
+	${DOCKER_COMMAND} save $1 | gzip > $2
 	if [ $? -ne 0 ];
 	then
 		echo "$red $(date) Not able to save image for $1 in $2 $default"
