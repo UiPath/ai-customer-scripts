@@ -32,16 +32,6 @@ function validate_setup() {
 }
 
 function get_db_details() {
-	## get password for deployer db => Using Deployer pod
-	#line=$(kubectl get secrets -n aifabric ai-deployer-secrets -o yaml | grep 'DATASOURCE_PASSWORD')
-	#readonly DB_PASSWORD=$(echo ${line##* } | base64 -d)
-	## get url
-	#line=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_URL' | grep -v 'SPRING_DATASOURCE_URL')
-	#readonly DB_CONN=${line##* }
-	## get user
-	#line=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_USERNAME' | grep -v 'SPRING_DATASOURCE_USERNAME')
-	#readonly DB_USER=${line##* }
-
 	# Fetch details from provisioning job
 	provisionPod=$(kubectl get jobs -l app=provision --field-selector status.successful=1  --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}')
 	line=$(kubectl get jobs ${provisionPod} -o yaml | grep -A1 'SQL_HOST' | grep -v 'SQL_HOST')
@@ -121,7 +111,3 @@ get_db_details
 get_registry_details
 
 generate_json
-
-
-
-
