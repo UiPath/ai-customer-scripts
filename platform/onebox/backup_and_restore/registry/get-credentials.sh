@@ -110,7 +110,3 @@ get_db_details
 get_registry_details
 
 generate_json
-
-
-
-

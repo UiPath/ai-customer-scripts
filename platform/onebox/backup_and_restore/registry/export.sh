@@ -141,17 +141,6 @@ validate_input
 
 docker_setup
 
-#validate_file_path "./is.sh"
-#source ./is.sh
-#
-## register
-#register_client_and_fetch_access_token
-#
-## export
 get_image_list
 
 save_images
-#
-#
-## deregister
-#deregister_client
