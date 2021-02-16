@@ -22,6 +22,7 @@ function initialize_variables() {
     else
     	OBJECT_GATEWAY_EXTERNAL_HOST=$PRIVATE_IP
     fi
+    echo "$green $(date) Private IP was $PRIVATE_IP and OBJECT_GATEWAY_EXTERNAL_HOST is $OBJECT_GATEWAY_EXTERNAL_HOST"
     
 	OBJECT_GATEWAY_EXTERNAL_PORT=31443
 	
