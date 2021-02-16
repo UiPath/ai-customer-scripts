@@ -31,8 +31,8 @@ function internal_fetch_identity_server_token_to_register_client() {
     "rememberLogin": true
   }'
 
-  cookie_file="cookfile.txt"
-  cookie_file_new="cookfile_new.txt"
+  cookie_file="cookiefile.txt"
+  cookie_file_new="cookiefile_new.txt"
 
   # Get token and construct the cookie, save the returned token.
   curl --silent --fail --show-error -k -c $cookie_file --request GET "$antif"

@@ -32,16 +32,6 @@ function validate_setup() {
 }
 
 function get_db_details() {
-	## get password for deployer db => Using Deployer pod
-	#line=$(kubectl get secrets -n aifabric ai-deployer-secrets -o yaml | grep 'DATASOURCE_PASSWORD')
-	#readonly DB_PASSWORD=$(echo ${line##* } | base64 -d)
-	## get url
-	#line=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_URL' | grep -v 'SPRING_DATASOURCE_URL')
-	#readonly DB_CONN=${line##* }
-	## get user
-	#line=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_USERNAME' | grep -v 'SPRING_DATASOURCE_USERNAME')
-	#readonly DB_USER=${line##* }
-
 	# Fetch details from provisioning job
 	provisionPod=$(kubectl get jobs -l app=provision --field-selector status.successful=1  --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}')
 	line=$(kubectl get jobs ${provisionPod} -o yaml | grep -A1 'SQL_HOST' | grep -v 'SQL_HOST')
@@ -54,9 +44,9 @@ function get_db_details() {
 	readonly DB_NAME=${line##* }
 
 	if [[ -z $DB_CONN || -z $DB_USER || -z $DB_PASSWORD || -z $DB_NAME ]]; then
-    	echo "$red $(date) Failed to fetch one or more db info, Please check ... Exiting $default"
-    	exit 1
-  	fi
+  	echo "$red $(date) Failed to fetch one or more db info, Please check ... Exiting $default"
+  	exit 1
+  fi
 }
 
 function get_registry_details() {
@@ -67,46 +57,45 @@ function get_registry_details() {
 		#OBJECT_GATEWAY_EXTERNAL_HOST=$(hostname -i)
 		PRIVATE_ADDRESS=$(ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')
     	#This is needed on k8s 1.18.x as $PRIVATE_ADDRESS is found to have a newline
-    	REGISTRY_IP=$(echo "$PRIVATE_ADDRESS" | tr -d '\n')
-    else
-    	REGISTRY_IP=$PRIVATE_IP
-    fi
-    echo "$green $(date) Private IP was $PRIVATE_IP and REGISTRY_IP is $REGISTRY_IP"
+    REGISTRY_IP=$(echo "$PRIVATE_ADDRESS" | tr -d '\n')
+  else
+  	REGISTRY_IP=$PRIVATE_IP
+  fi
+  echo "$green $(date) Private IP was $PRIVATE_IP and REGISTRY_IP is $REGISTRY_IP"
 	# check if nodeport exists for registry
 	regnp=$(kubectl -n kurl get svc registry-np)
 	if [ -z "$regnp" ]; then
-    	echo "$yellow $(date) Registry service not exposed as nodeport  ... Creating $default"
-    	result=kubectl -n kurl apply -f registry_np.yaml
-    	if [ -z "$result" ]; then
-    		echo "$red $(date) Failed to expose Registry service as nodeport  ... Exiting $default"
-    		exit 1
-    	fi
-  	fi
-  	port=$(kubectl -n kurl get service/registry-np -o jsonpath='{.spec.ports[0].nodePort}')
-  	if [ -z "$port" ]; then
-    	echo "$red $(date) Failed to fetch nodeport of Registry service  ... Exiting $default"
+    echo "$yellow $(date) Registry service not exposed as nodeport  ... Creating $default"
+    result=kubectl -n kurl apply -f registry_np.yaml
+    if [ -z "$result" ]; then
+    	echo "$red $(date) Failed to expose Registry service as nodeport  ... Exiting $default"
     	exit 1
     fi
-    readonly REGISTRY_CONN=${REGISTRY_IP}:${port}
+  fi
+  port=$(kubectl -n kurl get service/registry-np -o jsonpath='{.spec.ports[0].nodePort}')
+  if [ -z "$port" ]; then
+  	echo "$red $(date) Failed to fetch nodeport of Registry service  ... Exiting $default"
+  	exit 1
+  fi
+  readonly REGISTRY_CONN=${REGISTRY_IP}:${port}
 
-    # get credentials
-    line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_USERNAME')
+  # get credentials
+  line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_USERNAME')
 	readonly REGISTRY_USER=${line##* }
 	line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_PASSWORD')
 	readonly REGISTRY_PASSWORD=${line##* }
 
-    # get old ip
-    old=$(kubectl -n kurl get service/registry -o jsonpath='{.spec.clusterIP}')
-    if [ -z "$old" ]; then
-    	echo "$red $(date) Failed to fetch clusterip of Registry service  ... Exiting $default"
-    	exit 1
-    fi
-    readonly REGISTRY_OLD=${old}
-
-    if [[ -z $REGISTRY_CONN || -z $REGISTRY_USER || -z $REGISTRY_PASSWORD || -z $REGISTRY_OLD ]]; then
-    	echo "$red $(date) Failed to fetch one or more registry info, Please check ... Exiting $default"
-    	exit 1
-  	fi
+  # get old ip
+  old=$(kubectl -n kurl get service/registry -o jsonpath='{.spec.clusterIP}')
+  if [ -z "$old" ]; then
+  	echo "$red $(date) Failed to fetch clusterip of Registry service  ... Exiting $default"
+  	exit 1
+  fi
+  readonly REGISTRY_OLD=${old}
+  if [[ -z $REGISTRY_CONN || -z $REGISTRY_USER || -z $REGISTRY_PASSWORD || -z $REGISTRY_OLD ]]; then
+  	echo "$red $(date) Failed to fetch one or more registry info, Please check ... Exiting $default"
+  	exit 1
+  fi
 }
 
 function generate_json() {
