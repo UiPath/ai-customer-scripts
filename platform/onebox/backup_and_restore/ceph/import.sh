@@ -45,23 +45,39 @@ function list_buckets() {
   readonly DIRS=${dirs}
 }
 
-function upload_blobs() {
+function upload_blob() {
+  BUCKET_NAME=${1}
+  # create bucket if not exists
+  local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate -q)
+  if [ ! -z "$check_bucket" ]; then
+    echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
+    s3cmd mb --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate
+  else
+    echo "$yellow $(date)  Bucket exists: ${BUCKET_NAME}, skipping $default"
+  fi
+  # sync folder to bucket
+  echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
+  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${dir}/ s3://${BUCKET_NAME}
+  echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
+}
+
+function update_cors_policy() {
+  BUCKET_NAME=${1}
+  if [ ! -f "${FOLDER}${BUCKET_NAME}-cors.json" ]; then
+    echo "$red $(date) ${FOLDER}${BUCKET_NAME}-cors.json file does not exist, Please check ... Skipping cors creation $default"
+    return
+  fi
+  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${FOLDER}${BUCKET_NAME}-cors.json
+}
+
+function process_buckets() {
   while read dir;
   do echo "Processing directory: '${dir}'"
     # aws doesn't allow underscores in bucket name
-  	BUCKET_NAME=${dir//_/-}
-  	# create bucket if not exists
-    local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate -q)
-    if [ ! -z "$check_bucket" ]; then
-  	  echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
-  	  s3cmd mb --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate
-    else
-      echo "$yellow $(date)  Bucket exists: ${BUCKET_NAME}, skipping $default"
-    fi
-  	# sync folder to bucket
-  	echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
-  	aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${dir}/ s3://${BUCKET_NAME}
-  	echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
+  	bucket=${dir//_/-}
+  	# Create and sync bucket contents
+    upload_blob ${bucket}
+    update_cors_policy ${bucket}
   done <<< "$DIRS";
 }
 
@@ -70,5 +86,5 @@ initialize_variables
 
 list_buckets
 
-upload_blobs
+process_buckets
 
