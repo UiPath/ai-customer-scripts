@@ -1,3 +1,20 @@
+IS_DOCKER_ACTIVE=$(systemctl is-active docker)
+
+if [[ "${IS_DOCKER_ACTIVE}" != "active" ]];
+then
+  echo "Docker service is not running. Please start the docker service using command : sudo systemctl restart docker"
+  exit 1
+fi
+
+IS_DOCKER_ACTIVE=$(systemctl is-active kubelet)
+
+if [[ "${IS_DOCKER_ACTIVE}" != "active" ]];
+then
+  echo "Kubelet is not running. Please start the kubelet service using command : sudo systemctl restart kubelet"
+  exit 1
+fi
+
+
 kubectl -n aifabric delete job diagnostics-job
 kubectl -n aifabric create job diagnostics-job --from cronjob/ai-diagnostics-tool
 
