@@ -1,0 +1,61 @@
+apiVersion: kots.io/v1beta1
+kind: ConfigValues
+metadata:
+  creationTimestamp: null
+  name: aifabric-onprem
+spec:
+  values:
+    dbname.aiAppManager:
+      default: ai_appmanager
+    dbname.aiDeployer:
+      default: ai_deployer
+    dbname.aiHelper:
+      default: ai_helper
+    dbname.aiPkgManager:
+      default: ai_pkgmanager
+    dbname.aiTrainer:
+      default: ai_trainer
+    dbname.aifabric:
+      default: aifabric
+    dbname.enable:
+      default: disable
+    featuremanagement.flags:
+      value: data-labeling-enabled
+    hacoreservices.status:
+      default: disable
+      value: disable
+    hacpumlskills.status:
+      default: disable
+      value: disable
+    hagpumlskills.status:
+      default: disable
+      value: disable
+    identity.accessToken:
+      default: JWT Token
+      value: JWT_TOKEN_VAR
+    identityserver.endpoint:
+      default: identityserver.uipath.com:443
+      value: IDENTITY_ENDPOINT_VAR
+    ingress.host:
+      value: INGRESS_ENDPOINT_VAR
+    job.gpu.cpu.limit:
+      default: "5000"
+    job.gpu.mem.limit:
+      default: "50"
+    orchestrator.endpoint:
+      default: orchestrator.uipath.com:443
+      value: ORCH_ENDPOINT_VAR
+    sql.host:
+      value: SQL_HOST_VAR
+    sql.password:
+      value: SQL_PASS_VAR
+    sql.username:
+      default: aifabricuser
+      value: SQL_USER_VAR
+    dbtype.enable:
+      default: single
+      value: DATABASE_TYPE
+    platform.type:
+      default: azure
+      value: azure
+status: {}
