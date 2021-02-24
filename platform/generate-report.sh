@@ -1,17 +1,87 @@
+RED='\033[0;31m' # Red
+NC='\033[0m' # No Color
+GREEN='\033[0;32m' # Green
+YELLOW='\033[1;33m' # Yellow
+BOLD='\033[1m'
+
+print_directory_size() {
+  if [[ "${2}" -gt "90" ]];
+  then
+    echo -e "${RED}[ERROR]${NC} The device for the directory $1 is $2% full"
+  elif [[ "${2}" -gt "75" ]];
+  then
+    echo -e "${YELLOW}[WARNING]${NC} The device for the directory $1 is $2% full"
+  else
+    echo -e "${GREEN}[INFO]${NC} The device for the directory $1 is $2% full"
+  fi
+}
+
 IS_DOCKER_ACTIVE=$(systemctl is-active docker)
 
 if [[ "${IS_DOCKER_ACTIVE}" != "active" ]];
 then
-  echo "Docker service is not running. Please start the docker service using command : sudo systemctl restart docker"
+  echo -e "${RED}[ERROR]${NC} Docker service is not running. Please start the docker service using command : sudo systemctl restart docker"
   exit 1
+else
+  echo -e "${GREEN}[INFO]${NC} Docker is running."
 fi
 
 IS_DOCKER_ACTIVE=$(systemctl is-active kubelet)
 
 if [[ "${IS_DOCKER_ACTIVE}" != "active" ]];
 then
-  echo "Kubelet is not running. Please start the kubelet service using command : sudo systemctl restart kubelet"
+  echo -e "${RED}[ERROR]${NC} Kubelet is not running. Please start the kubelet service using command : sudo systemctl restart kubelet"
   exit 1
+else
+  echo -e "${GREEN}[INFO]${NC} Kubelet is running."
+fi
+
+KUBELET_CGROUP=$(sudo cat /var/lib/kubelet/config.yaml | grep cgroupDriver | cut -d ':' -f 2 | xargs)
+DOCKER_CGROUP=$(sudo docker info 2> /dev/null | grep -i cgroup | cut -d ":" -f 2 | xargs)
+
+if [[ "${KUBELET_CGROUP}" != "${DOCKER_CGROUP}" ]];
+then
+  echo -e "${RED}[ERROR]${NC} Docker and kubelet are running under different cgroups. Please correct it."
+  exit 1
+else
+  echo -e "${GREEN}[INFO]${NC} Docker and kubelet are running under the same cgroup."
+fi
+
+DOCKER_STORAGE_DRIVER=$(sudo docker info 2> /dev/null | grep "Storage Driver" | cut -d ':' -f 2 | xargs)
+
+if [[ "${RED}[ERROR]${NC} ${DOCKER_STORAGE_DRIVER}" == "devicemapper" ]];
+then
+  echo -e "${GREEN}[INFO]${NC} Current docker storage driver is devicemapper, which will cause issues in AI Center, please consider changing to overlay or overlay2"
+  exit 1
+else
+  echo -e "${GREEN}[INFO]${NC} Docker is using ${DOCKER_STORAGE_DRIVER} storage driver."
+fi
+
+if [[ -d "/var/lib/docker" ]];
+then
+  DEVICE_NAME_DOCKER=$(df /var/lib/docker | sed -n '2 p' | cut -d' ' -f1)
+else
+  DEVICE_NAME_DOCKER=$(df /var/lib/ | sed -n '2 p' | cut -d' ' -f1)
+fi
+
+# Check if /var/lib/kubelet is mount with a separate device or check for /var/lib
+if [[ -d "/var/lib/kubelet" ]];
+then
+  DEVICE_NAME_KUBELET=$(df /var/lib/kubelet | sed -n '2 p' | cut -d' ' -f1)
+else
+  DEVICE_NAME_KUBELET=$(df /var/lib/ | sed -n '2 p' | cut -d' ' -f1)
+fi
+
+# If both folders are under same device, check the size to be 200GB or check for the size to be 125GB and 100GB for docker and kubelet
+if [[ "${DEVICE_NAME_DOCKER}"=="${DEVICE_NAME_KUBELET}" ]];
+then
+  COMMON_SIZE=$(df -hl | grep $DEVICE_NAME_DOCKER | awk 'BEGIN{} {percent+=$5;} END{print percent}')
+  print_directory_size "/var/lib/" $COMMON_SIZE
+else
+  DOCKER_SIZE=$(df -hl | grep $DEVICE_NAME_DOCKER | awk 'BEGIN{} {percent+=$5;} END{print percent}')
+  print_directory_size "/var/lib/docker" $DOCKER_SIZE
+  KUBELET_SIZE=$(df -hl | grep $DEVICE_NAME_KUBELET | awk 'BEGIN{} {percent+=$5;} END{print percent}')
+  print_directory_size "/var/lib/kubelet" $KUBELET_SIZE
 fi
 
 
