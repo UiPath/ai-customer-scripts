@@ -10,7 +10,7 @@ This backs up only the images currently used by any skills
 ## Requirements
 The Machine where backup/restore runs needs the following:
 * Access to AIF machine (public ip address can be obtained via dig)
-* jq to be installed, e.g. on Ubuntu ```sudo apt install -y jq```
+* jq, sqlcmd to be installed, e.g. on Ubuntu ```sudo apt install -y jq```
 * User logged in with permission to run the script and access to above tools
 * AIF machines need registry accessible via nodeport. It can be done via ```kubectl -n kurl apply -f registry-np.yaml```
 

@@ -139,6 +139,8 @@ validate_setup
 
 validate_input
 
+formulate_docker_command
+
 docker_setup
 
 get_image_list
