@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : '
-This script will import user oriented cluster resources from one enviornmnet to another envrionment
+This script will import user triggered cluster resources from one environment to another environment
 [Script Version -> 21.4]'
 
 red=$(tput setaf 1)
@@ -13,8 +13,8 @@ echo "$green $(date) Starting export of user namespaces and pipeline related cro
 
 readonly CLUSTER_RESOURCES_EXPORT_FILE=$1
 
-# Validate dependecny module
-# $1 - Name of the dependecny module
+# Validate dependency module
+# $1 - Name of the dependency module
 # $2 - Command to validate module
 function validate_dependency() {
   list=$($2)
@@ -34,7 +34,7 @@ function validate_file_path() {
 # Validate required modules exits in target setup
 function validate_setup() {
   validate_dependency velero "velero version"
-  echo "$(date) Successfully validated required dependecies"
+  echo "$(date) Successfully validated required dependencies"
 }
 
 # Validate input provided by end user
@@ -43,8 +43,8 @@ function validate_input() {
   # Validate file path
   validate_file_path $CLUSTER_RESOURCES_EXPORT_FILE
 
-  readonly NAMESPACES_BACKUP_NAME=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.namespaceBackupName != null) | .namespaceBackupName')
-  readonly CRONJOBS_BACKUP_NAME=$(cat $ML_PACKAGE_EXPORT_INPUT_FILE | jq -r 'select(.cronjobsBackupName != null) | .cronjobsBackupName')
+  readonly NAMESPACES_BACKUP_NAME=$(cat $CLUSTER_RESOURCES_EXPORT_FILE | jq -r 'select(.namespaceBackupName != null) | .namespaceBackupName')
+  readonly CRONJOBS_BACKUP_NAME=$(cat $CLUSTER_RESOURCES_EXPORT_FILE | jq -r 'select(.cronjobsBackupName != null) | .cronjobsBackupName')
 
   if [[ -z $NAMESPACES_BACKUP_NAME || -z $CRONJOBS_BACKUP_NAME ]]; then
     echo "$red $(date) Input is invalid or missing, Please check ... Exiting $default"
@@ -54,33 +54,37 @@ function validate_input() {
   echo "$green $(date) Successfully validated user input $default"
   }
 
-# Restore all user orinated namespaces
+# Restore all user related namespaces
 function restore_namespace() {
   echo "$(date) Process of namespace restoration started"
-  readonly restore_namespace_backup_name=$1
 
   # Restore namespaces
-  velero restore create --from-backup $restore_namespace_backup_name
+  velero restore create --from-backup $NAMESPACES_BACKUP_NAME
 
-  echo "$(date) Successfully restore all user namespaces from backup $restore_namespace_backup_name"
+  echo "$(date) Successfully restore all user namespaces from backup $NAMESPACES_BACKUP_NAME"
 }
 
 # Restore cronjobs
 function restore_cronjobs() {
-  echo "$(date) Process of cronjobs restoration started"
-  readonly restore_cronjobs_backup_name=$2
+  echo "$(date) Process of cronjob restoration started"
 
   # Restore namespaces
-  velero restore create --from-backup $restore_cronjobs_backup_name
-  echo "$(date) Successfully restore all cronjobs from backup $restore_cronjobs_backup_name"
+  velero restore create --from-backup $CRONJOBS_BACKUP_NAME
+  echo "$(date) Successfully restore all cronjob from backup $CRONJOBS_BACKUP_NAME"
 }
 
 # Patch secrets in namespaces
 function update_secrets_in_namespaces() {
 
+  echo "$(date) Updating secrets"
+
+  # Sleep is required for namespaces to be created
+  sleep 30
+
   # Get docker config secrets
   readonly registryCredentials=$(kubectl -n aifabric get configmap registry-config -o jsonpath="{.data.REGISTRY_CREDENTIALS_PULL}")
   local registryInternalIp=$(kubectl get svc registry -n kurl -o jsonpath={.spec.clusterIP})
+
   NAMESPACES=($(kubectl get ns -A | awk '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/ {print $1}'))
 
   for ((ns = 0; ns < ${#NAMESPACES[@]}; ns = ns + 1)); do
@@ -88,6 +92,13 @@ function update_secrets_in_namespaces() {
 
     echo "$(date) Deleting $defaultTokenSecrets in namespace ${NAMESPACES[ns]}"
     kubectl -n ${NAMESPACES[ns]} delete secrets $defaultTokenSecrets
+
+    if (echo ${NAMESPACES[ns]} | grep "training-");
+    then
+      local trainingStorageSecrets=$(kubectl get secrets -n ${NAMESPACES[ns]} --no-headers -o custom-columns=":metadata.name" | grep training-storage-credentials)
+      echo "$(date) Deleting $trainingStorageSecrets in namespace ${NAMESPACES[ns]}"
+      kubectl -n ${NAMESPACES[ns]} delete secrets $trainingStorageSecrets
+    fi
 
     echo "$(date) Updating registry credentials in namespace ${NAMESPACES[ns]}"
     kubectl patch secret kurl-registry -n ${NAMESPACES[ns]} --type='json' -p="[{'op' : 'replace' ,'path' : '/data/.dockerconfigjson' ,'value' : '$registryCredentials'}]"
@@ -106,6 +117,8 @@ function update_secrets_in_namespaces() {
       done
     fi
   done
+
+  echo "$(date) Restore process is completed successfully"
 }
 
 # Validate setup
@@ -121,6 +134,4 @@ restore_namespace
 restore_cronjobs
 
 # Update secrets in namespaces
-update_secret_in_namespaces
-
-}
+update_secrets_in_namespaces
