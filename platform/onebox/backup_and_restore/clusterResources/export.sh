@@ -53,7 +53,7 @@ function backup_cronjobs() {
   #backup pipeline cron jobs
   velero backup create $backup_name --include-resources cronjobs --include-namespaces $backup_cronjobs_ns
 
-  echo "$(date) Successfully backup all cronjobs in namespace $backup_cronjobs_ns with name $backup_name"
+  echo "$(date) Successfully backup all cron jobs in namespace $backup_cronjobs_ns with name $backup_name"
 }
 
 # Validate setup

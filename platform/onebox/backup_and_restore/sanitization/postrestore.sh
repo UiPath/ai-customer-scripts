@@ -181,7 +181,7 @@ function wait_for_service_pods_liveness() {
 
 # Validate if data manager is enabled, returns 0 for true, 1 for false
 function isDataManagerEnabled() {
-  local feature_flag_name=data_manager_enabled
+  local feature_flag_name=data-labeling-enabled
   local isDataManagerEnabled=$(kubectl -n $CORE_SERVICE_NAMESPACE get deployment ai-app-deployment -o yaml | grep FEATURE_FLAGS -A 1 | grep $feature_flag_name)
   if [ -z "$isDataManagerEnabled" ];
   then

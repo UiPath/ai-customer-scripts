@@ -12,6 +12,8 @@ default=$(tput sgr0)
 echo "$green $(date) Starting export of user namespaces and pipeline related cron jobs $default"
 
 readonly CLUSTER_RESOURCES_EXPORT_FILE=$1
+readonly CORE_SERVICE_NAMESPACE=aifabric
+readonly KOTS_REGISTRY_SECRET=kotsadm-replicated-registry
 
 # Validate dependency module
 # $1 - Name of the dependency module
@@ -82,7 +84,7 @@ function update_secrets_in_namespaces() {
   sleep 30
 
   # Get docker config secrets
-  readonly registryCredentials=$(kubectl -n aifabric get configmap registry-config -o jsonpath="{.data.REGISTRY_CREDENTIALS_PULL}")
+  readonly registryCredentials=$(kubectl -n $CORE_SERVICE_NAMESPACE get configmap registry-config -o jsonpath="{.data.REGISTRY_CREDENTIALS_PULL}")
   local registryInternalIp=$(kubectl get svc registry -n kurl -o jsonpath={.spec.clusterIP})
 
   NAMESPACES=($(kubectl get ns -A | awk '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/ {print $1}'))
@@ -93,11 +95,24 @@ function update_secrets_in_namespaces() {
     echo "$(date) Deleting $defaultTokenSecrets in namespace ${NAMESPACES[ns]}"
     kubectl -n ${NAMESPACES[ns]} delete secrets $defaultTokenSecrets
 
+    # Deleting storage credentials, will be updated from post resource
     if (echo ${NAMESPACES[ns]} | grep "training-");
     then
       local trainingStorageSecrets=$(kubectl get secrets -n ${NAMESPACES[ns]} --no-headers -o custom-columns=":metadata.name" | grep training-storage-credentials)
       echo "$(date) Deleting $trainingStorageSecrets in namespace ${NAMESPACES[ns]}"
       kubectl -n ${NAMESPACES[ns]} delete secrets $trainingStorageSecrets
+    fi
+
+    # Deleting storage credentials, will be updated from post resource
+    if (echo ${NAMESPACES[ns]} | grep "data-manager-");
+    then
+       local dataManagerNewSecrets=$(kubectl -n $CORE_SERVICE_NAMESPACE get secrets $KOTS_REGISTRY_SECRET -o jsonpath='{.data.\.dockerconfigjson}')
+       local appHelperDataManager=$(kubectl get secrets -n ${NAMESPACES[ns]} --no-headers -o custom-columns=":metadata.name" | grep app-data-manager)
+       local appDataHelperManager=$(kubectl get secrets -n ${NAMESPACES[ns]} --no-headers -o custom-columns=":metadata.name" | grep app-helper-data-manager)
+       kubectl patch secret $appHelperDataManager -n ${NAMESPACES[ns]} --type='json' -p="[{'op' : 'replace' ,'path' : '/data/.dockerconfigjson' ,'value' : '$dataManagerNewSecrets'}]"
+       kubectl patch secret $appDataHelperManager -n ${NAMESPACES[ns]} --type='json' -p="[{'op' : 'replace' ,'path' : '/data/.dockerconfigjson' ,'value' : '$dataManagerNewSecrets'}]"
+       kubectl delete --all deployments --namespace=${NAMESPACES[ns]}
+       kubectl delete --all svc --namespace=${NAMESPACES[ns]}
     fi
 
     echo "$(date) Updating registry credentials in namespace ${NAMESPACES[ns]}"
