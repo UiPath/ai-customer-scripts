@@ -32,7 +32,7 @@ function validate_setup() {
   validate_dependency sqlcmd "sqlcmd -?"
   validate_dependency gzip "gzip --version"
   validate_dependency docker "docker --version"
-  echo "$(date) Successfully validated required dependecies"
+  echo "$(date) Successfully validated required dependencies"
 }
 
 

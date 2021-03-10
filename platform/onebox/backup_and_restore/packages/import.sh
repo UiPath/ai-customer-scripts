@@ -625,7 +625,7 @@ function validate_input() {
 function validate_setup() {
   validate_dependency curl "curl --version"
   validate_dependency jq "jq --version"
-  echo "$(date) Successfully validated required dependecies"
+  echo "$(date) Successfully validated required dependencies"
 }
 
 # Validate Setup

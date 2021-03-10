@@ -28,7 +28,7 @@ function validate_dependency() {
 # Validate required modules exits in target setup
 function validate_setup() {
   validate_dependency kubectl "kubectl version"
-  echo "$(date) Successfully validated required dependecies"
+  echo "$(date) Successfully validated required dependencies"
 }
 
 function get_db_details() {
