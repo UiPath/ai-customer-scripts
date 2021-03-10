@@ -20,6 +20,8 @@ The Machine where backup/restore runs needs the following:
 ## Usage
 * Run get-credentials.sh on AIF machine. It generates a file storage-creds.json. Copy it over to the backup/restore VM.
 * [Optionally] Move the credentials to some cluster manager and make changes to the scripts to read from there
+# Ceph Backup-Restore
+* Make sure to use absolute path as basepath in below scripts
 
 ### For Backup
 ```

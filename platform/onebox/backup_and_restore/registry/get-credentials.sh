@@ -32,16 +32,16 @@ function validate_setup() {
 }
 
 function get_db_details() {
-	# Fetch details from provisioning job
-	provisionPod=$(kubectl get jobs -l app=provision --field-selector status.successful=1  --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}')
-	line=$(kubectl get jobs ${provisionPod} -o yaml | grep -A1 'SQL_HOST' | grep -v 'SQL_HOST')
-	readonly DB_CONN=${line##* }
-	line=$(kubectl get jobs ${provisionPod} -o yaml | grep -A1 'SQL_USERNAME' | grep -v 'SQL_USERNAME')
-	readonly DB_USER=${line##* }
-	line=$(kubectl get jobs ${provisionPod} -o yaml | grep -A1 'SQL_PASSWORD' | grep -v 'SQL_PASSWORD')
-	readonly DB_PASSWORD=${line##* }
-	line=$(kubectl get jobs ${provisionPod} -o yaml | grep -A1 'DEPLOYER_DBNAME' | grep -v 'DEPLOYER_DBNAME')
-	readonly DB_NAME=${line##* }
+
+  conn=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_URL' | grep -v 'SPRING_DATASOURCE_URL')
+  line=$(echo $conn | grep -o 'sqlserver://.*;')
+  readonly DB_CONN=$(basename ${line//;/})
+  line=$(echo $conn | grep -o 'databaseName=[a-zA-Z0-9_-]*')
+  readonly DB_NAME=${line##*=}
+  user=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_USER' | grep -v 'SPRING_DATASOURCE_USER')
+  readonly DB_USER=${user##* }
+  pass=$(kubectl -n aifabric get secret ai-deployer-secrets -o yaml | grep 'DATASOURCE_PASSWORD')
+  readonly DB_PASSWORD=$(echo ${pass##* } | base64 -d)
 
 	if [[ -z $DB_CONN || -z $DB_USER || -z $DB_PASSWORD || -z $DB_NAME ]]; then
   	echo "$red $(date) Failed to fetch one or more db info, Please check ... Exiting $default"
