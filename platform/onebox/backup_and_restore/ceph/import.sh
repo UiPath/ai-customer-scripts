@@ -43,10 +43,12 @@ function list_buckets() {
   cd $FOLDER
   dirs=$(find . -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
   readonly DIRS=${dirs}
+  cd -
 }
 
 function upload_blob() {
   BUCKET_NAME=${1}
+  DIR_NAME=${2}
   # create bucket if not exists
   local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate -q)
   if [ ! -z "$check_bucket" ]; then
@@ -57,17 +59,18 @@ function upload_blob() {
   fi
   # sync folder to bucket
   echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
-  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${dir}/ s3://${BUCKET_NAME}
+  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${FOLDER}${DIR_NAME}/ s3://${BUCKET_NAME}
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
 function update_cors_policy() {
   BUCKET_NAME=${1}
-  if [ ! -f "${FOLDER}${BUCKET_NAME}-cors.json" ]; then
-    echo "$red $(date) ${FOLDER}${BUCKET_NAME}-cors.json file does not exist, Please check ... Skipping cors creation $default"
+  DIR_NAME=${2}
+  if [ ! -f "${FOLDER}${DIR_NAME}-cors.json" ]; then
+    echo "$red $(date) ${FOLDER}${DIR_NAME}-cors.json file does not exist, Please check ... Skipping cors creation $default"
     return
   fi
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${FOLDER}${BUCKET_NAME}-cors.json
+  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${FOLDER}${DIR_NAME}-cors.json
 }
 
 function process_buckets() {
@@ -76,8 +79,8 @@ function process_buckets() {
     # aws doesn't allow underscores in bucket name
   	bucket=${dir//_/-}
   	# Create and sync bucket contents
-    upload_blob ${bucket}
-    update_cors_policy ${bucket}
+    upload_blob ${bucket} ${dir}
+    update_cors_policy ${bucket} ${dir}
   done <<< "$DIRS";
 }
 
@@ -85,6 +88,5 @@ function process_buckets() {
 initialize_variables
 
 list_buckets
-
 process_buckets
 
