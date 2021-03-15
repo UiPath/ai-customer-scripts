@@ -40,7 +40,7 @@ function get_db_details() {
   readonly DB_NAME=${line##*=}
   user=$(kubectl -n aifabric get deployment ai-deployer-deployment -o yaml | grep -A1 'SPRING_DATASOURCE_USER' | grep -v 'SPRING_DATASOURCE_USER')
   readonly DB_USER=${user##* }
-  pass=$(kubectl -n aifabric get secret ai-deployer-secrets -o yaml | grep 'DATASOURCE_PASSWORD')
+  pass=$(kubectl -n aifabric get secret ai-deployer-secrets -o yaml | grep 'DATASOURCE_PASSWORD' | grep -v ':DATASOURCE_PASSWORD')
   readonly DB_PASSWORD=$(echo ${pass##* } | base64 -d)
 
 	if [[ -z $DB_CONN || -z $DB_USER || -z $DB_PASSWORD || -z $DB_NAME ]]; then
