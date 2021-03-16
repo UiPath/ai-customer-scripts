@@ -193,12 +193,16 @@ function isDataManagerEnabled() {
 
 # Update core service specific env variables
 function update_core_service_env_variables_for_recovery() {
+  kubectl -n $CORE_SERVICE_NAMESPACE set env deployment/ai-pkgmanager-deployment S2S_RECOVERY_CLIENT_ID=$IS_AIFABRIC_CLIENT_ID S2S_RECOVERY_AUDIENCE=AiFabric
   kubectl -n $CORE_SERVICE_NAMESPACE set env deployment/ai-deployer-deployment S2S_RECOVERY_CLIENT_ID=$IS_AIFABRIC_CLIENT_ID S2S_RECOVERY_AUDIENCE=AiFabric
   kubectl -n $CORE_SERVICE_NAMESPACE set env deployment/ai-trainer-deployment S2S_RECOVERY_CLIENT_ID=$IS_AIFABRIC_CLIENT_ID S2S_RECOVERY_AUDIENCE=AiFabric
-  kubectl -n $CORE_SERVICE_NAMESPACE set env deployment/ai-pkgmanager-deployment S2S_RECOVERY_CLIENT_ID=$IS_AIFABRIC_CLIENT_ID S2S_RECOVERY_AUDIENCE=AiFabric
+  
 
   # Sleep is needed for pods status to be updated
   sleep 2
+
+  # Update pkg-manager service
+  wait_for_service_pods_liveness "ai-pkgmanager-deployment"
 
   # Update deployer service
   wait_for_service_pods_liveness "ai-deployer-deployment"
@@ -206,8 +210,7 @@ function update_core_service_env_variables_for_recovery() {
   # Update trainer service
   wait_for_service_pods_liveness "ai-trainer-deployment"
 
-  # Update pkg-manager service
-  wait_for_service_pods_liveness "ai-pkgmanager-deployment"
+  sleep 2
 
   if isDataManagerEnabled;
   then
@@ -311,7 +314,7 @@ function sanitize_core_services_in_flight_operation() {
   sleep 5
   sanitize_in_flight_ml_skills
   sleep 5
-  sanitize_i_flight_projects
+  sanitize_in_flight_projects
   sleep 5
   sanitize_in_flight_tenants
 
