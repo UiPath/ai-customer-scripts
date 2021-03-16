@@ -77,15 +77,15 @@ formulate_docker_command() {
 }
 
 function docker_setup() {
-	# Mark docker registry as unauth => Adapt for other envs
-	echo "{\"insecure-registries\": [\"${REGISTRY_ENDPOINT}\"]}" > insecure.json
-	sudo touch /etc/docker/daemon.json
-	daemondiff=$(sudo jq -s '.[0] as $o1 | .[1] as $o2 | ($o1 + $o2) | ."insecure-registries" = ($o1."insecure-registries" + $o2."insecure-registries" | unique)'  /etc/docker/daemon.json insecure.json)
-	sudo echo $daemondiff > /etc/docker/daemon.json
-	# Restart docker
-	sudo service docker restart
-	# Login to docker registry
-	${DOCKER_COMMAND} login ${REGISTRY_ENDPOINT} -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
+  # Mark docker registry as unauth => Adapt for other envs
+  echo "{\"insecure-registries\": [\"${REGISTRY_ENDPOINT}\"]}" > insecure.json
+  sudo touch /etc/docker/daemon.json
+  daemondiff=$(sudo jq -s '.[0] as $o1 | .[1] as $o2 | ($o1 + $o2) | ."insecure-registries" = ($o1."insecure-registries" + $o2."insecure-registries" | unique)'  /etc/docker/daemon.json insecure.json)
+  echo $daemondiff | sudo tee /etc/docker/daemon.json
+  # Restart docker
+  sudo service docker restart
+  # Login to docker registry
+  ${DOCKER_COMMAND} login ${REGISTRY_ENDPOINT} -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD}
 }
 
 function load_image() {
