@@ -215,7 +215,7 @@ function update_core_service_env_variables_for_recovery() {
   if isDataManagerEnabled;
   then
   # Update data manager service
-    kubectl -n $CORE_SERVICE_NAMESPACE set env deployment/ai-appmanager-deployment S2S_RECOVERY_CLIENT_ID=$IS_AIFABRIC_CLIENT_NAME, S2S_RECOVERY_AUDIENCE=AiFabric
+    kubectl -n $CORE_SERVICE_NAMESPACE set env deployment/ai-appmanager-deployment S2S_RECOVERY_CLIENT_ID=$IS_AIFABRIC_CLIENT_NAME S2S_RECOVERY_AUDIENCE=AiFabric
     wait_for_service_pods_liveness "ai-appmanager-deployment"
   fi
 }
