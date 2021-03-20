@@ -34,8 +34,8 @@ function backup_namespace() {
   declare -a NAMESPACES=()
 
   echo "$(date) Fetching list of all UUID namespaces"
-  readonly NAMESPACES=($(kubectl get ns -A | awk '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/ {print $1}'))
-  local namespaces_list=$(IFS=, ; echo "${NAMESPACES[*]}")
+  readonly NAMESPACES=$(kubectl get ns -A | awk '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/ {print $1}')
+  local namespaces_list=$(echo "$NAMESPACES" | paste -s -d, /dev/stdin)
 
   backup_name="ai-center-onpremise-backup"-$(date +%s)
   velero backup create $backup_name --include-namespaces $namespaces_list

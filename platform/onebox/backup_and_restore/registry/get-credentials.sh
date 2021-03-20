@@ -80,9 +80,9 @@ function get_registry_details() {
   readonly REGISTRY_CONN=${REGISTRY_IP}:${port}
 
   # get credentials
-  line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_USERNAME')
+  line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_USERNAME' | grep -v 'f:REGISTRY_USERNAME')
 	readonly REGISTRY_USER=${line##* }
-	line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_PASSWORD')
+	line=$(kubectl -n aifabric get configmap registry-config -o yaml | grep 'REGISTRY_PASSWORD' | grep -v 'f:REGISTRY_PASSWORD')
 	readonly REGISTRY_PASSWORD=${line##* }
 
   # get old ip
