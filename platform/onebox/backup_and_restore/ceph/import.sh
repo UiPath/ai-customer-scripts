@@ -50,10 +50,10 @@ function upload_blob() {
   BUCKET_NAME=${1}
   DIR_NAME=${2}
   # create bucket if not exists
-  local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate -q)
-  if [ ! -z "$check_bucket" ]; then
+  local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate -q)
+  if [ -z "$check_bucket" ]; then
     echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
-    s3cmd mb --host=${AWS_ENDPOINT} --host-bucket=  s3://${BUCKET_NAME} --no-check-certificate
+    s3cmd mb --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate
   else
     echo "$yellow $(date)  Bucket exists: ${BUCKET_NAME}, skipping $default"
   fi
@@ -74,19 +74,42 @@ function update_cors_policy() {
 }
 
 function process_buckets() {
-  while read dir;
-  do echo "Processing directory: '${dir}'"
+  while read dir; do
+    echo "Processing directory: '${dir}'"
     # aws doesn't allow underscores in bucket name
-  	bucket=${dir//_/-}
-  	# Create and sync bucket contents
+    bucket=${dir//_/-}
+    # Create and sync bucket contents
     upload_blob ${bucket} ${dir}
     update_cors_policy ${bucket} ${dir}
-  done <<< "$DIRS";
+  done <<<"$DIRS"
 }
 
+# Validate dependency module
+# $1 - Name of the dependency module
+# $2 - Command to validate module
+function validate_dependency() {
+  list=$($2)
+  if [ -z "$list" ]; then
+    echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
+    exit 1
+  fi
+}
 
+# Validate required modules exits in target setup
+function validate_setup() {
+  validate_dependency "aws s3" "aws --version"
+  validate_dependency s3cmd "s3cmd --version"
+  echo "$(date) Successfully validated required dependencies"
+}
+
+# Validate Setup
+validate_setup
+
+# Update ENV Variables
 initialize_variables
 
+# List Buckets
 list_buckets
-process_buckets
 
+# Process data inside buckets
+process_buckets
