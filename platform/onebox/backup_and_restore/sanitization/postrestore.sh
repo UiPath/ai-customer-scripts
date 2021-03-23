@@ -221,88 +221,75 @@ function update_core_service_env_variables_for_recovery() {
   fi
 }
 
-# Sanitize in flight ML packages
-function sanitize_in_flight_ml_packages() {
-  readonly local ml_packages_sanitize_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/mlpackage/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-
-  local resp_code=DEFAULT
-  if [ ! -z "$ml_packages_sanitize_resp_code" ]; then
-    resp_code=$(echo "$ml_packages_sanitize_resp_code" | jq -r 'select(.respCode != null) | .respCode')
+function parse_sanitize_response() {
+  if [ -z "$1" ];
+  then
+    echo "$red $(date) No response received from server for sanitizing $2, retry may fix it ... Exiting !!! $default"
+    exit 1
   fi
 
-  validate_response_from_api $resp_code "200" "Successfully sanitized inflight ML Packages" "$red Failed to sanitized inflight ML Packages ... Exiting"
+  resp_code=$(echo "$1" | grep -v '100 Continue' | grep HTTP | awk '{print $2}')
+
+  if [ "${resp_code}" = "200" ];
+  then
+    echo "$green $(date) $2 sanitized Successfully $default"
+  else
+    echo "$red $(date) Sanitization failed for $2 with message: $1 $default"
+    exit 1
+  fi  
+}
+
+# Sanitize in flight ML packages
+function sanitize_in_flight_ml_packages() {
+  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/mlpackage/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response $response "MLPackages"
 }
 
 # Sanitize in flight projects
 function sanitize_in_flight_projects() {
-  readonly local projects_sanitize_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/project/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/project/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
-  local resp_code=DEFAULT
-  if [ ! -z "$projects_sanitize_resp_code" ]; then
-    resp_code=$(echo "$projects_sanitize_resp_code" | jq -r 'select(.respCode != null) | .respCode')
-  fi
-
-  validate_response_from_api $resp_code "202" "Successfully sanitized inflight projects" "$red Failed to sanitized inflight projects ... Exiting"
+  parse_sanitize_response $response "Projects"
 }
 
 # Sanitize in flight ML Skills
 function sanitize_in_flight_ml_skills() {
-  readonly local skills_sanitize_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/mlskills/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/mlskills/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
-  local resp_code=DEFAULT
-  if [ ! -z "$skills_sanitize_resp_code" ]; then
-    resp_code=$(echo "$skills_sanitize_resp_code" | jq -r 'select(.respCode != null) | .respCode')
-  fi
-
-  validate_response_from_api $resp_code "200" "Successfully sanitized inflight ML Skills" "$red Failed to sanitized inflight ML Skills ... Exiting"
+  parse_sanitize_response $response "MLSkills"
 }
 
-# Sanitize in flight namespaces
+# Sanitize in flight trainer namespaces
 function sanitize_in_flight_namespaces() {
- readonly local sanitize_ns_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-
-  local resp_code=DEFAULT
-  if [ ! -z "$sanitize_ns_resp_code" ]; then
-    resp_code=$(echo "$sanitize_ns_resp_code" | jq -r 'select(.respCode != null) | .respCode')
-  fi
-
-  validate_response_from_api $resp_code "200" "Successfully sanitized in-flight namespaces" "$red Failed to sanitized in-flight namespaces ... Exiting"
+ response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ parse_sanitize_response $response "TrainerNamespaces"
 }
+
+# Sanitize in flight trainer namespaces
+function sanitize_in_flight_deployer_namespaces() {
+ response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ parse_sanitize_response $response "DeployerNamespaces"
+}
+
 
 # Sanitize in flight ML Pipelines
 function sanitize_in_flight_pipelines() {
-  readonly local pipeline_sanitize_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/pipeline/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-
-  local resp_code=DEFAULT
-  if [ ! -z "$pipeline_sanitize_resp_code" ]; then
-    resp_code=$(echo "$pipeline_sanitize_resp_code" | jq -r 'select(.respCode != null) | .respCode')
-  fi
-
-  validate_response_from_api $resp_code "200" "Successfully sanitized in-flight pipeline" "$red Failed to sanitized in-flight pipeline ... Exiting"
+  response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/pipeline/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response $response "Pipelines"
 }
 
 # Sanitize in flight Tenants
 function sanitize_in_flight_tenants() {
-  readonly local tenants_sanitize_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/tenant/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/tenant/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
-  local resp_code=DEFAULT
-  if [ ! -z "$tenants_sanitize_resp_code" ]; then
-    resp_code=$(echo "$tenants_sanitize_resp_code" | jq -r 'select(.respCode != null) | .respCode')
-  fi
-
-  validate_response_from_api $resp_code "200" "Successfully sanitized in-flight tenants" "$red Failed to sanitized in-flight tenants ... Exiting"
+  parse_sanitize_response $response "Tenants"
 }
 
 # Sanitize in flight data manager apps
 function sanitize_in_flight_data_manager_apps() {
-  readonly local app_manager_sanitize_resp_code=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-appmanager/v1/system/app/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  response=$(curl -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-appmanager/v1/system/app/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
 
-  local resp_code=DEFAULT
-  if [ ! -z "$tenants_sanitize_resp_code" ]; then
-    resp_code=$(echo "$tenants_sanitize_resp_code" | jq -r 'select(.respCode != null) | .respCode')
-  fi
-
-  validate_response_from_api $resp_code "202" "Successfully sanitized data manager app" "$red Failed to sanitized data manager app ... Exiting"
+  parse_sanitize_response $response "DataManager"
 }
 
 function sanitize_core_services_in_flight_operation() {
@@ -312,6 +299,8 @@ function sanitize_core_services_in_flight_operation() {
   sanitize_in_flight_pipelines
   sleep 5
   sanitize_in_flight_namespaces
+  sleep 5
+  sanitize_in_flight_deployer_namespaces
   sleep 5
   sanitize_in_flight_ml_skills
   sleep 5
