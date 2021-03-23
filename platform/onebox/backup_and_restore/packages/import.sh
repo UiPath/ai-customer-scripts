@@ -581,8 +581,8 @@ function validate_file_path() {
   fi
 }
 
-# Validate dependecny module
-# $1 - Name of the dependecny module
+# Validate dependency module
+# $1 - Name of the dependency module
 # $2 - Command to validate module
 function validate_dependency() {
   list=$($2)

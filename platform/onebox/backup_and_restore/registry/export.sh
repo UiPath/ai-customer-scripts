@@ -14,8 +14,8 @@ default=$(tput sgr0)
 readonly REGISTRY_EXPORT_FILE=$1
 readonly EXPORT_PATH=$2/registry
 
-# Validate dependecny module
-# $1 - Name of the dependecny module
+# Validate dependency module
+# $1 - Name of the dependency module
 # $2 - Command to validate module
 function validate_dependency() {
   list=$($2)
