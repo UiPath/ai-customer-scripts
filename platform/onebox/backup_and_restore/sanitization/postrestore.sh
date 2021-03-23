@@ -230,7 +230,7 @@ function parse_sanitize_response() {
 
   resp_code=$(echo "$1" | grep -v '100 Continue' | grep HTTP | awk '{print $2}')
 
-  if [ "${resp_code}" = "200" ];
+  if [[ "${resp_code}" =~ ^2 ]];
   then
     echo "$green $(date) $2 sanitized Successfully $default"
   else
@@ -241,51 +241,51 @@ function parse_sanitize_response() {
 
 # Sanitize in flight ML packages
 function sanitize_in_flight_ml_packages() {
-  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/mlpackage/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-  parse_sanitize_response $response "MLPackages"
+  response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/mlpackage/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response "$response" "MLPackages"
 }
 
 # Sanitize in flight projects
 function sanitize_in_flight_projects() {
-  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/project/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-  parse_sanitize_response $response "Projects"
+  response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-pkgmanager/v1/system/project/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response "$response" "Projects"
 }
 
 # Sanitize in flight ML Skills
 function sanitize_in_flight_ml_skills() {
-  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/mlskills/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-  parse_sanitize_response $response "MLSkills"
+  response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/mlskills/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response "$response" "MLSkills"
 }
 
 # Sanitize in flight trainer namespaces
 function sanitize_in_flight_namespaces() {
- response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
- parse_sanitize_response $response "TrainerNamespaces"
+ response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ parse_sanitize_response "$response" "TrainerNamespaces"
 }
 
 # Sanitize in flight trainer namespaces
 function sanitize_in_flight_deployer_namespaces() {
- response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
- parse_sanitize_response $response "DeployerNamespaces"
+ response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+ parse_sanitize_response "$response" "DeployerNamespaces"
 }
 
 
 # Sanitize in flight ML Pipelines
 function sanitize_in_flight_pipelines() {
-  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/pipeline/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-  parse_sanitize_response $response "Pipelines"
+  response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-trainer/v1/system/pipeline/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response "$response" "Pipelines"
 }
 
 # Sanitize in flight Tenants
 function sanitize_in_flight_tenants() {
-  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/tenant/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-  parse_sanitize_response $response "Tenants"
+  response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-deployer/v1/system/tenant/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response "$response" "Tenants"
 }
 
 # Sanitize in flight data manager apps
 function sanitize_in_flight_data_manager_apps() {
-  response=$(curl -i -k --silent --fail --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-appmanager/v1/system/app/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
-  parse_sanitize_response $response "DataManager"
+  response=$(curl -i -k --show-error -X POST 'https://'"$INGRESS_HOST_OR_FQDN"'/ai-appmanager/v1/system/app/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"'')
+  parse_sanitize_response "$response" "DataManager"
 }
 
 function sanitize_core_services_in_flight_operation() {
