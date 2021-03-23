@@ -30,7 +30,7 @@ function validate_file_path() {
 # $1 - Name of the dependency module
 # $2 - Command to validate module
 function validate_dependency() {
-  $($2)
+  eval $2
   # Next statement is checking last command success aws --version has some issue
   if [ $? -ne 0 ]; then
     echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
