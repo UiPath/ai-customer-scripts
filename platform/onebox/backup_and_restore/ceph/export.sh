@@ -26,6 +26,24 @@ function validate_file_path() {
   fi
 }
 
+# Validate dependency module
+# $1 - Name of the dependency module
+# $2 - Command to validate module
+function validate_dependency() {
+  eval $2
+  # Next statement is checking last command success aws --version has some issue
+  if [ $? -ne 0 ]; then
+    echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
+    exit 1
+  fi
+}
+
+# Validate required modules exits in target setup
+function validate_setup() {
+  validate_dependency "aws s3" "aws --version"
+  echo "$(date) Successfully validated required dependencies"
+}
+
 function initialize_variables() {
   # Validate file path
   validate_file_path $CREDENTIALS_FILE
@@ -45,7 +63,7 @@ function list_buckets() {
 
 function get_cors_policy() {
   BUCKET_NAME=${1}
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api get-bucket-cors --bucket ${BUCKET_NAME} > ${FOLDER}${BUCKET_NAME}-cors.json
+  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api get-bucket-cors --bucket ${BUCKET_NAME} >${FOLDER}${BUCKET_NAME}-cors.json
 }
 
 function download_blob() {
@@ -56,21 +74,25 @@ function download_blob() {
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
-
 function sync_buckets() {
-  while read line; 
-  do 
+  while read line; do
     echo "Response line: '${line}'"
-    bucket=$(echo ${line}| cut -d" " -f3)
+    bucket=$(echo ${line} | cut -d" " -f3)
     # get cors policy on bucket
     get_cors_policy $bucket
     # download bucket contents => Ceph issue limits it to 1000 blobs
     download_blob $bucket
-  done <<< "$BUCKETS"
+  done <<<"$BUCKETS"
 }
 
+# Validate Setup
+validate_setup
+
+# Update ENV Variables
 initialize_variables
 
+# List buckets
 list_buckets
 
+# Sync Buckets
 sync_buckets
