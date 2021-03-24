@@ -102,6 +102,8 @@ function update_secrets_in_namespaces() {
       local trainingStorageSecrets=$(kubectl get secrets -n ${NAMESPACES[ns]} --no-headers -o custom-columns=":metadata.name" | grep training-storage-credentials)
       echo "$(date) Deleting $trainingStorageSecrets in namespace ${NAMESPACES[ns]}"
       kubectl -n ${NAMESPACES[ns]} delete secrets $trainingStorageSecrets
+      echo "$(date) Deleting all active jobs if any in namespace: ${NAMESPACES[ns]}"
+      kubectl delete jobs --all -n ${NAMESPACES[ns]}
     fi
 
     # Deleting storage credentials, will be updated from post resource
