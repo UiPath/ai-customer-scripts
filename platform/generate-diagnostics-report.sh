@@ -49,9 +49,9 @@ fi
 
 DOCKER_STORAGE_DRIVER=$(sudo docker info 2> /dev/null | grep "Storage Driver" | cut -d ':' -f 2 | xargs)
 
-if [[ "${RED}[ERROR]${NC} ${DOCKER_STORAGE_DRIVER}" == "devicemapper" ]];
+if [[ "${DOCKER_STORAGE_DRIVER}" == "devicemapper" ]];
 then
-  echo -e "${GREEN}[INFO]${NC} Current docker storage driver is devicemapper, which will cause issues in AI Center, please consider changing to overlay or overlay2"
+  echo -e "${RED}[ERROR]${NC} Current docker storage driver is devicemapper, which will cause issues in AI Center, please consider changing to overlay or overlay2"
   exit 1
 else
   echo -e "${GREEN}[INFO]${NC} Docker is using ${DOCKER_STORAGE_DRIVER} storage driver."
@@ -73,7 +73,7 @@ else
 fi
 
 # If both folders are under same device, check the size to be 200GB or check for the size to be 125GB and 100GB for docker and kubelet
-if [[ "${DEVICE_NAME_DOCKER}"=="${DEVICE_NAME_KUBELET}" ]];
+if [[ "${DEVICE_NAME_DOCKER}" == "${DEVICE_NAME_KUBELET}" ]];
 then
   COMMON_SIZE=$(df -hl | grep $DEVICE_NAME_DOCKER | awk 'BEGIN{} {percent+=$5;} END{print percent}')
   print_directory_size "/var/lib/" $COMMON_SIZE
