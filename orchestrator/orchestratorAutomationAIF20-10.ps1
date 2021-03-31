@@ -3,20 +3,20 @@
 <#   
 
 .SYNOPSIS   
-   Makes aifabric related changes to orchestrator web.config to enable aifabric installation and access.
+   Makes aicenter related changes to orchestrator web.config to enable aicenter installation and access.
 .DESCRIPTION 
-   Add entries in orchestrator web.config(if not exists) for orchestrator internal IDP and aifabric access from robot and orchestrator. 
+   Add entries in orchestrator web.config(if not exists) for orchestrator internal IDP and aicenter access from robot and orchestrator. 
    Removes cache to allow access to new controllers and resets iis to load new values.
 .NOTES   
     Name: ./orchestratorAutomation.ps1
-    Author: AIFabric Team
+    Author: AICenter Team
     Pre-Requisites: script has to be executed throuh powershell in Administrator mode & before running script set execution policy to RemoteSigned by running "Set-ExecutionPolicy RemoteSigned"
 .EXAMPLE 
-    If orchestrator is hosted at orchestrator.uipath.com and aifabric is available at ww.xx.yy.zz, command to run would be 
+    If orchestrator is hosted at orchestrator.uipath.com and aicenter is available at ww.xx.yy.zz, command to run would be 
     ./orchestratorAutomation.ps1 -aifip ww.xx.yy.zz -orcname orchestrator.uipath.com
 
     If ai-app is accessed via domain instead of IP:PORT combo, then enable domainBasedAccess to true
-    .\orchestratorAutomation.ps1 -aifip "aif-sahil-aks.westeurope.cloudapp.azure.com" -orcname "aifabricdevorch.northeurope.cloudapp.azure.com" -portlessAccess "true"
+    .\orchestratorAutomation.ps1 -aifip "aif-sahil-aks.westeurope.cloudapp.azure.com" -orcname "aicenterdevorch.northeurope.cloudapp.azure.com" -portlessAccess "true"
 
     If Orchestrator Installation Path has to be specified,
     ./orchestratorAutomation.ps1 -aifip ww.xx.yy.zz -orcname orchestrator.uipath.com -config "C:\Program Files (x86)\UiPath\Orchestrator"
