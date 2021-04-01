@@ -14,10 +14,8 @@
   "projectId": "[project-id]",
   "retrainable": false,
   "stagingUri": "[staging-uri]",
-  "projectName": "UiPath Computer Vision",
-  "projectDescription": "Backend server for the Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
+  "projectName": "UiPath Document Understanding",
+  "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
-  "minAIFabricVersion": "v20.7.1",
-  "languageVersion": 0,
   "imagePath": "registry.replicated.com/aif-core/computervision:1"
 }
