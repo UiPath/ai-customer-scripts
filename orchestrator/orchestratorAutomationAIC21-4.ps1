@@ -59,7 +59,7 @@ if(Test-Path $dll_config){
 if(Test-Path $dll_config){
     $config = $config + 'UiPath.Orchestrator.dll.config'
     $configFile = 'UiPath.Orchestrator.dll.config'
-} else {
+} else{
     $config = $config + 'web.config'
     $configFile = 'web.config'
 }
@@ -69,7 +69,6 @@ if(-not (Test-Path $config)){
 	throw "$config File does not Exists. Please make sure that the Orchestrator installation folder is correct !"
 	exit
 }
-
 
 if(!$aifport){   
     $aifport = "31390"
@@ -198,7 +197,7 @@ function EmptyAspNetCache
         return
     }
     echo $"Removing $ControllerCacheFileName files from ASP.NET cache folder $aspNetCacheFolder"
-    Get-Childitem –Path $aspNetCacheFolder -Include $ControllerCacheFileName -Recurse | ForEach {
+    Get-Childitem -Path $aspNetCacheFolder -Include $ControllerCacheFileName -Recurse | ForEach {
         $retrycount = 0
         $retries = 3
         $completed = $false
