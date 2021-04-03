@@ -1,7 +1,7 @@
 {
   "changeLog": "Release v2020.8",
   "cpu": 0,
-  "description": "This Package provides the Endpoint required by the Intelligent Form Extractor activity. Please see more details in the Form Extractor activity documentation here: https://docs.uipath.com/activities/docs/intelligent-form-extractor. For instructions about the steps required to correctly configure and deploy this Package, see the Out-of-the-box Packages documentation for AI Fabric here: https://docs.uipath.com/ai-fabric/docs/uipath-document-understanding",
+  "description": "This Package provides the Endpoint required by the Intelligent Form Extractor activity. Please see more details in the Form Extractor activity documentation here: https://docs.uipath.com/activities/docs/intelligent-form-extractor. For instructions about the steps required to correctly configure and deploy this Package, see the Out-of-the-box Packages documentation for AI Center here: https://docs.uipath.com/ai-fabric/docs/uipath-document-understanding",
   "displayName": "IntelligentFormExtractor",
   "gpu": 0,
   "inputDescription": "ML Skills deployed using this package are queried directly by Intelligent Form Extractor Activity. For document types, languages supported and other information about the Intelligent Form Extractor product please refer to the documentation here: https://docs.uipath.com/activities/docs/intelligent-form-extractor.",

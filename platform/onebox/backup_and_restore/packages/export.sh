@@ -393,12 +393,13 @@ function validate_input() {
   echo "$(date) Successfully validated user input"
 }
 
-# Validate dependecny module
-# $1 - Name of the dependecny module
+# Validate dependency module
+# $1 - Name of the dependency module
 # $2 - Command to validate module
 function validate_dependency() {
-  list=$($2)
-  if [ -z "$list" ]; then
+  eval $2
+  # Next statement is checking last command success
+  if [ $? -ne 0 ]; then
     echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
     exit 1
   fi
@@ -408,7 +409,7 @@ function validate_dependency() {
 function validate_setup() {
   validate_dependency curl "curl --version"
   validate_dependency jq "jq --version"
-  echo "$(date) Successfully validated required dependecies"
+  echo "$(date) Successfully validated required dependencies"
 }
 
 # Create directory
