@@ -85,9 +85,9 @@ function download_blob_old() {
   if [ "$blob_count" -gt 1000 ]
   then
     # sync root level, caveat that it will only sync 100
-    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX} --exclude "*/*"
+    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX} --exclude "*/*" --delete
     # get subfolders & call recursively
-    folders=($(aws s3api --endpoint-url $AWS_ENDPOINT --no-verify-ssl list-objects --bucket ${BUCKET_NAME}  --delimiter "/" --prefix "${PREFIX}" --output json | jq -r ".CommonPrefixes[].Prefix"))
+    folders=($(aws s3api --endpoint-url $AWS_ENDPOINT --no-verify-ssl list-objects --bucket ${BUCKET_NAME}  --delimiter "/" --prefix "${PREFIX}" --output json | jq -r 'select(.CommonPrefixes != null and (.CommonPrefixes |type) == "array") | .CommonPrefixes[] | select(.Prefix != null).Prefix'))
     for subprefix in "${folders[@]}"
     do
        : 
@@ -95,7 +95,7 @@ function download_blob_old() {
     done
   else
     # sync all
-    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX}
+    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX} --delete
   fi
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} and prefix ${PREFIX} $default"
 }
