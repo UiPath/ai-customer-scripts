@@ -102,7 +102,7 @@ function download_blob_old() {
 
 function sync_buckets() {
   #Ceph issue limits it to 1000 blobs for rook 1.0.6 so find rook first
-  old_rook="v1.0.6"
+  old_rook="v1.0."
   toolbox_pod=$(kubectl -n rook-ceph get pod -l app=rook-ceph-tools -o jsonpath="{.items[0].metadata.name}")
   rook_version=$(kubectl -n rook-ceph exec -it $toolbox_pod -- sh -c 'rook version | head -n 1 | cut -d ':' -f2')
   while read line; do
@@ -111,7 +111,7 @@ function sync_buckets() {
     # get cors policy on bucket
     get_cors_policy $bucket
     # download bucket contents
-    if [ "$rook_version" == "$old_rook" ]; then
+    if [[ "$rook_version" =~ "$old_rook".* ]]; then
       download_blob_old $bucket ""
     else
       download_blob $bucket
