@@ -16,6 +16,7 @@ yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
 declare -A etags
+declare -A errors
 
 echo "$green $(date) Starting validation of object storage $default"
 
@@ -69,8 +70,9 @@ function initialize_variables() {
   export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
   export BUCKET_1=$(cat $CREDENTIALS_FILE | jq -r 'select(.BUCKET_1 != null) | .BUCKET_1')
   export BUCKET_2=$(cat $CREDENTIALS_FILE | jq -r 'select(.BUCKET_2 != null) | .BUCKET_2')
-  #readonly FOLDER=${BASE_PATH}/ceph/
-  #mkdir -p ${FOLDER}
+  echoinfo "bucket1: $BUCKET_1, and bucket2: $BUCKET_2"
+  echoinfo "AWS_HOST: $AWS_HOST, and AWS_ENDPOINT: $AWS_ENDPOINT"
+  echoinfo "Please ensure that AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY are correct in the credentials file"
 }
 
 function bucket_exists {
@@ -84,7 +86,8 @@ function bucket_exists {
         return 0
     else
     	errecho "ERROR: Bucket doesn't exist: $be_bucketname"
-        exit 1
+    	errors['bucket_exists']="Missing bucket $be_bucketname"
+        return 1
     fi
 }
 
@@ -101,7 +104,8 @@ function copy_local_file_to_bucket {
 
     if [[ ${?} -ne 0 ]]; then
         errecho "ERROR: AWS reports put-object operation failed.\n$RESPONSE"
-        exit 1
+        errors['copy_local_file_to_bucket']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -118,7 +122,8 @@ function copy_item_in_bucket {
 
     if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api copy-object operation failed.\n$RESPONSE"
-        exit 1
+        errors['copy_item_in_bucket']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -127,7 +132,8 @@ function copy_items_across_buckets {
     RESPONSE=$(aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl cp s3://$1/$3 s3://$2/$3)
     if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api cp operation failed (across buckets).\n$RESPONSE"
-        exit 1
+        errors['copy_items_across_buckets']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -144,7 +150,8 @@ function list_items_in_bucket {
         echo "$RESPONSE"
     else
         errecho "ERROR: AWS reports s3api list-objects operation failed.\n$RESPONSE"
-        exit 1
+        errors['list_items_in_bucket']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -161,7 +168,8 @@ function list_items_in_bucket_paginated {
         echoinfo "Paginated fetch gave nextToken as $TOKEN, should be non empty"
     else
         errecho "ERROR: AWS reports s3api list-objects operation failed.\n$RESPONSE"
-        exit 1
+        errors['list_items_in_bucket_paginated']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -176,7 +184,8 @@ function delete_item_in_bucket {
 
     if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api delete-object operation failed.\n$RESPONSE"
-        exit 1
+        errors['delete_item_in_bucket']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -187,7 +196,8 @@ function delete_multiple {
 
     if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api delete-objects operation failed.\n$RESPONSE"
-        exit 1
+        errors['delete_multiple']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -196,7 +206,8 @@ function download_file {
     RESPONSE=$(aws s3api --endpoint-url $AWS_ENDPOINT --no-verify-ssl get-object --bucket $1 --key $2 $2)
     if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api get-object operation failed.\n$RESPONSE"
-        exit 1
+        errors['download_file']="Failed with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -216,7 +227,8 @@ function create_multipart() {
 	# Key, UploadId
 	if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api create-multipart-upload operation failed.\n$RESPONSE"
-        exit 1
+        errors['multipart-upload']="Failed in create_multipart with RESPONSE: \n$RESPONSE"
+        return 1
     fi
     export UPLOAD_ID=$(echo $RESPONSE | jq -r 'select(.UploadId != null) | .UploadId')
 }
@@ -227,7 +239,8 @@ function upload_part() {
 	#Etag
 	if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api upload-part operation failed.\n$RESPONSE"
-        exit 1
+        errors['multipart-upload']="Failed in upload_part with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 
     local etag=$(echo $RESPONSE | jq -r 'select(.ETag != null) | .ETag')
@@ -242,7 +255,8 @@ function upload_part_copy() {
 	#CopyPartResult.Etag
 	if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api upload-part-copy operation failed.\n$RESPONSE"
-        exit 1
+        errors['multipart-upload']="Failed in upload_part_copy with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 
     local etag=$(echo $RESPONSE | jq -r 'select(.CopyPartResult != null) | .CopyPartResult.ETag')
@@ -257,7 +271,8 @@ function complete_multipart() {
 	RESPONSE=$(aws s3api --endpoint-url $AWS_ENDPOINT --no-verify-ssl complete-multipart-upload --multipart-upload file://$4 --bucket $1 --key $2 --upload-id $3)
 	if [[ $? -ne 0 ]]; then
         errecho "ERROR:  AWS reports s3api complete-multipart-upload operation failed.\n$RESPONSE"
-        exit 1
+        errors['multipart-upload']="Failed in complete_multipart with RESPONSE: \n$RESPONSE"
+        return 1
     fi
 }
 
@@ -333,6 +348,16 @@ function storage_validations() {
   download_file $BUCKET_1 $key
   echoinfo "verify that file size is about 15MB"
   ls -lh $key
+
+  len=${#errors[@]}
+  if [[ $len -ne 0 ]]; then
+    echoinfo "All tests passed successfully, please check individual logs above for any discrepancy"
+  else
+  	errecho "The following tests failed. Please check individual log statements above"
+  	for part in "${!errors[@]}"; do errecho "Failed $part with error - ${errors[$part]}"; done
+  fi
+
+
 
   # Get signedurl from bucket 1
   # upload using signedurl
