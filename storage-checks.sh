@@ -370,10 +370,10 @@ function storage_validations() {
 
   len=${#errors[@]}
   if [[ $len -ne 0 ]]; then
-    echoinfo "All tests passed successfully, please check individual logs above for any discrepancy"
-  else
   	errecho "Failed tests:"
   	for part in "${!errors[@]}"; do errecho "Failed $part with error - ${errors[$part]}"; done
+  else
+  	echoinfo "All tests passed successfully, please check individual logs above for any discrepancy"
   fi
 
 
