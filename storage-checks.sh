@@ -3,7 +3,7 @@
 : '
 This scipt will validate blob storage from AIC perspective.
 # $1 - json file with credentials
-[Script Version -> 21.4]
+[Script Version -> 21.7]
 Credentials file structure
 {"AWS_HOST": <AWS_HOST>, "AWS_ENDPOINT": <AWS_ENDPOINT>, "AWS_ACCESS_KEY_ID": <AWS_ACCESS_KEY_ID>, "AWS_SECRET_ACCESS_KEY": <AWS_SECRET_ACCESS_KEY>, "BUCKET_1": <BUCKET_1>, "BUCKET_2": <BUCKET_2>}
 where the access_key and secret correspond to aws crednetials which has access to the two buckets (customer creates buckets with appropriate policies) 
@@ -15,12 +15,10 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
+json_schema='{"AWS_HOST": <AWS_HOST>, "AWS_ENDPOINT": <AWS_ENDPOINT>, "AWS_ACCESS_KEY_ID": <AWS_ACCESS_KEY_ID>, "AWS_SECRET_ACCESS_KEY": <AWS_SECRET_ACCESS_KEY>, "BUCKET_1": <BUCKET_1>, "BUCKET_2": <BUCKET_2>}'
+
 declare -A etags
 declare -A errors
-
-echo "$green $(date) Starting validation of object storage $default"
-
-readonly CREDENTIALS_FILE=$1
 
 function echoinfo() {
 	echo "$yellow $(date) $1 $default"
@@ -29,6 +27,18 @@ function echoinfo() {
 function errecho() {
   echo "$red $(date) $1 $default"
 }
+
+
+echo "$green $(date) Starting validation of object storage $default"
+
+if [ "$#" -ne 1 ]; then
+    errecho "Illegal number of arguments, scripts requires a single argument as filepath to crednetials json file"
+    exit 1
+fi
+
+readonly CREDENTIALS_FILE=$1
+
+
 
 # Validate file provided by user exists or not, It may be relative path or absolute path
 # $1 - File path
@@ -51,6 +61,14 @@ function validate_dependency() {
   fi
 }
 
+function validate_file_is_json() {
+	if [ $(cat $1 | jq empty > /dev/null 2>&1; echo $?) -eq 0 ]; then
+      echo "$green $(date) JSON is valid in file $1 $default"
+	else
+	  errecho "JSON is invalid in file $1, please ensure it conforms to the schema $2"
+	fi
+}
+
 # Validate required modules exits in target setup
 function validate_setup() {
   validate_dependency "aws s3" "aws --version"
@@ -63,6 +81,7 @@ function validate_setup() {
 function initialize_variables() {
   # Validate file path
   validate_file_path $CREDENTIALS_FILE
+  validate_file_is_json $CREDENTIALS_FILE $json_schema
 
   export AWS_HOST=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_HOST != null) | .AWS_HOST')
   export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
@@ -353,7 +372,7 @@ function storage_validations() {
   if [[ $len -ne 0 ]]; then
     echoinfo "All tests passed successfully, please check individual logs above for any discrepancy"
   else
-  	errecho "The following tests failed. Please check individual log statements above"
+  	errecho "Failed tests:"
   	for part in "${!errors[@]}"; do errecho "Failed $part with error - ${errors[$part]}"; done
   fi
 
