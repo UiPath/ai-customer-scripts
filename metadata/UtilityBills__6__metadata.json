@@ -19,5 +19,5 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v20.10.1.2",
     "languageVersion": 2,
-    "imagePath": "localcruipath.azurecr.io/aicenter/utilitybills:6"
+    "imagePath": "sfbrdevhelmweacr.azurecr.io/aicenter/utilitybills:6"
 }
