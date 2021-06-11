@@ -1,0 +1,23 @@
+{
+    "name": "TMAnalyzerModel",
+    "retrainable": true,
+    "gpu": 1,
+    "processorType": "CPU",
+    "description": "Task Mining Model package meant to process and produce the data containing detected tasks.",
+    "inputDescription": "Dataset that contains files captured and uploaded by Task Mining Desktop application (or uploaded via Task Mining Uploader tool).",
+    "outputDescription": "Definition of the tasks that can be visualized in Task Mining Admin Console. Data will be imported into Admin Console Discovered Tasks section automatically some time after the package is finished.",
+    "changeLog": "Model: 1.0.16",
+    "cpu": 0,
+    "inputType": "JSON",
+    "displayName": "TMAnalyzerModel",
+    "memory": 0,
+    "mlPackageLanguage": "PYTHON37",
+    "projectId": "[project-id]",
+    "stagingUri": "[staging-uri]",
+    "projectName": "UiPath Task Mining",
+    "projectDescription": "UiPath Task Mining models to analyze captured data",
+    "tenantName": "UiPath",
+    "minAIFabricVersion": "v20.10.1.2",
+    "languageVersion": 0,
+    "imagePath": "sfbrdevhelmweacr.azurecr.io/aicenter/tm:1"
+}
