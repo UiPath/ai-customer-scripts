@@ -1,0 +1,62 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+  name: onprem-istio-operator
+spec:
+  meshConfig:
+    accessLogFile: "/dev/stdout"
+    accessLogEncoding: 1
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          hpaSpec:
+            minReplicas: 1
+          service:
+            ports:
+              - port: 15012
+                targetPort: 15012
+                name: tcp-istiod
+              - port: 15021
+                targetPort: 15021
+                name: status-port
+              - port: 15030
+                targetPort: 15030
+                name: prometheus
+              - port: 15443
+                targetPort: 15443
+                name: tls
+              - nodePort: 31443
+                port: 8443
+                protocol: TCP
+                targetPort: 8443
+                name: https-rgw
+              - nodePort: 31380
+                port: 80
+                protocol: TCP
+                targetPort: 8080
+                name: http2
+              - nodePort: 31390
+                port: 443
+                protocol: TCP
+                targetPort: 7443
+                name: https
+  values:
+    pilot:
+      autoscaleMin: 1
+    gateways:
+      istio-ingressgateway:
+        externalTrafficPolicy: Local
+    global:
+      configValidation: true
+      defaultPodDisruptionBudget:
+        enabled: false
+      proxy:
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true

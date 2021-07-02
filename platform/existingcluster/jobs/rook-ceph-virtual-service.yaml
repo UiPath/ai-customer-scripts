@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: aicenter-rook-ceph-virtual-service
+  namespace: rook-ceph
+spec:
+  gateways:
+    - rook-ceph-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: rook-ceph-rgw-rook-ceph-store
+            port:
+              number: 80
