@@ -41,6 +41,7 @@ function validate_dependency() {
 # Validate required modules exits in target setup
 function validate_setup() {
   validate_dependency "aws s3" "aws --version"
+  validate_dependency "jq" "jq --version"
   echo "$(date) Successfully validated required dependencies"
 }
 
@@ -74,14 +75,47 @@ function download_blob() {
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
+function download_blob_old() {
+  BUCKET_NAME=${1}
+  PREFIX=${2}
+  echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} and prefix ${PREFIX} $default"
+  mkdir -p ${FOLDER}${BUCKET_NAME}/${PREFIX}
+  # check if less than 1000 blobs
+  blob_count=$(aws s3api --endpoint-url $AWS_ENDPOINT --no-verify-ssl list-objects --bucket ${BUCKET_NAME} --prefix "${PREFIX}" --output json --query "length(Contents[])")
+  if [ "$blob_count" -gt 1000 ]
+  then
+    # sync root level, caveat that it will only sync 100
+    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX} --exclude "*/*" --delete
+    # get subfolders & call recursively
+    folders=($(aws s3api --endpoint-url $AWS_ENDPOINT --no-verify-ssl list-objects --bucket ${BUCKET_NAME}  --delimiter "/" --prefix "${PREFIX}" --output json | jq -r 'select(.CommonPrefixes != null and (.CommonPrefixes |type) == "array") | .CommonPrefixes[] | select(.Prefix != null).Prefix'))
+    for subprefix in "${folders[@]}"
+    do
+       : 
+       download_blob_old ${BUCKET_NAME} ${subprefix}
+    done
+  else
+    # sync all
+    aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX} --delete
+  fi
+  echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} and prefix ${PREFIX} $default"
+}
+
 function sync_buckets() {
+  #Ceph issue limits it to 1000 blobs for rook 1.0.6 so find rook first
+  old_rook="v1.0."
+  toolbox_pod=$(kubectl -n rook-ceph get pod -l app=rook-ceph-tools -o jsonpath="{.items[0].metadata.name}")
+  rook_version=$(kubectl -n rook-ceph exec -it $toolbox_pod -- sh -c 'rook version | head -n 1 | cut -d ':' -f2')
   while read line; do
     echo "Response line: '${line}'"
     bucket=$(echo ${line} | cut -d" " -f3)
     # get cors policy on bucket
     get_cors_policy $bucket
-    # download bucket contents => Ceph issue limits it to 1000 blobs
-    download_blob $bucket
+    # download bucket contents
+    if [[ "$rook_version" =~ "$old_rook".* ]]; then
+      download_blob_old $bucket ""
+    else
+      download_blob $bucket
+    fi
   done <<<"$BUCKETS"
 }
 

@@ -155,6 +155,13 @@ function create_package_upload_payload() {
     extractedMetadata=$(echo $extractedMetadata | jq -M ". + {languageVersion:"0"}")
   fi
 
+  # Check if image path exists and then update the package payload
+  local isImagePath=$(cat $ML_PACKAGE_METADATA_FILE_PATH | jq -r 'select(.imagePath != null) | .imagePath')
+  if [[ ! -z "$isImagePath" && "$is_public_package" == false ]]; then
+    echo "$yellow $(date) Image path provided is not null for private packages, updating the image path"
+    extractedMetadata=$(echo $extractedMetadata | jq -M ". + {imagePath:\"$isImagePath\"}")
+  fi
+
   validate_last_command_executed_succesfully "$red Failed to extract ML package metadata from $ML_PACKAGE_METADATA_FILE_PATH"
 }
 
