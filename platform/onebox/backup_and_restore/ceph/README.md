@@ -25,12 +25,12 @@ The Machine where backup/restore runs needs the following:
 
 ### For Backup
 ```
-./backup.sh <path to creds file> <basePath to download assets/blobs>
+./export.sh <path to creds file> <basePath to download assets/blobs>
 ```
 It creates a folder <basePath>/ceph which contains 1 folder per bucket containing all the blobs of that bucket
 
 ### For Restore
 ```
-./restore.sh <path to creds file> <basePath to upload assets/blobs from>
+./import.sh <path to creds file> <basePath to upload assets/blobs from>
 ```
 This looks for a folder ceph inside basePath, creates a bucket per folder inside ceph and then uploads all blobs
