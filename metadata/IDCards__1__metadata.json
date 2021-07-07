@@ -1,7 +1,7 @@
 {
   "changeLog": "Model: 21.5.5",
   "cpu": 0,
-  "description": "Machine Learning model(available in Preview) for extracting commonly occurring data points from ID-Cards, including header fields and line items. Please see more details including supported languages and link to Activities guide in the About Licensing -> Document Understanding API Key section of the UiPath Automation Cloud Guide here: https://docs.uipath.com/automation-cloud/docs/about-licensing#section-document-understanding-api-key",
+  "description": "Machine Learning model(available in Preview) for extracting commonly occurring data points from ID-Cards, including header fields and line items. Please see more details including supported languages in the ML Packages section of the Document Understanding Guide: https://docs.uipath.com/document-understanding/docs/ml-packages",
   "displayName": "IDCards",
   "gpu": 1,
   "inputDescription": "ML Skills deployed using this ML Package can be integrated into RPA workflows using the Machine Learning Extractor activity in the Official feed or the MLModel activity in Connect feed. File formats accepted include pdf, tiff, jpg or png files. The activities also require an API Key input which you need to obtain from your UiPath Automation Cloud account, in the Licenses -> Other Services view.",
