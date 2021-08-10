@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 function edit_daemon_json(){
@@ -85,6 +86,8 @@ function restart_docker() {
         exit
     fi
 }
+echo "#################################### Ecko Shutdown #######################################"
+sudo /opt/ekco/shutdown.sh
 
 echo "################################# Attach GPU Driver #####################################"
 # edit json
@@ -101,4 +104,8 @@ sleep 10
 kubernetes_cluster_up
 kubectl apply -f nvidia-device-plugin.yaml
 validate_gpu_updated
+
+echo "########################## Uncordon Node #######################################"
+kubectl uncordon $(hostname | tr '[:upper:]' '[:lower:]')
+
 echo "################ GPU driver installation successful ###################"
