@@ -17,7 +17,7 @@
   "projectName": "Language Comprehension",
   "projectDescription": "Models performing cognitively challenging tasks such as text summarization and question answering",
   "tenantName": "Open-Source Packages",
-  "minAIFabricVersion": "v20.7.1",
+  "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
-  "imagePath": "registry.replicated.com/aif-core/textsummarization:1"
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/TextSummarization/1/Model.zip"
 }

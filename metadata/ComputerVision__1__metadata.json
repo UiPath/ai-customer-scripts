@@ -17,7 +17,7 @@
   "projectName": "UiPath Computer Vision",
   "projectDescription": "Backend server for the Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "tenantName": "UiPath",
-  "minAIFabricVersion": "v20.7.1",
+  "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
-  "imagePath": "registry.replicated.com/aif-core/computervision:1"
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/ComputerVision/1/cv_server.zip"
 }

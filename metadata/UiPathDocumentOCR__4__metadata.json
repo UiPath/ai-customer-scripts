@@ -17,7 +17,7 @@
   "projectName": "UiPath Document Understanding",
   "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
-  "minAIFabricVersion": "v20.10.1.2",
-  "languageVersion": 1,
-  "imagePath": "registry.replicated.com/aif-core/uipathdocumentocr:4"
+  "minAIFabricVersion": "v21.10",
+  "languageVersion": 2,
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/UiPathDocumentOCR/4/ocr_aif_package.zip"
 }

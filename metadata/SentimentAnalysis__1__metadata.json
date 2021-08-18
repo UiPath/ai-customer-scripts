@@ -17,7 +17,7 @@
   "projectName": "Language Analysis",
   "projectDescription": "Models for analyzing text including language detection, sentiment analysis, and named-entity recognition.",
   "tenantName": "Open-Source Packages",
-  "minAIFabricVersion": "v20.7.1",
+  "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
-  "imagePath": "registry.replicated.com/aif-core/sentimentanalysis:1"
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/SentimentAnalysis/1/Model.zip"
 }

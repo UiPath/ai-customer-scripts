@@ -17,7 +17,7 @@
   "projectName": "Tabular Data",
   "projectDescription": "Models for analyzing tabular data including classification and regression ML Packages",
   "tenantName": "Open-Source Packages",
-  "minAIFabricVersion": "v20.7.1",
+  "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
-  "imagePath": "registry.replicated.com/aif-core/tpotautomlclassification:1"
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/TPOTAutoMLClassification/1/TPOTAutoMLClassification.zip"
 }

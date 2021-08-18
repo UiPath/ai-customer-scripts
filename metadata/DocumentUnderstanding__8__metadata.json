@@ -6,7 +6,7 @@
     "description": "Machine Learning model for extracting commonly occurring data points from Semi-structured or Structured documents, including regular fields, table columns and classification fields. Please see more details including supported languages in the ML Packages section of the Document Understanding Guide: https://docs.uipath.com/document-understanding/docs/ml-packages",
     "inputDescription": "ML Skills deployed using this ML Package can be integrated into RPA workflows using the Machine Learning Extractor activity in the Official feed or the MLModel activity in Connect feed. File formats accepted include pdf, tiff, jpg or png files. The activities also require an API Key input which you need to obtain from your UiPath Automation Cloud account, in the Licenses -\u003e Other Services view.",
     "outputDescription": "Please refer to the documentation of the Activity used to query the ML Skill.",
-    "changeLog": "Model: 21.5.5",
+    "changeLog": "Model: 21.5.6",
     "cpu": 0,
     "inputType": "JSON",
     "displayName": "DocumentUnderstanding",
@@ -17,7 +17,7 @@
     "projectName": "UiPath Document Understanding",
     "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
     "tenantName": "UiPath",
-    "minAIFabricVersion": "v20.10.1.2",
+    "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
-    "imagePath": "registry.replicated.com/aif-core/documentunderstanding:8"
+    "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/DocumentUnderstanding/8/du_package.zip"
 }

@@ -17,7 +17,7 @@
   "projectName": "UiPath Document Understanding",
   "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
-  "minAIFabricVersion": "v20.7.1",
+  "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
-  "imagePath": "registry.replicated.com/aif-core/formextractor:1"
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/FormExtractor/1/FE-du-svc-v21.7-18-main.4a0e8c.zip"
 }
