@@ -1,5 +1,5 @@
 {
-  "changeLog": "Model: 21.6.3 Build: v2021061706",
+  "changeLog": "Model: 21.8.2",
   "cpu": 0,
   "description": "Machine Learning model for extracting text and checkboxes/radio buttons from Documents. Please see more details including supported languages and link to Activities guide in the Document Understanding Guide here: https://docs.uipath.com/document-understanding/v2021.4/docs/ml-packages#uipath-document-ocr. For alternative deployment methods in high-volume scenarios see also this page: https://docs.uipath.com/document-understanding/v2021.4/docs/ocr-services",
   "displayName": "UiPathDocumentOCR",
@@ -19,5 +19,5 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
-  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/UiPathDocumentOCR/4/ocr_aif_package.zip"
+  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/UiPathDocumentOCR/5/ocr_aif_package.zip"
 }
