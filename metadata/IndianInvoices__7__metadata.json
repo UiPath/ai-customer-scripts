@@ -19,4 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v20.10.1.2",
     "languageVersion": 2,
+    "version": 7,
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/IndianInvoices/7/invoices_india_package.zip"
+}

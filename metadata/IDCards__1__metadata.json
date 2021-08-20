@@ -19,5 +19,6 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
+  "version": 1,
   "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/IDCards/1/id_cards_package.zip"
 }

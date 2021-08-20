@@ -19,5 +19,6 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
+  "version": 2,
   "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/HandwritingRecognition/2/hwocr_aif_package-du-svc-v21.7-18-main.4a0e8c.zip"
 }

@@ -19,5 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
+    "version": 8,
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/Receipts/8/receipts_package.zip"
 }

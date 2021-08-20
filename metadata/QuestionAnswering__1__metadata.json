@@ -19,5 +19,6 @@
   "tenantName": "Open-Source Packages",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
+  "version": 1,
   "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/QuestionAnswering/1/Model.zip"
 }
