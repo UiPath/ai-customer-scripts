@@ -19,5 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
+    "version": 7,
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/PurchaseOrders/7/purchase_orders_package.zip"
 }

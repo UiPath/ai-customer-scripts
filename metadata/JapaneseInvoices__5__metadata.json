@@ -19,5 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
+    "version": 5,
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/JapaneseInvoices/5/invoices_japan_package.zip"
 }

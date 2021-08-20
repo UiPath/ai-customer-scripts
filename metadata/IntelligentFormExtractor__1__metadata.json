@@ -19,5 +19,6 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 0,
+  "version": 1,
   "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/IntelligentFormExtractor/1/IFE-du-svc-v21.7-18-main.4a0e8c.zip"
 }

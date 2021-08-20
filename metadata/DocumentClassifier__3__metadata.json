@@ -19,5 +19,6 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
+  "version": 3,
   "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/DocumentClassifier/3/document_type_text_classifier_package.zip"
 }
