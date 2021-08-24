@@ -43,7 +43,9 @@ Param (
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $suffix,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
-   [string] $singleDatabase
+   [string] $singleDatabase,
+   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [bool] $withDatamanager = $false
 )
 
 if($windowsAuthentication.Length -eq 0){
@@ -140,6 +142,9 @@ $pkgmanager_login_user=$dbuser+"_pkgmanager"
 $deployer_login_user=$dbuser+"_deployer"
 $trainer_login_user=$dbuser+"_trainer"
 $appmanager_login_user=$dbuser+"_appmanager"
+if ($withDatamanager -eq $true){
+    $datamanager_login_user=$dbuser+"_datamanager"
+}
 
 
 if($singleDatabase -eq "N"){
@@ -150,6 +155,11 @@ if($singleDatabase -eq "N"){
     "
 }
 else {
+$dmCommand = ""
+if ($withDatamanager -eq $true){
+    $dmCommand = "CREATE LOGIN $datamanager_login_user WITH PASSWORD=N'{{pwd}}'"
+}
+
 $sqlcommand = "
     GO
     CREATE LOGIN $helper_login_user WITH PASSWORD=N'{{pwd}}'
@@ -157,6 +167,7 @@ $sqlcommand = "
     CREATE LOGIN $deployer_login_user WITH PASSWORD=N'{{pwd}}'
     CREATE LOGIN $trainer_login_user WITH PASSWORD=N'{{pwd}}'
     CREATE LOGIN $appmanager_login_user WITH PASSWORD=N'{{pwd}}'
+    $dmCommand
     GO
     "
 }
@@ -254,5 +265,7 @@ if($singleDatabase -eq "N"){
     executeQuery "aifabric$suffix" $grantcommand.Replace("{{USER_NAME}}", $deployer_login_user).Replace("{{SCHEMA_NAME}}", "ai_deployer")
     executeQuery "aifabric$suffix" $grantcommand.Replace("{{USER_NAME}}", $trainer_login_user).Replace("{{SCHEMA_NAME}}", "ai_trainer")
     executeQuery "aifabric$suffix" $grantcommand.Replace("{{USER_NAME}}", $appmanager_login_user).Replace("{{SCHEMA_NAME}}", "ai_appmanager")
+    if ($withDatamanager -eq $true){
+        executeQuery "aifabric$suffix" $grantcommand.Replace("{{USER_NAME}}", $datamanager_login_user).Replace("{{SCHEMA_NAME}}", "ai_datamanager")
+    }
 }
-
