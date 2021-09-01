@@ -20,5 +20,7 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
     "version": 7,
+    "baseImageCpu": "python37du:v21.8.1-2",
+    "baseImageGpu": "python37du:v21.8.1-2-gpu",
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/AustralianInvoices/7/invoices_au_package.zip"
 }
