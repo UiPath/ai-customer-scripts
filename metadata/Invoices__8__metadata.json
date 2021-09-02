@@ -20,5 +20,7 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
     "version": 8,
+    "baseImageCpu": "python37du:v21.8.1-2",
+    "baseImageGpu": "python37du:v21.8.1-2-gpu",
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/Invoices/8/invoices_package.zip"
 }
