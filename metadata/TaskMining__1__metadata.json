@@ -17,7 +17,7 @@
     "projectName": "UiPath Task Mining",
     "projectDescription": "UiPath Task Mining models to analyze captured data",
     "tenantName": "UiPath",
-    "minAIFabricVersion": "v20.10.1.2",
+    "minAIFabricVersion": "v21.10",
     "languageVersion": 0,
     "version": 1,
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/TaskMining/1/task_mining.zip"
