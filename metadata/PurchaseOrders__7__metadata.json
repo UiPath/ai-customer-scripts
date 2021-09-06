@@ -19,6 +19,8 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
+    "baseImageCpu": "python37du:v21.8.1-2",
+    "baseImageGpu": "python37du:v21.8.1-2-gpu",
     "version": 7,
     "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/PurchaseOrders/7/purchase_orders_package.zip"
 }
