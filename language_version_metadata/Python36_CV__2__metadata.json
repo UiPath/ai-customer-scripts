@@ -1,0 +1,20 @@
+[{
+        "version": 2,
+        "imageType": "SERVING",
+        "processor": "CPU",
+        "mlPackageLanguage": "PYTHON36_CV",
+        "languageGroup": "CV",
+        "baseImage": "python36cv:v21.8.1-2",
+        "runtimeImage": "",
+        "displayName": "Python 36 CV"
+},
+{
+        "version": 2,
+        "imageType": "SERVING",
+        "processor": "GPU",
+        "mlPackageLanguage": "PYTHON36_CV",
+        "languageGroup": "CV",
+        "baseImage": "python36cv:v21.8.1-2",
+        "runtimeImage": "",
+        "displayName": "Python 36 CV"
+}]
