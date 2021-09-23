@@ -6,7 +6,7 @@
     "description": "Task Mining Model package meant to process and produce the data containing detected tasks.",
     "inputDescription": "Dataset that contains files captured and uploaded by Task Mining Desktop application (or uploaded via Task Mining Uploader tool).",
     "outputDescription": "Definition of the tasks that can be visualized in Task Mining Admin Console. Data will be imported into Admin Console Discovered Tasks section automatically some time after the package is finished.",
-    "changeLog": "Model: 1.0.20",
+    "changeLog": "Model: 1.0.21",
     "cpu": 0,
     "inputType": "JSON",
     "displayName": "TMAnalyzerModel",
