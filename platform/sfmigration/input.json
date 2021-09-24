@@ -1,0 +1,23 @@
+{
+	"SRC_SERVER": "sf-migration-onlinesqlserver.database.windows.net",
+	"SRC_PKGMANAGER_DB_NAME": "aifabric_sfmigrationonline",
+	"SRC_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+	"SRC_PKGMANAGER_DB_USERNAME": "aifadmin",
+	"SRC_PKGMANAGER_DB_PASSWORD": "admin@12",
+	"SRC_TRAINER_DB_NAME": "aifabric_sfmigrationonline",
+	"SRC_TRAINER_DB_SCHEMA": "ai_trainer",
+	"SRC_TRAINER_DB_USERNAME": "aifadmin",
+	"SRC_TRAINER_DB_PASSWORD": "admin@12",
+	"DESTINATION_SERVER": "sfdev1931829-2e56f2f6-sql.database.windows.net",
+	"DESTINATION_DB_NAME": "AutomationSuite_AICenter",
+	"DESTINATION_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+	"DESTINATION_TRAINER_DB_SCHEMA": "ai_trainer",
+	"DESTINATION_DB_USERNAME": "testadmin",
+	"DESTINATION_DB_PASSWORD": "tPYx19z57csYjx79LN%uySagh4C@ez0c",
+	"TENANT_MAP": [
+		{
+			"SRC_TENANT_ID": "4f43ae74-7399-48b7-b2e4-696a84e7facd",
+			"DESTINATION_TENANT_ID": "43ac9302-e912-4346-b635-26927daea173"
+		}
+	]
+}
