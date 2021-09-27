@@ -48,7 +48,7 @@ function validate_setup() {
 # $2 - SRC_TENANT_ID
 # $3 - DESTINATION_TENANT_ID
 function db_migration(){
- sh ./dbmigrationbcp.bash $1 $2 $3 
+ sh ./dbmigrationbcp.bash $1 $2 $3 $4
 }
 
 function parse_input_and_migrate_db() {
@@ -59,7 +59,8 @@ jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE | while read tenantEntry; do
     # Loop through each element of array
 	export SRC_TENANT_ID=$(echo $tenantEntry | jq -r '.SRC_TENANT_ID')
 	export DESTINATION_TENANT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_TENANT_ID')
-	db_migration $CREDENTIALS_FILE $SRC_TENANT_ID $DESTINATION_TENANT_ID
+	export DESTINATION_ACCOUNT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_ACCOUNT_ID')
+	db_migration $CREDENTIALS_FILE $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
 	echo "$(date) Successfully parsed input file and db migration completed"
 done
 }
