@@ -49,7 +49,7 @@ function validate_setup() {
 # $3 - DESTINATION_TENANT_ID
 # $4 - DESTINATION_ACCOUNT_ID
 function db_migration(){
- sh ./dbmigrationbcp.bash $1 $2 $3 $4
+ sh ./databasemigration/dbmigration.bash $1 $2 $3 $4
 }
 
 # Function to validate credential file and perform database migration for each tenant
