@@ -1,6 +1,22 @@
 #!/bin/bash
 
-function update_database_table(){
+# Migrate database tables from source database to destination database
+# $1 - Table Name whose data needs to be migrated
+# $2 - Source db server
+# $3 - Source db name
+# $4 - Source db schema
+# $5 - Source db username
+# $6 - Source db password
+# $7 - Destination db server
+# $8 - Destination db name
+# $9 - Destination db schema
+# $10 - Destination db username
+# $11 - Destination db password
+# $12 - Tenant id in the source db to be migrated
+# $13 - Tenant id in the destination db to be migrated
+# $14 - Account id in the destination db to be migrated
+function migrate_database_table_data(){
+echo "Database table migration started"
 
   TableName=$1
   SRC_SERVER=$2
@@ -53,6 +69,7 @@ echo "*************************************************************************"
 
 sqlcmd -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -Q "update "$DESTINATION_DB_SCHEMA"."$TableName" set tenant_id = '"$DESTINATION_TENANT_ID"' , account_id = '"$DESTINATION_ACCOUNT_ID"' where tenant_id = '"$SRC_TENANT_ID"';"
 
+echo "Database table migration finished"
 
 }
 
@@ -66,7 +83,10 @@ export DESTINATION_TENANT_ID=$3
 
 export DESTINATION_ACCOUNT_ID=$4
 
+# Table names in ai-pkgmanager db to be migrated
 PkgManagerDBTableNames=( projects ml_packages ml_package_versions)
+
+# Table names in ai-trainer db to be migrated
 TrainerDBTableNames=( datasets)
 
 export SRC_SERVER=$(cat $CREDENTIALS_FILE | jq -r 'select(.SRC_SERVER != null) | .SRC_SERVER')
@@ -103,16 +123,15 @@ export DESTINATION_DB_PASSWORD=$(cat $CREDENTIALS_FILE | jq -r 'select(.DESTINAT
 # Updating all the table for ai_pkgmanager db
 for TableName in ${PkgManagerDBTableNames[*]} 
 do
-update_database_table  $TableName $SRC_SERVER $SRC_PKGMANAGER_DB_NAME $SRC_PKGMANAGER_DB_SCHEMA $SRC_PKGMANAGER_DB_USERNAME $SRC_PKGMANAGER_DB_PASSWORD $DESTINATION_SERVER $DESTINATION_DB_NAME $DESTINATION_PKGMANAGER_DB_SCHEMA $DESTINATION_DB_USERNAME $DESTINATION_DB_PASSWORD $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
+migrate_database_table_data  $TableName $SRC_SERVER $SRC_PKGMANAGER_DB_NAME $SRC_PKGMANAGER_DB_SCHEMA $SRC_PKGMANAGER_DB_USERNAME $SRC_PKGMANAGER_DB_PASSWORD $DESTINATION_SERVER $DESTINATION_DB_NAME $DESTINATION_PKGMANAGER_DB_SCHEMA $DESTINATION_DB_USERNAME $DESTINATION_DB_PASSWORD $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
 done
 
 # Updating all the table for ai_trainer db
 for TableName in ${TrainerDBTableNames[*]} 
 do
-update_database_table  $TableName $SRC_SERVER $SRC_TRAINER_DB_NAME $SRC_TRAINER_DB_SCHEMA $SRC_TRAINER_DB_USERNAME $SRC_TRAINER_DB_PASSWORD $DESTINATION_SERVER $DESTINATION_DB_NAME $DESTINATION_TRAINER_DB_SCHEMA $DESTINATION_DB_USERNAME $DESTINATION_DB_PASSWORD $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
+migrate_database_table_data  $TableName $SRC_SERVER $SRC_TRAINER_DB_NAME $SRC_TRAINER_DB_SCHEMA $SRC_TRAINER_DB_USERNAME $SRC_TRAINER_DB_PASSWORD $DESTINATION_SERVER $DESTINATION_DB_NAME $DESTINATION_TRAINER_DB_SCHEMA $DESTINATION_DB_USERNAME $DESTINATION_DB_PASSWORD $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
 done
 
 
 # update cloned packages source package id , source package version ids
-
 sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i UpdateClonedPackageReferences.sql

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 : '
-This scipt will export all data stored in blob storage from target environments.
-# $1 - input json file with credentials
+This is the master script which will migrate db entities , datasets , ML Packages from source AIC environment to target AIC environment
+# $1 - input json file with db credentials and details of tenant to be migrated from src to destination
 
 [Script Version -> 21.10]
 '
@@ -28,7 +28,7 @@ function validate_file_path() {
 # $2 - Command to validate module
 function validate_dependency() {
   eval $2
-  # Next statement is checking last command success aws --version has some issue
+  # Next statement is checking last command success
   if [ $? -ne 0 ]; then
     echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
     exit 1
@@ -43,14 +43,17 @@ function validate_setup() {
   echo "$(date) Successfully validated required dependencies"
 }
 
-# Validate dependency module
+# Database migration for a tenant from src to destination environment
 # $1 - Credentials file
 # $2 - SRC_TENANT_ID
 # $3 - DESTINATION_TENANT_ID
+# $4 - DESTINATION_ACCOUNT_ID
 function db_migration(){
  sh ./dbmigrationbcp.bash $1 $2 $3 $4
 }
 
+# Function to validate credential file and perform database migration for each tenant
+# $1 - Credentials file
 function parse_input_and_migrate_db() {
   # Validate file path
   validate_file_path $CREDENTIALS_FILE
