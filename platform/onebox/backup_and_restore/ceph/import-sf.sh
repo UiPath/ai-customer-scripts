@@ -17,6 +17,9 @@ echo "$green $(date) Starting sync of object storage to local disk $default"
 
 readonly CREDENTIALS_FILE=$1
 readonly BASE_PATH=$2
+readonly SOURCE_TENANT_ID=$3
+readonly TARGET_TENANT_ID=$4
+readonly BUCKET_NAME_INPUT=$5
 
 # Validate file provided by user exists or not, It may be relative path or absolute path
 # $1 - File path
@@ -35,22 +38,18 @@ function initialize_variables() {
   export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
   export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
   export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
-  readonly FOLDER=${BASE_PATH}/ceph/
+  readonly DATA_FOLDER_NAME="ceph"
+  readonly DATA_FOLDER_PATH=${BASE_PATH}/${DATA_FOLDER_NAME}/
 
-}
-
-function list_buckets() {
-  cd $FOLDER
-  dirs=$(find . -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
-  readonly DIRS=${dirs}
-  cd -
 }
 
 function upload_blob() {
   BUCKET_NAME=${1}
   DIR_NAME=${2}
   # create bucket if not exists
-  local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate -q)
+  echo "Inside upload_blob"
+  local check_bucket=$(s3cmd -v info --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate -q)
+  echo "Inside upload_blob 2"
   if [ -z "$check_bucket" ]; then
     echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
     s3cmd mb --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate
@@ -65,35 +64,73 @@ function upload_blob() {
 
   ## Show failure, if training-tenantId bucket is not created already on S3.
 
-  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${FOLDER}${DIR_NAME}/ s3://${BUCKET_NAME}/${DIR_NAME}/
+  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${DATA_FOLDER_PATH}${DIR_NAME} s3://${BUCKET_NAME}/${DIR_NAME}
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
 function update_cors_policy() {
   BUCKET_NAME=${1}
   DIR_NAME=${2}
-  if [ ! -f "${FOLDER}${DIR_NAME}-cors.json" ]; then
-    echo "$red $(date) ${FOLDER}${DIR_NAME}-cors.json file does not exist, Please check ... Skipping cors creation $default"
+  if [ ! -f "${DATA_FOLDER_PATH}${DIR_NAME}-cors.json" ]; then
+    echo "$red $(date) ${DATA_FOLDER_PATH}${DIR_NAME}-cors.json file does not exist, Please check ... Skipping cors creation $default"
     return
   fi
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${FOLDER}${DIR_NAME}-cors.json
+  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${DATA_FOLDER_PATH}${DIR_NAME}-cors.json
+}
+
+function _contains () {  # Check if space-separated list $1 contains line $2
+  echo "$1" | tr ' ' '\n' | grep -F -x -q "$2"
+}
+
+function remove_unwanted_data_from_source_directory() {
+
+  SOURCE_DIRECTORY=$1
+  cd $DATA_FOLDER_PATH
+
+  DIRS=$(find . -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
+  echo "DIRS is $DIRS"
+  echo "SOURCE_DIRECTORY is $SOURCE_DIRECTORY"
+
+  ## Check if source tenant directory is present in the storage or not.
+  if _contains "${DIRS}" "${SOURCE_DIRECTORY}"; then
+    echo "in list"
+  else
+    echo "$SOURCE_DIRECTORY not present in the storage."
+    exit 1
+  fi
+
+  cd $DATA_FOLDER_PATH/$SOURCE_DIRECTORY
+
+  ## Remove all unwanted directies from source folder.
+  data=$(find . -maxdepth 1 -mindepth 1 -printf '%f\n')
+  while read folder; do
+    if [[ $folder =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]]; then
+      echo "Pass $folder"
+      continue;
+    else
+      echo "Deleting $folder"
+      sudo rm -rf $folder
+    fi
+  done <<<"$data"
+  cd $DATA_FOLDER_PATH
+}
+
+function change_source_to_target_tenant_id() {
+  SOURCE_DIRECTORY=$1
+  TARGET_DIRECTORY=$2
+  cd $DATA_FOLDER_PATH
+  sudo mv $SOURCE_DIRECTORY $TARGET_DIRECTORY
 }
 
 function process_buckets() {
-  while read dir; do
 
-    ## eliminate unwanted buckets.
-    ## Take bucket name as input.
-    ## perform cleanup on the dir before uploading them.
-
-    echo "Processing directory: '${dir}'"
-    # aws doesn't allow underscores in bucket name
-    bucket="train-data"
-    # Create and sync bucket contents
-
-    upload_blob ${bucket} ${dir}
-#    update_cors_policy ${bucket} ${dir}
-  done <<<"$DIRS"
+  cd $BASE_PATH
+  SOURCE_DIRECTORY="training-"$SOURCE_TENANT_ID
+  TARGET_DIRECTORY="training-"$TARGET_TENANT_ID
+  remove_unwanted_data_from_source_directory $SOURCE_DIRECTORY
+  change_source_to_target_tenant_id $SOURCE_DIRECTORY $TARGET_DIRECTORY
+  upload_blob ${BUCKET_NAME_INPUT} ${TARGET_DIRECTORY}
+#  update_cors_policy ${BUCKET_NAME_INPUT} ${TARGET_DIRECTORY}
 }
 
 # Validate dependency module
@@ -120,9 +157,6 @@ validate_setup
 
 # Update ENV Variables
 initialize_variables
-
-# List Buckets
-list_buckets
 
 # Process data inside buckets
 
