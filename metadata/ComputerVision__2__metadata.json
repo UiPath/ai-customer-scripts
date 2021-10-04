@@ -20,7 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 2,
-  "baseImageCpu": "python36cv:v21.8.1-2",
-  "baseImageGpu": "python36cv:v21.8.1-2",
   "contentUri": "https://<placeholder-url>/download/AIC/ComputerVision/2/cv_server.zip"
 }

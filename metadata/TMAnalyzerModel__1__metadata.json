@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 0,
     "version": 1,
-    "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/TaskMining/1/task_mining.zip"
+    "contentUri": "https://<placeholder-url>/download/AIC/TaskMining/1/task_mining.zip"
 }
