@@ -20,7 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 1,
-  "baseImageCpu": "python37du:v21.8.1-2",
-  "baseImageGpu": "python37du:v21.8.1-2-gpu",
-  "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/IDCards/1/id_cards_package.zip"
+  "contentUri": "https://<placeholder-url>/download/AIC/IDCards/1/id_cards_package.zip"
 }

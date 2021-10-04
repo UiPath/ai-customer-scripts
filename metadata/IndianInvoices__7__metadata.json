@@ -20,7 +20,5 @@
     "minAIFabricVersion": "v20.10.1.2",
     "languageVersion": 2,
     "version": 7,
-    "baseImageCpu": "python37du:v21.8.1-2",
-    "baseImageGpu": "python37du:v21.8.1-2-gpu",
-    "contentUri": "https://uipathdownloadstaging.blob.core.windows.net/download/AIC/IndianInvoices/7/invoices_india_package.zip"
+    "contentUri": "https://<placeholder-url>/download/AIC/IndianInvoices/7/invoices_india_package.zip"
 }

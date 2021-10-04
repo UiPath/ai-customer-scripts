@@ -4,7 +4,7 @@
         "processor": "CPU",
         "mlPackageLanguage": "PYTHON36_CV",
         "languageGroup": "CV",
-        "baseImage": "python36cv:v21.8.1-2",
+        "baseImage": "python36cv:v21.10.0-2",
         "runtimeImage": "",
         "displayName": "Python 36 CV"
 },
@@ -14,7 +14,7 @@
         "processor": "GPU",
         "mlPackageLanguage": "PYTHON36_CV",
         "languageGroup": "CV",
-        "baseImage": "python36cv:v21.8.1-2",
+        "baseImage": "python36cv:v21.10.0-2",
         "runtimeImage": "",
         "displayName": "Python 36 CV"
 }]
