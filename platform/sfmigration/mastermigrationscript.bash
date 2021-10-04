@@ -11,8 +11,8 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
-
 readonly CREDENTIALS_FILE=$1
+export BASE_PATH=$2
 
 # Validate file provided by user exists or not, It may be relative path or absolute path
 # $1 - File path
@@ -40,6 +40,7 @@ function validate_setup() {
   validate_dependency "bcp utility" "BCP -v"
   validate_dependency "sqlcmd utility" "sqlcmd -?"
   validate_dependency "jq utility" "jq --version"
+
   echo "$(date) Successfully validated required dependencies"
 }
 
@@ -55,8 +56,6 @@ function db_migration(){
 # Function to validate credential file and perform database migration for each tenant
 # $1 - Credentials file
 function parse_input_and_migrate_db() {
-  # Validate file path
-  validate_file_path $CREDENTIALS_FILE
 
 jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE | while read tenantEntry; do
     # Loop through each element of array
@@ -68,8 +67,23 @@ jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE | while read tenantEntry; do
 done
 }
 
+# Validate Credential file
+validate_file_path $CREDENTIALS_FILE
+
+# Validate Credential file input and export data
+# ./databasemigration/input-validation.sh
+
 # Validate Setup
 validate_setup
 
-# Update ENV Variables
+# Trigger DB migration script
 parse_input_and_migrate_db
+
+
+# get credentials --> SF , replicated --> get credentil 10.19.
+
+# export SOURCE_CREDENTIAL_FILE storageData
+
+# exportMLPackage storageData/ceph/ml-model-files
+
+ # import DEST_CREDENTIAL_FILE storage

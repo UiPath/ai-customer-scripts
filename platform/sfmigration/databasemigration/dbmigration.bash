@@ -54,11 +54,20 @@ echo $TableName " Migration started"
 
 #BCP [$SRC_DB_NAME].[$SRC_DB_SCHEMA].[$TableName] format nul -n -S $SRC_SERVER  -U $SRC_DB_USERNAME -P $SRC_DB_PASSWORD -f $TableName.fmt 
 
-BCP "SELECT * FROM ["$SRC_DB_SCHEMA"].["$TableName"] where tenant_id = '"$SRC_TENANT_ID"'" queryout $TableName.dat -n -S $SRC_SERVER  -U $SRC_DB_USERNAME -P $SRC_DB_PASSWORD -d $SRC_DB_NAME
+if [ "${TableName}" == "ml_package_versions" ];
+then
+DestTempTableName="${TableName}_temp"
+echo "TableName--> " $DestTempTableName
+else
+DestTempTableName="${TableName}"
+echo "TableName--> " $DestTempTableName
+fi
+
+BCP "SELECT * FROM ["$SRC_DB_SCHEMA"].["$TableName"] where tenant_id = '"$SRC_TENANT_ID"'" queryout $DestTempTableName.dat -n -S $SRC_SERVER  -U $SRC_DB_USERNAME -P $SRC_DB_PASSWORD -d $SRC_DB_NAME
 
 echo $TableName " Export Done"
 
-BCP [$DESTINATION_DB_NAME].[$DESTINATION_DB_SCHEMA].[$TableName] in $TableName.dat -n -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -f $TableName.fmt
+BCP [$DESTINATION_DB_NAME].[$DESTINATION_DB_SCHEMA].[$DestTempTableName] in $DestTempTableName.dat -n -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -f $BASE_PATH/databasemigration/$DestTempTableName.fmt
 
 echo $TableName " Import Done"
 
@@ -67,7 +76,7 @@ echo "*************************************************************************"
 
 # update tenant id in the destination database
 
-sqlcmd -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -Q "update "$DESTINATION_DB_SCHEMA"."$TableName" set tenant_id = '"$DESTINATION_TENANT_ID"' , account_id = '"$DESTINATION_ACCOUNT_ID"' where tenant_id = '"$SRC_TENANT_ID"';"
+sqlcmd -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -Q "update "$DESTINATION_DB_SCHEMA"."$DestTempTableName" set tenant_id = '"$DESTINATION_TENANT_ID"' , account_id = '"$DESTINATION_ACCOUNT_ID"' where tenant_id = '"$SRC_TENANT_ID"';"
 
 echo "Database table migration finished"
 
@@ -120,10 +129,20 @@ export DESTINATION_DB_USERNAME=$(cat $CREDENTIALS_FILE | jq -r 'select(.DESTINAT
 export DESTINATION_DB_PASSWORD=$(cat $CREDENTIALS_FILE | jq -r 'select(.DESTINATION_DB_PASSWORD != null) | .DESTINATION_DB_PASSWORD')
 
 
+sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i $BASE_PATH/databasemigration/create_temp_table.sql
+
 # Updating all the table for ai_pkgmanager db
 for TableName in ${PkgManagerDBTableNames[*]} 
 do
+if [ "${TableName}" == "ml_package_versions" ];
+then
 migrate_database_table_data  $TableName $SRC_SERVER $SRC_PKGMANAGER_DB_NAME $SRC_PKGMANAGER_DB_SCHEMA $SRC_PKGMANAGER_DB_USERNAME $SRC_PKGMANAGER_DB_PASSWORD $DESTINATION_SERVER $DESTINATION_DB_NAME $DESTINATION_PKGMANAGER_DB_SCHEMA $DESTINATION_DB_USERNAME $DESTINATION_DB_PASSWORD $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
+
+sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA DestinationTenantId=$DESTINATION_TENANT_ID -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i $BASE_PATH/databasemigration/import_script_temp_to_ml_package_versions.sql
+
+else
+migrate_database_table_data  $TableName $SRC_SERVER $SRC_PKGMANAGER_DB_NAME $SRC_PKGMANAGER_DB_SCHEMA $SRC_PKGMANAGER_DB_USERNAME $SRC_PKGMANAGER_DB_PASSWORD $DESTINATION_SERVER $DESTINATION_DB_NAME $DESTINATION_PKGMANAGER_DB_SCHEMA $DESTINATION_DB_USERNAME $DESTINATION_DB_PASSWORD $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
+fi
 done
 
 # Updating all the table for ai_trainer db
@@ -134,4 +153,4 @@ done
 
 
 # update cloned packages source package id , source package version ids
-sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i UpdateClonedPackageReferences.sql
+sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i $BASE_PATH/databasemigration/UpdateClonedPackageReferences.sql

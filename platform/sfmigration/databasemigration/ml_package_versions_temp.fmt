@@ -34,7 +34,7 @@
 32      SQLCHAR             2       36      ""   32    source_package_version_id                                          SQL_Latin1_General_CP1_CI_AS
 33      SQLCHAR             8       0       ""   33    config                                                             SQL_Latin1_General_CP1_CI_AS
 34      SQLCHAR             2       2048    ""   34    image_path                                                         SQL_Latin1_General_CP1_CI_AS
-35      SQLINT              0       4       ""   36    source_package_version                                             ""
-36      SQLINT              0       4       ""   37    source_package_training_version                                    ""
-37      SQLINT              0       4       ""   38    language_version                                                   ""
-38      SQLCHAR             2       36      ""   39    min_aifabric_version                                               SQL_Latin1_General_CP1_CI_AS
+35      SQLINT              0       4       ""   35    source_package_version                                             ""
+36      SQLINT              0       4       ""   36    source_package_training_version                                    ""
+37      SQLINT              0       4       ""   37    language_version                                                   ""
+38      SQLCHAR             2       36      ""   38    min_aifabric_version                                               SQL_Latin1_General_CP1_CI_AS
