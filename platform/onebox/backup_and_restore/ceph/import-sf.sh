@@ -3,7 +3,10 @@
 : '
 This scipt will import all data stored at a path to blob storage in target environments.
 # $1 - json file with credentials, change the script to work with own credential manager
-# $2 - path to import from
+# $2 - Absolute path to import from
+# $3 - Source tenant id.
+# $4 - Target tenant id.
+# $5 - Bucket name.
 Script will look for folders like path/ceph/bucket1 path/ceph/bucket2 each containing data from 1 bucket and create bucket and upload
 [Script Version -> 21.4]
 '
@@ -40,16 +43,14 @@ function initialize_variables() {
   export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
   readonly DATA_FOLDER_NAME="ceph"
   readonly DATA_FOLDER_PATH=${BASE_PATH}/${DATA_FOLDER_NAME}/
-
 }
 
 function upload_blob() {
   BUCKET_NAME=${1}
   DIR_NAME=${2}
+  TARGET_DIR_NAME=${3}
   # create bucket if not exists
-  echo "Inside upload_blob"
-  local check_bucket=$(s3cmd -v info --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate -q)
-  echo "Inside upload_blob 2"
+  local check_bucket=$(s3cmd info --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate -q)
   if [ -z "$check_bucket" ]; then
     echo "$green $(date) Creating bucket ${BUCKET_NAME} $default"
     s3cmd mb --host=${AWS_ENDPOINT} --host-bucket= s3://${BUCKET_NAME} --no-check-certificate
@@ -64,7 +65,7 @@ function upload_blob() {
 
   ## Show failure, if training-tenantId bucket is not created already on S3.
 
-  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${DATA_FOLDER_PATH}${DIR_NAME} s3://${BUCKET_NAME}/${DIR_NAME}
+  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${DATA_FOLDER_PATH}${DIR_NAME} s3://${BUCKET_NAME}/${TARGET_DIR_NAME}
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
@@ -78,33 +79,34 @@ function update_cors_policy() {
   aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${DATA_FOLDER_PATH}${DIR_NAME}-cors.json
 }
 
-function _contains () {  # Check if space-separated list $1 contains line $2
+function _contains() {  # Check if space-separated list $1 contains item $2
   echo "$1" | tr ' ' '\n' | grep -F -x -q "$2"
 }
 
 function remove_unwanted_data_from_source_directory() {
 
   SOURCE_DIRECTORY=$1
+  echo "$green $(date) Removing unwanted data from source directory $SOURCE_DIRECTORY $default"
   cd $DATA_FOLDER_PATH
 
+  ## Fetch list of directories available in the ceph folder.
   DIRS=$(find . -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
-  echo "DIRS is $DIRS"
-  echo "SOURCE_DIRECTORY is $SOURCE_DIRECTORY"
 
   ## Check if source tenant directory is present in the storage or not.
   if _contains "${DIRS}" "${SOURCE_DIRECTORY}"; then
-    echo "in list"
+    echo "$green $SOURCE_DIRECTORY present in the storage $default."
   else
-    echo "$SOURCE_DIRECTORY not present in the storage."
+    echo "$red $SOURCE_DIRECTORY not present in the storage $default."
     exit 1
   fi
 
   cd $DATA_FOLDER_PATH/$SOURCE_DIRECTORY
 
-  ## Remove all unwanted directies from source folder.
+  ## Remove all unwanted directories from source folder.
   data=$(find . -maxdepth 1 -mindepth 1 -printf '%f\n')
   while read folder; do
     if [[ $folder =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]]; then
+      ## Only folder names which are in the form of guid are allowed, as they represent projectIds.
       echo "Pass $folder"
       continue;
     else
@@ -112,12 +114,15 @@ function remove_unwanted_data_from_source_directory() {
       sudo rm -rf $folder
     fi
   done <<<"$data"
+
   cd $DATA_FOLDER_PATH
 }
 
 function change_source_to_target_tenant_id() {
   SOURCE_DIRECTORY=$1
   TARGET_DIRECTORY=$2
+
+  echo "$green $(date) Changing source tenantId $SOURCE_DIRECTORY to target tenantId $TARGET_DIRECTORY $default"
   cd $DATA_FOLDER_PATH
   sudo mv $SOURCE_DIRECTORY $TARGET_DIRECTORY
 }
@@ -128,9 +133,17 @@ function process_buckets() {
   SOURCE_DIRECTORY="training-"$SOURCE_TENANT_ID
   TARGET_DIRECTORY="training-"$TARGET_TENANT_ID
   remove_unwanted_data_from_source_directory $SOURCE_DIRECTORY
-  change_source_to_target_tenant_id $SOURCE_DIRECTORY $TARGET_DIRECTORY
-  upload_blob ${BUCKET_NAME_INPUT} ${TARGET_DIRECTORY}
+#  change_source_to_target_tenant_id $SOURCE_DIRECTORY $TARGET_DIRECTORY
+  upload_blob ${BUCKET_NAME_INPUT} ${SOURCE_DIRECTORY} ${TARGET_DIRECTORY}
 #  update_cors_policy ${BUCKET_NAME_INPUT} ${TARGET_DIRECTORY}
+}
+
+function process_ml_model_files() {
+
+  echo "Inside process_ml_model_files $DATA_FOLDER_PATH, $"
+  cd $BASE_PATH
+  aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${DATA_FOLDER_PATH}/ml-model-files/ s3://ml-model-files/
+  cd -
 }
 
 # Validate dependency module
@@ -159,6 +172,6 @@ validate_setup
 initialize_variables
 
 # Process data inside buckets
-
-## Take a map input containing source and target tenant Id's.
 process_buckets
+
+process_ml_model_files
