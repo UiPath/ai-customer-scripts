@@ -15,7 +15,7 @@
     If aifabric is available at ww.xx.yy.zz:port, command to run would be
     .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port
 
-    If ai-app is accessed via domain instead of IP:PORT combo, then enable domainBasedAccess to true
+    If ai-app is accessed via domain instead of IP:PORT combo, command would be
     .\orchestratorAutomation.ps1 -aifUrl "aif-sahil-aks.westeurope.cloudapp.azure.com"
 
     If aifabric is available at ww.xx.yy.zz:port and Orchestrator Installation Path has to be specified,
