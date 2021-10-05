@@ -28,7 +28,9 @@ The Machine where migration script runs needs the following:
 
 
 ## Usage
-* USE WINSCP or scp to copy sfmigration present in the platform/sfmigration location in ai-customer-script repo to the machine where script are to be executed. 
+* Create the tenant in SF environment manually.
+* Replace the source SRC_TENANT_ID,DESTINATION_TENANT_ID,DESTINATION_ACCOUNT_ID in the sample_input.json file.
+* USE WINSCP or scp to copy sfmigration directory present in the platform/sfmigration location in ai-customer-script repo to the machine where script are to be executed. 
 * Run get-credentials.sh on Replicated machine. It generates a file storage-creds.json. Replace the content in sfmigration/storagemigration/SOURCE_CREDENTIAL_FILE file.
 * Run get-credentials-sf.sh on SF machine. It generates a file storage-creds.json. Replace the content in sfmigration/storagemigration/TARGET_CREDENTIAL_FILE file.
 * chmod 777 -R sfmigration
@@ -37,3 +39,4 @@ The Machine where migration script runs needs the following:
 * Add DNS of object storage in the machine executing script (This can be found from the extension tab of the pipeline from where the SF env was created).
 example - sudo bash -c "echo \"20.86.28.123    objectstore.sfdev1968699-2f356c0d-lb.westeurope.cloudapp.azure.com\" >> /etc/hosts"
 * execute ./mastermigrationscriptnew.sh sample_input.json .
+ 
