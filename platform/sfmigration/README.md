@@ -1,6 +1,6 @@
 # Command to execute
 Go to the directory where you have downloaded sfmigration directory
-Usage ./mastermigrationscriptnew.sh sample_input.json .
+Usage ./mastermigrationscript.sh sample_input.json .
 
 # Migration Scripts from Source replicated environment to Destination environment
 
