@@ -18,11 +18,11 @@
     If ai-app is accessed via domain instead of IP:PORT combo, then enable domainBasedAccess to true
     .\orchestratorAutomation.ps1 -aifUrl "aif-sahil-aks.westeurope.cloudapp.azure.com"
 
-    If Orchestrator Installation Path has to be specified,
-    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz -config "C:\Program Files (x86)\UiPath\Orchestrator"
+    If aifabric is available at ww.xx.yy.zz:port and Orchestrator Installation Path has to be specified,
+    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port -config "C:\Program Files (x86)\UiPath\Orchestrator"
 
     If aifabric is available at ww.xx.yy.zz:port and aifabric storage is available at aa.bb.cc.dd:port,
-    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz -storageUrl aa.bb.cc.dd:port
+    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port -storageUrl aa.bb.cc.dd:port
 
 #>
 
