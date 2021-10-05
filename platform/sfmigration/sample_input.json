@@ -8,17 +8,17 @@
 	"SRC_TRAINER_DB_SCHEMA": "ai_trainer",
 	"SRC_TRAINER_DB_USERNAME": "aifadmin",
 	"SRC_TRAINER_DB_PASSWORD": "admin@12",
-	"DESTINATION_SERVER": "sfdev1901833-bd7d84c3-sql.database.windows.net",
+	"DESTINATION_SERVER": "sfdev1968699-2f356c0d-sql.database.windows.net",
 	"DESTINATION_DB_NAME": "AutomationSuite_AICenter",
 	"DESTINATION_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
 	"DESTINATION_TRAINER_DB_SCHEMA": "ai_trainer",
 	"DESTINATION_DB_USERNAME": "testadmin",
-	"DESTINATION_DB_PASSWORD": "GpBCL5262WkLDZ5v%_aCx%uyrvtD40HP",
+	"DESTINATION_DB_PASSWORD": "xjle_2%sei9_O0qyhq@c73@s42xRq73o",
 	"TENANT_MAP": [
 		{
 			"SRC_TENANT_ID": "27d75a8e-0d85-45ce-8198-a3c15863797d",
-			"DESTINATION_TENANT_ID": "e3ea6516-a269-46f1-b2e0-331660be351b",
-			"DESTINATION_ACCOUNT_ID": "c48be4d4-9ac8-4859-a88f-9a2877e2604a"
+			"DESTINATION_TENANT_ID": "f54f5ea9-7ef4-4a7c-b91b-733ea7ac1223",
+			"DESTINATION_ACCOUNT_ID": "a4e3ddd2-0cc0-44b4-8383-ff1b225379df"
 		}
 	]
 }

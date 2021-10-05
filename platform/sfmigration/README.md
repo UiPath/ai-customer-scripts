@@ -1,39 +1,39 @@
-# TO BE EDITED
-Usage sh mastermigrationscript.bash input.json
+# Command to execute
+Go to the directory where you have downloaded sfmigration directory
+Usage ./mastermigrationscriptnew.sh sample_input.json .
 
-# Ceph Backup-Restore
+# Migration Scripts from Source replicated environment to Destination environment
 
 
 ## Purpose
-To provide backup and restore scripts for object storage in ceph to handle DR scenarios.
-This backs up:
-* Packages (zips)
+To provide migration scripts for object storage and database to migrate from replicated environment to sf environment.
+This migrates:
+* Database
 * Datasets
-* Pipeline Artifacts/Logs
-...
+* ML packages
 
 
 ## Requirements
-The Machine where backup/restore runs needs the following:
-* Access to AIF machine (public ip address can be obtained via dig)
+The Machine where migration script runs needs the following:
+* Access to Replicated and SF machine (public ip address can be obtained via dig)
 * aws s3, s3cmd, jq to be installed, e.g. on Ubuntu ```sudo apt install -y jq awscli s3cmd```
+* MSSQL utility can be downloaded from https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-setup-tools?view=sql-server-ver15
+ - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+ - curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+ - sudo apt-get update 
+   sudo apt-get install mssql-tools unixodbc-dev
+ - sudo apt-get update 
+   sudo apt-get install mssql-tools  
 * User logged in with permission to run the script and access to above tools
 
 
 ## Usage
-* Run get-credentials.sh on AIF machine. It generates a file storage-creds.json. Copy it over to the backup/restore VM.
-* [Optionally] Move the credentials to some cluster manager and make changes to the scripts to read from there
-# Ceph Backup-Restore
-* Make sure to use absolute path as basepath in below scripts
-
-### For Backup
-```
-./export.sh <path to creds file> <basePath to download assets/blobs>
-```
-It creates a folder <basePath>/ceph which contains 1 folder per bucket containing all the blobs of that bucket
-
-### For Restore
-```
-./import.sh <path to creds file> <basePath to upload assets/blobs from>
-```
-This looks for a folder ceph inside basePath, creates a bucket per folder inside ceph and then uploads all blobs
+* USE WINSCP or scp to copy sfmigration present in the platform/sfmigration location in ai-customer-script repo to the machine where script are to be executed. 
+* Run get-credentials.sh on Replicated machine. It generates a file storage-creds.json. Replace the content in sfmigration/storagemigration/SOURCE_CREDENTIAL_FILE file.
+* Run get-credentials-sf.sh on SF machine. It generates a file storage-creds.json. Replace the content in sfmigration/storagemigration/TARGET_CREDENTIAL_FILE file.
+* chmod 777 -R sfmigration
+* Whitelist Public IP of the machine where scripts are getting executed and add it in the DBs firewall(Both Source and destination DBs) in azure portal.
+* Replace database credentials in sample-input.json file.
+* Add DNS of object storage in the machine executing script (This can be found from the extension tab of the pipeline from where the SF env was created).
+example - sudo bash -c "echo \"20.86.28.123    objectstore.sfdev1968699-2f356c0d-lb.westeurope.cloudapp.azure.com\" >> /etc/hosts"
+* execute ./mastermigrationscriptnew.sh sample_input.json .

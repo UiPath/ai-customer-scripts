@@ -15,7 +15,7 @@
 # $12 - Tenant id in the source db to be migrated
 # $13 - Tenant id in the destination db to be migrated
 # $14 - Account id in the destination db to be migrated
-function migrate_database_table_data(){
+function migrate_database_table_data() {
 echo "Database table migration started"
 
   TableName=$1

@@ -158,16 +158,6 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
-function validate_setup() {
-  validate_dependency "aws s3" "aws --version"
-  validate_dependency s3cmd "s3cmd --version"
-  echo "$(date) Successfully validated required dependencies"
-}
-
-# Validate Setup
-validate_setup
-
 # Update ENV Variables
 initialize_variables
 

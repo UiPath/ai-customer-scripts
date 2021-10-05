@@ -38,13 +38,6 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
-function validate_setup() {
-  validate_dependency "aws s3" "aws --version"
-  validate_dependency "jq" "jq --version"
-  echo "$(date) Successfully validated required dependencies"
-}
-
 function initialize_variables() {
   # Validate file path
   validate_file_path $CREDENTIALS_FILE
@@ -119,8 +112,6 @@ function sync_buckets() {
   done <<<"$BUCKETS"
 }
 
-# Validate Setup
-validate_setup
 
 # Update ENV Variables
 initialize_variables

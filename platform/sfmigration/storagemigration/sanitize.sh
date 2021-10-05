@@ -33,11 +33,6 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
-function validate_setup() {
-  validate_dependency "zip" "zip -v"
-  echo "$(date) Successfully validated required dependencies"
-}
 
 function process_file() {
 	echo "$green $(date) Processing file $1... $default"
@@ -62,8 +57,6 @@ function list_files() {
   cd -
 }
 
-# Validate Setup
-validate_setup
 
 # List Buckets
 list_files
