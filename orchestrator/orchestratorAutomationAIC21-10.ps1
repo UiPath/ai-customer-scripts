@@ -11,18 +11,16 @@
     Name: ./orchestratorAutomation.ps1
     Author: AIFabric Team
     Pre-Requisites: script has to be executed throuh powershell in Administrator mode & before running script set execution policy to RemoteSigned by running "Set-ExecutionPolicy RemoteSigned"
+    Params: The aifUrl and storageUrl are mandatory parameters
 .EXAMPLE
-    If aifabric is available at ww.xx.yy.zz:port, command to run would be
-    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port
-
-    If ai-app is accessed via domain instead of IP:PORT combo, command would be
-    .\orchestratorAutomation.ps1 -aifUrl "aif-sahil-aks.westeurope.cloudapp.azure.com"
-
-    If aifabric is available at ww.xx.yy.zz:port and Orchestrator Installation Path has to be specified,
-    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port -config "C:\Program Files (x86)\UiPath\Orchestrator"
-
-    If aifabric is available at ww.xx.yy.zz:port and aifabric storage is available at aa.bb.cc.dd:port,
+    If aifabric is available at ww.xx.yy.zz:port and aifabric storage is available at aa.bb.cc.dd:port, command would be
     .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port -storageUrl aa.bb.cc.dd:port
+
+    If ai-app is accessed via domain instead of IP:PORT combo and aifabric storage is available at aa.bb.cc.dd:port, command would be
+    .\orchestratorAutomation.ps1 -aifUrl "aif-sahil-aks.westeurope.cloudapp.azure.com" -storageUrl aa.bb.cc.dd:port
+
+    If aifabric is available at ww.xx.yy.zz:port, aifabric storage is available at aa.bb.cc.dd:port and Orchestrator Installation Path has to be specified,
+    .\orchestratorAutomation.ps1 -aifUrl ww.xx.yy.zz:port -storageUrl aa.bb.cc.dd:port -config "C:\Program Files (x86)\UiPath\Orchestrator"
 
 #>
 
@@ -31,7 +29,7 @@ Param (
    [string] $aifUrl,
    [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
    [string] $config,
-   [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName)]
+   [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName)]
    [string] $storageUrl
 )
 
