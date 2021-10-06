@@ -19,6 +19,6 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
-  "version": 5,
+  "version": 6,
   "contentUri": "https://<placeholder-url>/download/AIC/UiPathDocumentOCR/21.10.1/ocr_aif_package.zip"
 }
