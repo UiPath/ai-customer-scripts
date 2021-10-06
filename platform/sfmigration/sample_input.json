@@ -1,24 +1,25 @@
 {
-	"SRC_SERVER": "sf-migration-onlinesqlserver.database.windows.net",
-	"SRC_PKGMANAGER_DB_NAME": "aifabric_sfmigrationonline",
-	"SRC_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
-	"SRC_PKGMANAGER_DB_USERNAME": "aifadmin",
-	"SRC_PKGMANAGER_DB_PASSWORD": "admin@12",
-	"SRC_TRAINER_DB_NAME": "aifabric_sfmigrationonline",
-	"SRC_TRAINER_DB_SCHEMA": "ai_trainer",
-	"SRC_TRAINER_DB_USERNAME": "aifadmin",
-	"SRC_TRAINER_DB_PASSWORD": "admin@12",
-	"DESTINATION_SERVER": "sfdev1968699-2f356c0d-sql.database.windows.net",
-	"DESTINATION_DB_NAME": "AutomationSuite_AICenter",
-	"DESTINATION_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
-	"DESTINATION_TRAINER_DB_SCHEMA": "ai_trainer",
-	"DESTINATION_DB_USERNAME": "testadmin",
-	"DESTINATION_DB_PASSWORD": "xjle_2%sei9_O0qyhq@c73@s42xRq73o",
-	"TENANT_MAP": [
-		{
-			"SRC_TENANT_ID": "27d75a8e-0d85-45ce-8198-a3c15863797d",
-			"DESTINATION_TENANT_ID": "f54f5ea9-7ef4-4a7c-b91b-733ea7ac1223",
-			"DESTINATION_ACCOUNT_ID": "a4e3ddd2-0cc0-44b4-8383-ff1b225379df"
-		}
-	]
+        "SRC_AIC_INSTALLATION_VERSION": "21.4",
+        "SRC_SERVER": "sf-migration-online-21-4sqlserver.database.windows.net",
+        "SRC_PKGMANAGER_DB_NAME": "aifabric_sfmigrationonline214",
+        "SRC_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+        "SRC_PKGMANAGER_DB_USERNAME": "aifadmin",
+        "SRC_PKGMANAGER_DB_PASSWORD": "admin@12",
+        "SRC_TRAINER_DB_NAME": "aifabric_sfmigrationonline214",
+        "SRC_TRAINER_DB_SCHEMA": "ai_trainer",
+        "SRC_TRAINER_DB_USERNAME": "aifadmin",
+        "SRC_TRAINER_DB_PASSWORD": "admin@12",
+        "DESTINATION_SERVER": "sfdev1970353-8e7d14de-sql.database.windows.net",
+        "DESTINATION_DB_NAME": "AutomationSuite_AICenter",
+        "DESTINATION_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+        "DESTINATION_TRAINER_DB_SCHEMA": "ai_trainer",
+        "DESTINATION_DB_USERNAME": "testadmin",
+        "DESTINATION_DB_PASSWORD": "1oFyBN5LOsx4VST@yjARfgKETaBTEkez",
+        "TENANT_MAP": [
+                {
+                        "SRC_TENANT_ID": "b814dbf9-7ebb-46c0-8a25-0003f4dfcce3",
+                        "DESTINATION_TENANT_ID": "b814dbf9-7ebb-46c0-8a25-0003f4dfcce3",
+                        "DESTINATION_ACCOUNT_ID": "host"
+                }
+        ]
 }

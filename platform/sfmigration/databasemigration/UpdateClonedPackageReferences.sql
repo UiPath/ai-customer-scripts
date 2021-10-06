@@ -1,7 +1,7 @@
 -- update cloned packages source package id
 
 UPDATE mpc
-SET  mpc.source_package_id = mpo.id
+SET  mpc.source_package_id = mpo.id,mpc.ml_package_owned_by_account_id=mpo.account_id,mpc.ml_package_owned_by_tenant_id=mpo.tenant_id,mpc.ml_package_owned_by_project_id=mpo.project_id
 FROM $(DestinationDBSchema).ml_packages mpc
 JOIN $(DestinationDBSchema).ml_packages mpo ON (mpc.source_package_name = mpo.name and mpo.is_public=1
 and mpc.source_package_name is not null);

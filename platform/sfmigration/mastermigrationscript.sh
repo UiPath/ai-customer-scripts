@@ -44,9 +44,9 @@ function validate_setup() {
   validate_dependency "bcp utility" "bcp -v"
   validate_dependency "sqlcmd utility" "sqlcmd -?"
   validate_dependency "jq utility" "jq --version"
-  validate_dependency "aws s3" "aws --version"
-  validate_dependency "s3cmd" "s3cmd --version"
-  validate_dependency "zip" "zip -v"
+ # validate_dependency "aws s3" "aws --version"
+ # validate_dependency "s3cmd" "s3cmd --version"
+ # validate_dependency "zip" "zip -v"
 
   echo "$(date) Successfully validated required dependencies"
 }
