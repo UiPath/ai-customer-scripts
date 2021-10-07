@@ -1,0 +1,25 @@
+{
+        "SRC_AIC_INSTALLATION_VERSION": "TO-BE-REPLACED",
+        "SRC_SERVER": "TO-BE-REPLACED",
+        "SRC_PKGMANAGER_DB_NAME": "TO-BE-REPLACED",
+        "SRC_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+        "SRC_PKGMANAGER_DB_USERNAME": "TO-BE-REPLACED",
+        "SRC_PKGMANAGER_DB_PASSWORD": "TO-BE-REPLACED",
+        "SRC_TRAINER_DB_NAME": "TO-BE-REPLACED",
+        "SRC_TRAINER_DB_SCHEMA": "ai_trainer",
+        "SRC_TRAINER_DB_USERNAME": "TO-BE-REPLACED",
+        "SRC_TRAINER_DB_PASSWORD": "TO-BE-REPLACED",
+        "DESTINATION_SERVER": "TO-BE-REPLACED",
+        "DESTINATION_DB_NAME": "TO-BE-REPLACED",
+        "DESTINATION_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+        "DESTINATION_TRAINER_DB_SCHEMA": "ai_trainer",
+        "DESTINATION_DB_USERNAME": "TO-BE-REPLACED",
+        "DESTINATION_DB_PASSWORD": "TO-BE-REPLACED",
+        "TENANT_MAP": [
+                {
+                        "SRC_TENANT_ID": "TO-BE-REPLACED",
+                        "DESTINATION_TENANT_ID": "TO-BE-REPLACED",
+                        "DESTINATION_ACCOUNT_ID": "TO-BE-REPLACED"
+                }
+        ]
+}
