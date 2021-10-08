@@ -13,10 +13,8 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
-## TODO: should we use absolute path at every location.
 readonly CREDENTIALS_FILE=$1
-export BASE_PATH=$2
-readonly ABSOLUTE_BASE_PATH=$(pwd)
+export ABSOLUTE_BASE_PATH=$(pwd)
 
 # Validate file provided by user exists or not, It may be relative path or absolute path
 # $1 - File path
@@ -35,7 +33,7 @@ function validate_file_path() {
 # $3 - DESTINATION_TENANT_ID
 # $4 - DESTINATION_ACCOUNT_ID
 function db_migration(){
- ./databasemigration/dbmigration.sh $1 $2 $3 $4
+ . ${ABSOLUTE_BASE_PATH}/databasemigration/dbmigration.sh $1 $2 $3 $4
 }
 
 function dataset_and_mlpackages_migration(){
