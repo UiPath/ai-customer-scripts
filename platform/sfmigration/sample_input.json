@@ -18,8 +18,8 @@
         "TENANT_MAP": [
                 {
                         "SRC_TENANT_ID": "27d75a8e-0d85-45ce-8198-a3c15863797d",
-                        "DESTINATION_TENANT_ID": "f54f5ea9-7ef4-4a7c-b91b-733ea7ac1223",
-                        "DESTINATION_ACCOUNT_ID": "a4e3ddd2-0cc0-44b4-8383-ff1b225379df"
+                        "DESTINATION_TENANT_ID": "0f48dea7-c682-44f3-8fcf-56c936732191",
+                        "DESTINATION_ACCOUNT_ID": "0a4b8d3b-8e3f-437b-a4c0-a8948a79481e"
                 }
         ]
 }

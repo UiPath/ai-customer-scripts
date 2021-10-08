@@ -6,6 +6,8 @@ This is the master script which will migrate db entities , datasets , ML Package
 
 [Script Version -> 21.10]
 '
+
+ERROR=""
 red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
@@ -27,30 +29,6 @@ function validate_file_path() {
   fi
 }
 
-# Validate dependency module
-# $1 - Name of the dependency module
-# $2 - Command to validate module
-function validate_dependency() {
-  eval $2
-  # Next statement is checking last command success
-  if [ $? -ne 0 ]; then
-    echo "$red $(date) Please install ******** $1 ***********  ... Exiting $default"
-    exit 1
-  fi
-}
-
-# Validate required modules exits in target setup
-function validate_setup() {
-  validate_dependency "bcp utility" "bcp -v"
-  validate_dependency "sqlcmd utility" "sqlcmd -?"
-  validate_dependency "jq utility" "jq --version"
-  validate_dependency "aws s3" "aws --version"
-  validate_dependency "s3cmd" "s3cmd --version"
-  validate_dependency "zip" "zip -v"
-
-  echo "$(date) Successfully validated required dependencies"
-}
-
 # Database migration for a tenant from src to destination environment
 # $1 - Credentials file
 # $2 - SRC_TENANT_ID
@@ -61,7 +39,6 @@ function db_migration(){
 }
 
 function dataset_and_mlpackages_migration(){
-  # TODO: Do we need to change the extension from sh to bash?
   ## run export script
   ./storagemigration/export.sh ./storagemigration/SOURCE_CREDENTIAL_FILE $ABSOLUTE_BASE_PATH/storagemigration/storageData
 
@@ -79,9 +56,9 @@ function parse_input_and_migrate() {
 jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE | while read tenantEntry; do
     # Loop through each element of array
   # TODO: why we are exporting the variables when we are passing them as an argument.
-	export SRC_TENANT_ID=$(echo $tenantEntry | jq -r '.SRC_TENANT_ID')
-	export DESTINATION_TENANT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_TENANT_ID')
-	export DESTINATION_ACCOUNT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_ACCOUNT_ID')
+	SRC_TENANT_ID=$(echo $tenantEntry | jq -r '.SRC_TENANT_ID')
+	DESTINATION_TENANT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_TENANT_ID')
+	DESTINATION_ACCOUNT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_ACCOUNT_ID')
 	BUCKET_NAME="train-data"
 	db_migration $CREDENTIALS_FILE $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
 	echo "$(date) Successfully parsed input file and db migration completed."
@@ -94,10 +71,16 @@ done
 validate_file_path $CREDENTIALS_FILE
 
 # Validate Credential file input and export data
-# ./databasemigration/input-validation.sh
+. ${ABSOLUTE_BASE_PATH}/checks/input-validation.sh
 
-# Validate Setup
-validate_setup
+# Validate Setup dependency
+. ${ABSOLUTE_BASE_PATH}/checks/dependency-validation.sh
+
+# Database connection validation
+. ${ABSOLUTE_BASE_PATH}/checks/database-connections.sh
+
+# Validate tenant provided tenant and account ids
+. ${ABSOLUTE_BASE_PATH}/checks/tenant-ids-validation.sh $CREDENTIALS_FILE
 
 # Trigger DB migration script
 parse_input_and_migrate

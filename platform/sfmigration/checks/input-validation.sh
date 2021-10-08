@@ -1,21 +1,30 @@
 #!/bin/bash
 
 check_input_value(){
-  if [ -z "$1" ];
+  if [ -z "$2" ];
   then
-    echo "$2 is blank or not provided"
-    ERROR="${ERROR} \n $2 is blank or not provided"
+    echo "$red $(date) $1 in $CREDENTIALS_FILE is blank or not provided $default"
+    exit 1;
+  elif [ "$1" == "SRC_AIC_INSTALLATION_VERSION" ];
+  then
+    if [[ "$2" != "20.10" && "$2" != "21.4" ]];
+    then
+    echo "$red $(date) $1 allowed values are 20.10 or 21.4 $default"
+    exit 1;
+    fi
   else
-    echo "$2 is provided"
+    echo "$green $(date) $1 is provided $default"
   fi
 }
 
-function validate_and_parse_creds_file_data(){
+function validate_and_parse_creds_file_data() {
 echo "validate_and_parse_creds_file_data started"
-echo cat $CREDENTIALS_FILE
+echo "Parsing input file : " $CREDENTIALS_FILE
+
+export SRC_AIC_INSTALLATION_VERSION=$(cat $CREDENTIALS_FILE | jq -r 'select(.SRC_AIC_INSTALLATION_VERSION != null) | .SRC_AIC_INSTALLATION_VERSION')
+
 export SRC_SERVER=$(cat $CREDENTIALS_FILE | jq -r 'select(.SRC_SERVER != null) | .SRC_SERVER')
 
-echo "Validation started 1"
 export SRC_PKGMANAGER_DB_NAME=$(cat $CREDENTIALS_FILE | jq -r 'select(.SRC_PKGMANAGER_DB_NAME != null) | .SRC_PKGMANAGER_DB_NAME')
 
 export SRC_PKGMANAGER_DB_SCHEMA=$(cat $CREDENTIALS_FILE | jq -r 'select(.SRC_PKGMANAGER_DB_SCHEMA != null) | .SRC_PKGMANAGER_DB_SCHEMA')
@@ -44,24 +53,25 @@ export DESTINATION_DB_USERNAME=$(cat $CREDENTIALS_FILE | jq -r 'select(.DESTINAT
 
 export DESTINATION_DB_PASSWORD=$(cat $CREDENTIALS_FILE | jq -r 'select(.DESTINATION_DB_PASSWORD != null) | .DESTINATION_DB_PASSWORD')
 
-echo "validate_and_parse_creds_file_data ended"
+echo "$green $(date) Successfully parsed $CREDENTIALS_FILE file $default"
 }
 
 validate_and_parse_creds_file_data
 
-check_input_value $SRC_SERVER "SRC_SERVER"
-check_input_value $SRC_PKGMANAGER_DB_NAME "Sql Source Pkg manager DB name"
-check_input_value $SRC_PKGMANAGER_DB_SCHEMA "Sql Source Pkg manager DB schema"
-check_input_value $SRC_PKGMANAGER_DB_USERNAME "Sql Source Pkg manager DB username"
-check_input_value $SRC_PKGMANAGER_DB_PASSWORD "Sql Source Pkg manager DB password"
-check_input_value $SRC_TRAINER_DB_NAME "Sql Source trainer DB name"
-check_input_value $SRC_TRAINER_DB_SCHEMA "Sql Source trainer DB schema"
-check_input_value $SRC_TRAINER_DB_USERNAME "Sql Source trainer DB username"
-check_input_value $SRC_TRAINER_DB_PASSWORD "Sql Source trainer DB password"
-check_input_value $DESTINATION_SERVER "Sql destination DB server"
-check_input_value $DESTINATION_DB_NAME "Sql destination DB name"
-check_input_value $DESTINATION_PKGMANAGER_DB_SCHEMA "Sql destination pkg manager DB schema"
-check_input_value $DESTINATION_TRAINER_DB_SCHEMA "Sql destination trainer DB schema"
-check_input_value $DESTINATION_DB_USERNAME "Sql destination DB username"
-check_input_value $DESTINATION_DB_PASSWORD "Sql destination DB password"
+check_input_value "SRC_AIC_INSTALLATION_VERSION" $SRC_AIC_INSTALLATION_VERSION
+check_input_value "SRC_SERVER" $SRC_SERVER
+check_input_value "Sql Source Pkg manager DB name" $SRC_PKGMANAGER_DB_NAME
+check_input_value "Sql Source Pkg manager DB schema" $SRC_PKGMANAGER_DB_SCHEMA
+check_input_value "Sql Source Pkg manager DB username" $SRC_PKGMANAGER_DB_USERNAME
+check_input_value "Sql Source Pkg manager DB password" $SRC_PKGMANAGER_DB_PASSWORD
+check_input_value "Sql Source trainer DB name" $SRC_TRAINER_DB_NAME
+check_input_value "Sql Source trainer DB schema" $SRC_TRAINER_DB_SCHEMA
+check_input_value "Sql Source trainer DB username" $SRC_TRAINER_DB_USERNAME
+check_input_value "Sql Source trainer DB password" $SRC_TRAINER_DB_PASSWORD
+check_input_value "Sql destination DB server" $DESTINATION_SERVER
+check_input_value "Sql destination DB name" $DESTINATION_DB_NAME
+check_input_value "Sql destination pkg manager DB schema" $DESTINATION_PKGMANAGER_DB_SCHEMA
+check_input_value "Sql destination trainer DB schema" $DESTINATION_TRAINER_DB_SCHEMA
+check_input_value "Sql destination DB username" $DESTINATION_DB_USERNAME
+check_input_value "Sql destination DB password" $DESTINATION_DB_PASSWORD
 
