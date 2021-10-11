@@ -38,5 +38,5 @@ The Machine where migration script runs needs the following:
 * Replace database credentials in sample-input.json file.
 * Add DNS of object storage in the machine executing script (This can be found from the extension tab of the pipeline from where the SF env was created).
 example - sudo bash -c "echo \"20.86.28.123    objectstore.sfdev1968699-2f356c0d-lb.westeurope.cloudapp.azure.com\" >> /etc/hosts"
-* execute ./mastermigrationscriptnew.sh sample_input.json .
+* execute ./mastermigrationscriptnew.sh sample_input.json
  
