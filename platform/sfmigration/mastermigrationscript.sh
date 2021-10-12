@@ -14,6 +14,7 @@ yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
 readonly CREDENTIALS_FILE=$1
+readonly BUCKET_NAME_INPUT=$2
 export ABSOLUTE_BASE_PATH=$(pwd)
 
 # Validate file provided by user exists or not, It may be relative path or absolute path
@@ -58,6 +59,9 @@ jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE | while read tenantEntry; do
 	DESTINATION_TENANT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_TENANT_ID')
 	DESTINATION_ACCOUNT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_ACCOUNT_ID')
 	BUCKET_NAME="train-data"
+	if [ $BUCKET_NAME_INPUT ]; then
+	  BUCKET_NAME=$BUCKET_NAME_INPUT
+	fi
 	db_migration $CREDENTIALS_FILE $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
 	echo "$(date) Successfully parsed input file and db migration completed."
 	dataset_and_mlpackages_migration $SRC_TENANT_ID $DESTINATION_TENANT_ID $BUCKET_NAME
@@ -79,6 +83,12 @@ validate_file_path $CREDENTIALS_FILE
 
 # Validate tenant provided tenant and account ids
 . ${ABSOLUTE_BASE_PATH}/checks/tenant-ids-validation.sh $CREDENTIALS_FILE
+
+# Validate source storage endpoint.
+. ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh $SOURCE_CREDENTIAL_FILE
+
+# Validate target storage endpoint.
+. ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh $TARGET_CREDENTIAL_FILE
 
 # Trigger DB migration script
 parse_input_and_migrate
