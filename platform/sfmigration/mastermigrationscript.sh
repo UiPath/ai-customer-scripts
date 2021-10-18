@@ -84,6 +84,13 @@ validate_file_path $CREDENTIALS_FILE
 # Validate tenant provided tenant and account ids
 . ${ABSOLUTE_BASE_PATH}/checks/tenant-ids-validation.sh $CREDENTIALS_FILE
 
+
+if [ $? -ne 0 ]
+then
+   echo " $red Error while validating tenant ids . Please check. Exiting script execution. Please fix and try again. $default"
+   exit 1;
+fi
+
 # Validate source storage endpoint.
 . ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh ${ABSOLUTE_BASE_PATH}/storagemigration/SOURCE_CREDENTIAL_FILE
 
