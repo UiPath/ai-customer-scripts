@@ -85,10 +85,10 @@ validate_file_path $CREDENTIALS_FILE
 . ${ABSOLUTE_BASE_PATH}/checks/tenant-ids-validation.sh $CREDENTIALS_FILE
 
 # Validate source storage endpoint.
-. ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh $SOURCE_CREDENTIAL_FILE
+. ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh ${ABSOLUTE_BASE_PATH}/storagemigration/SOURCE_CREDENTIAL_FILE
 
 # Validate target storage endpoint.
-. ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh $TARGET_CREDENTIAL_FILE
+. ${ABSOLUTE_BASE_PATH}/checks/storage-connections.sh ${ABSOLUTE_BASE_PATH}/storagemigration/TARGET_CREDENTIAL_FILE
 
 # Trigger DB migration script
 parse_input_and_migrate
