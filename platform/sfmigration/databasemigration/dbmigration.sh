@@ -124,4 +124,4 @@ done
 
 
 # update cloned packages source package id , source package version ids
-sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i $ABSOLUTE_BASE_PATH/databasemigration/UpdateClonedPackageReferences.sql
+sqlcmd -v DestinationDBSchema=$DESTINATION_PKGMANAGER_DB_SCHEMA DestinationTenantId=$DESTINATION_TENANT_ID -S $DESTINATION_SERVER -U $DESTINATION_DB_USERNAME -P $DESTINATION_DB_PASSWORD -d $DESTINATION_DB_NAME -i $ABSOLUTE_BASE_PATH/databasemigration/UpdateClonedPackageReferences.sql

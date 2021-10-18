@@ -39,3 +39,16 @@ on mpc.source_package_id = mpvo.ml_package_id
 where mpvc.source_package_version_id is not null
 and mpvc.source_package_version_id not in 
 (select id from $(DestinationDBSchema).ml_package_versions);
+
+
+update $(DestinationDBSchema).ml_packages set status = 'UNDEPLOYED' where status in ('DEPLOYING','DEPLOYED') and tenant_id='$(DestinationTenantId)';
+
+update $(DestinationDBSchema).ml_packages set status = 'VALIDATION_FAILED' where status in ('VALIDATING') and tenant_id='$(DestinationTenantId)';
+
+update $(DestinationDBSchema).ml_package_versions set status = 'UNDEPLOYED' where status in ('DEPLOYING','DEPLOYED') and tenant_id='$(DestinationTenantId)';
+
+update $(DestinationDBSchema).ml_package_versions set status = 'VALIDATION_FAILED' where status in ('VALIDATING') and tenant_id='$(DestinationTenantId)';
+
+update $(DestinationDBSchema).projects set active_pipelines = 0 , deployed_packages = 0 where tenant_id='$(DestinationTenantId)';
+
+update $(DestinationDBSchema).ml_package_versions set status = 'VALIDATION_FAILED' where tenant_id='$(DestinationTenantId)' and training_version = 0 and source_package_version_id is not null;
