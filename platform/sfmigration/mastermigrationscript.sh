@@ -52,21 +52,27 @@ function dataset_and_mlpackages_migration(){
 # $1 - Credentials file
 function parse_input_and_migrate() {
 
-jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE | while read tenantEntry; do
-    # Loop through each element of array
-  # TODO: why we are exporting the variables when we are passing them as an argument.
-	SRC_TENANT_ID=$(echo $tenantEntry | jq -r '.SRC_TENANT_ID')
-	DESTINATION_TENANT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_TENANT_ID')
-	DESTINATION_ACCOUNT_ID=$(echo $tenantEntry | jq -r '.DESTINATION_ACCOUNT_ID')
-	BUCKET_NAME="train-data"
-	if [ $BUCKET_NAME_INPUT ]; then
-	  BUCKET_NAME=$BUCKET_NAME_INPUT
-	fi
-	db_migration $CREDENTIALS_FILE $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
-	echo "$(date) Successfully parsed input file and db migration completed."
-	dataset_and_mlpackages_migration $SRC_TENANT_ID $DESTINATION_TENANT_ID $BUCKET_NAME
-	echo "$(date) Successfully migrated datasets and mlpackages."
+readarray -t my_array < <(jq -c '.TENANT_MAP[]' $CREDENTIALS_FILE)
+
+# iterate through the Bash array
+for item in "${my_array[@]}"; do
+  echo "******************loop started for destination tenant id $DESTINATION_TENANT_ID************************* "
+  SRC_TENANT_ID=$(jq -r '.SRC_TENANT_ID' <<< "$item")
+  DESTINATION_TENANT_ID=$(jq -r '.DESTINATION_TENANT_ID' <<< "$item")
+  DESTINATION_ACCOUNT_ID=$(jq -r '.DESTINATION_ACCOUNT_ID' <<< "$item")
+  # do your stuff
+  BUCKET_NAME="train-data"
+  if [ $BUCKET_NAME_INPUT ]; then
+        BUCKET_NAME=$BUCKET_NAME_INPUT
+  fi
+  db_migration $CREDENTIALS_FILE $SRC_TENANT_ID $DESTINATION_TENANT_ID $DESTINATION_ACCOUNT_ID
+  echo "$(date) Successfully parsed input file and db migration completed."
+  dataset_and_mlpackages_migration $SRC_TENANT_ID $DESTINATION_TENANT_ID $BUCKET_NAME
+  echo "$(date) Successfully migrated datasets and mlpackages."
+  echo "******************loop ended for destination tenant id $DESTINATION_TENANT_ID************************* "
+
 done
+
 }
 
 # Validate Credential file
