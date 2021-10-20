@@ -69,16 +69,6 @@ function upload_blob() {
   echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
-function update_cors_policy() {
-  BUCKET_NAME=${1}
-  DIR_NAME=${2}
-  if [ ! -f "${DATA_FOLDER_PATH}${DIR_NAME}-cors.json" ]; then
-    echo "$red $(date) ${DATA_FOLDER_PATH}${DIR_NAME}-cors.json file does not exist, Please check ... Skipping cors creation $default"
-    return
-  fi
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api put-bucket-cors --bucket ${BUCKET_NAME} --cors-configuration file://${DATA_FOLDER_PATH}${DIR_NAME}-cors.json
-}
-
 function _contains() {  # Check if space-separated list $1 contains item $2
   echo "$1" | tr ' ' '\n' | grep -F -x -q "$2"
 }
@@ -118,24 +108,14 @@ function remove_unwanted_data_from_source_directory() {
   cd $DATA_FOLDER_PATH
 }
 
-function change_source_to_target_tenant_id() {
-  SOURCE_DIRECTORY=$1
-  TARGET_DIRECTORY=$2
-
-  echo "$green $(date) Changing source tenantId $SOURCE_DIRECTORY to target tenantId $TARGET_DIRECTORY $default"
-  cd $DATA_FOLDER_PATH
-  sudo mv $SOURCE_DIRECTORY $TARGET_DIRECTORY
-}
-
 function process_buckets() {
 
   cd $BASE_PATH
   SOURCE_DIRECTORY="training-"$SOURCE_TENANT_ID
   TARGET_DIRECTORY="training-"$TARGET_TENANT_ID
   remove_unwanted_data_from_source_directory $SOURCE_DIRECTORY
-#  change_source_to_target_tenant_id $SOURCE_DIRECTORY $TARGET_DIRECTORY
+
   upload_blob ${BUCKET_NAME_INPUT} ${SOURCE_DIRECTORY} ${TARGET_DIRECTORY}
-#  update_cors_policy ${BUCKET_NAME_INPUT} ${TARGET_DIRECTORY}
 }
 
 function process_ml_model_files() {
@@ -164,4 +144,5 @@ initialize_variables
 # Process data inside buckets
 process_buckets
 
+# Process ml packages
 process_ml_model_files

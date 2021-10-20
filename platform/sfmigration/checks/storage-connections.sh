@@ -18,8 +18,8 @@ validate_storage_conn() {
 
   if [ $? -ne 0 ];
   then
-          echo "$red Error while connecting to $AWS_ENDPOINT server. Please check $default"
-          ERROR="${ERROR} \n Storage Check Failed: Error while connecting to $$AWS_ENDPOINT."
+          echo "$red Error while connecting to $AWS_ENDPOINT server. Please check storage credentials provided.$default"
+          ERROR="${ERROR} \n Storage Check Failed: Error while connecting to $AWS_ENDPOINT."
           exit 1;
   else
           echo "$green Connection to $AWS_ENDPOINT endpoint established successfully $default"
