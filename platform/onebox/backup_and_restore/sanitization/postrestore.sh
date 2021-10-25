@@ -17,7 +17,7 @@ default=$(tput sgr0)
 
 echo "$green $(date) Process of Updating in flight status to terminal state started $default"
 readonly POST_RESTORE_CONFIG_FILE=$1
-readonly CORE_SERVICE_NAMESPACE=aifabric
+readonly CORE_SERVICE_NAMESPACE=uipath
 readonly ACCESS_TOKEN_LIFE_TIME=345600
 
 # Fetch admin token from identity server end point using host tenant
