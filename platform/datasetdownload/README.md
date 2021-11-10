@@ -34,7 +34,7 @@ Note: If running from a third machine make sure to run the following command :
 
 Above script will generate creds.json file. Replace the content in creds.json file
 
-Replace the content in the input.json file
+Replace the content in the input.json file , these values can be found from the browser network call in ai-app.
 
 Create a directory by name {DATASET_NAME}
 
