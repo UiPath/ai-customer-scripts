@@ -1,0 +1,25 @@
+{
+        "SRC_AIC_INSTALLATION_VERSION": "20.10",
+        "SRC_SERVER": "sf-migration-onlinesqlserver.database.windows.net",
+        "SRC_PKGMANAGER_DB_NAME": "aifabric_sfmigrationonline",
+        "SRC_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+        "SRC_PKGMANAGER_DB_USERNAME": "aifadmin",
+        "SRC_PKGMANAGER_DB_PASSWORD": "admin@12",
+        "SRC_TRAINER_DB_NAME": "aifabric_sfmigrationonline",
+        "SRC_TRAINER_DB_SCHEMA": "ai_trainer",
+        "SRC_TRAINER_DB_USERNAME": "aifadmin",
+        "SRC_TRAINER_DB_PASSWORD": "admin@12",
+        "DESTINATION_SERVER": "sfdev1974458-51d12498-sql.database.windows.net",
+        "DESTINATION_DB_NAME": "AutomationSuite_AICenter",
+        "DESTINATION_PKGMANAGER_DB_SCHEMA": "ai_pkgmanager",
+        "DESTINATION_TRAINER_DB_SCHEMA": "ai_trainer",
+        "DESTINATION_DB_USERNAME": "testadmin",
+        "DESTINATION_DB_PASSWORD": "IrwsOXCT@oyZOpxW6fow8ONiRxVGQI68",
+        "TENANT_MAP": [
+                {
+                        "SRC_TENANT_ID": "27d75a8e-0d85-45ce-8198-a3c15863797d",
+                        "DESTINATION_TENANT_ID": "0f48dea7-c682-44f3-8fcf-56c936732191",
+                        "DESTINATION_ACCOUNT_ID": "0a4b8d3b-8e3f-437b-a4c0-a8948a79481e"
+                }
+        ]
+}

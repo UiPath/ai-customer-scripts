@@ -1,0 +1,13 @@
+14.0
+11
+1       SQLUNIQUEID         1       16      ""   1     id                                 ""
+2       SQLCHAR             2       36      ""   2     tenant_id                          SQL_Latin1_General_CP1_CI_AS
+3       SQLCHAR             2       36      ""   3     account_id                         SQL_Latin1_General_CP1_CI_AS
+4       SQLCHAR             2       36      ""   4     organization_id                    SQL_Latin1_General_CP1_CI_AS
+5       SQLCHAR             2       36      ""   5     project_id                         SQL_Latin1_General_CP1_CI_AS
+6       SQLNCHAR            2       100     ""   6     name                               SQL_Latin1_General_CP1_CI_AS
+7       SQLNCHAR            2       4096    ""   7     description                        SQL_Latin1_General_CP1_CI_AS
+8       SQLNUMERIC          1       19      ""   8     created_on                         ""
+9       SQLNUMERIC          1       19      ""   9     modified_on                        ""
+10      SQLNCHAR            2       100     ""   10    created_by                         SQL_Latin1_General_CP1_CI_AS
+11      SQLNCHAR            2       100     ""   11    modified_by                        SQL_Latin1_General_CP1_CI_AS

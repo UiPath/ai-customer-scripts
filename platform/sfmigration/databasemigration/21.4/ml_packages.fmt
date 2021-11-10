@@ -1,0 +1,27 @@
+14.0
+25
+1       SQLUNIQUEID         1       16      ""   1     id                                                               ""
+2       SQLCHAR             2       36      ""   2     tenant_id                                                        SQL_Latin1_General_CP1_CI_AS
+3       SQLCHAR             2       36      ""   3     account_id                                                       SQL_Latin1_General_CP1_CI_AS
+4       SQLCHAR             2       36      ""   4     organization_id                                                  SQL_Latin1_General_CP1_CI_AS
+5       SQLNCHAR            2       72      ""   5     name                                                             SQL_Latin1_General_CP1_CI_AS
+6       SQLNCHAR            2       100     ""   6     display_name                                                     SQL_Latin1_General_CP1_CI_AS
+7       SQLBINARY           8       0       ""   7     icon                                                             ""
+8       SQLCHAR             2       32      ""   8     type                                                             SQL_Latin1_General_CP1_CI_AS
+9       SQLCHAR             2       32      ""   9     status                                                           SQL_Latin1_General_CP1_CI_AS
+10      SQLNCHAR            2       4096    ""   10    description                                                      SQL_Latin1_General_CP1_CI_AS
+11      SQLCHAR             2       32      ""   11    access                                                           SQL_Latin1_General_CP1_CI_AS
+12      SQLNCHAR            2       510     ""   12    tags                                                             SQL_Latin1_General_CP1_CI_AS
+13      SQLNUMERIC          1       19      ""   13    created_on                                                       ""
+14      SQLNUMERIC          1       19      ""   14    modified_on                                                      ""
+15      SQLNCHAR            2       100     ""   15    created_by                                                       SQL_Latin1_General_CP1_CI_AS
+16      SQLNCHAR            2       100     ""   16    modified_by                                                      SQL_Latin1_General_CP1_CI_AS
+17      SQLCHAR             2       32      ""   17    input_type                                                       SQL_Latin1_General_CP1_CI_AS
+18      SQLINT              0       4       ""   18    last_uploaded_version                                            ""
+19      SQLBIT              1       1       ""   19    is_public                                                        ""
+20      SQLCHAR             2       36      ""   20    project_id                                                       SQL_Latin1_General_CP1_CI_AS
+21      SQLCHAR             2       36      ""   21    ml_package_owned_by_account_id                                   SQL_Latin1_General_CP1_CI_AS
+22      SQLCHAR             2       36      ""   22    ml_package_owned_by_tenant_id                                    SQL_Latin1_General_CP1_CI_AS
+23      SQLCHAR             2       36      ""   23    ml_package_owned_by_project_id                                   SQL_Latin1_General_CP1_CI_AS
+24      SQLCHAR             2       36      ""   24    source_package_id                                                SQL_Latin1_General_CP1_CI_AS
+25      SQLNCHAR            2       72      ""   25    source_package_name                                              SQL_Latin1_General_CP1_CI_AS
