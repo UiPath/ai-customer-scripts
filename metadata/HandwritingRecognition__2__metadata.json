@@ -11,14 +11,14 @@
   "name": "HandwritingRecognition",
   "outputDescription": "Please refer to the documentation of the Intelligent Form Extractor Activity.",
   "processorType": "CPU",
-  "projectId": "[project-id]",  
+  "projectId": "[project-id]",
   "retrainable": false,
   "stagingUri": "[staging-uri]",
   "projectName": "UiPath Document Understanding",
   "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
-  "languageVersion": 0,
+  "languageVersion": 2,
   "version": 2,
-  "imagePath": "https://<placeholder-url>/download/AIC/HandwritingRecognition/2/hwocr_aif_package.zip"
+  "contentUri": "https://<placeholder-url>/download/AIC/HandwritingRecognition/2/hwocr_aif_package.zip"
 }
