@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
     "version": 8,
-    "contentUri": "https://<placeholder-url>/download/AIC/Receipts/8/receipts_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/Receipts/8/receipts_package.zip"
 }
