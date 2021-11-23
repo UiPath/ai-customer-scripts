@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 3,
     "version": 9,
-    "contentUri": "https://<placeholder-url>/download/AIC/Invoices/21.10.10/invoices_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/Invoices/21.10.10/invoices_package.zip"
 }

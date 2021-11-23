@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v20.10.1.2",
     "languageVersion": 3,
     "version": 8,
-    "contentUri": "https://<placeholder-url>/download/AIC/IndianInvoices/21.10.10/invoices_india_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/IndianInvoices/21.10.10/invoices_india_package.zip"
 }

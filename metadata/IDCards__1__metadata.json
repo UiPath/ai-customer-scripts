@@ -20,5 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 1,
-  "contentUri": "https://<placeholder-url>/download/AIC/IDCards/1/id_cards_package.zip"
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/IDCards/1/id_cards_package.zip"
 }

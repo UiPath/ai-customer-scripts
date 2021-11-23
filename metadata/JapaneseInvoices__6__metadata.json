@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 3,
     "version": 6,
-    "contentUri": "https://<placeholder-url>/download/AIC/JapaneseInvoices/21.10.10/invoices_japan_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/JapaneseInvoices/21.10.10/invoices_japan_package.zip"
 }

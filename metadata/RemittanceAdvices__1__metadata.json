@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 3,
     "version": 1,
-    "contentUri": "https://<placeholder-url>/download/AIC/RemittanceAdvices/21.10.10/remittance_advices_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/RemittanceAdvices/21.10.10/remittance_advices_package.zip"
 }

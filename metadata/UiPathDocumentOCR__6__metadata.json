@@ -20,5 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 6,
-  "contentUri": "https://<placeholder-url>/download/AIC/UiPathDocumentOCR/21.10.3.1/ocr_aif_package.zip"
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/UiPathDocumentOCR/21.10.3.1/ocr_aif_package.zip"
 }

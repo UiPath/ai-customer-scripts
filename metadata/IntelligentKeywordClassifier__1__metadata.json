@@ -20,5 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 1,
-  "contentUri": "https://<placeholder-url>/download/AIC/IntelligentKeywordClassifier/1/IKC-du-svc-v21-7-18-main-4a0e8c.zip"
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/IntelligentKeywordClassifier/1/IKC-du-svc-v21-7-18-main-4a0e8c.zip"
 }

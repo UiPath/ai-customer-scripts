@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 3,
     "version": 8,
-    "contentUri": "https://<placeholder-url>/download/AIC/PurchaseOrders/21.10.10/purchase_orders_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/PurchaseOrders/21.10.10/purchase_orders_package.zip"
 }
