@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "languageVersion": 2,
     "version": 7,
-    "contentUri": "https://<placeholder-url>/download/AIC/AustralianInvoices/7/invoices_au_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/AustralianInvoices/7/invoices_au_package.zip"
 }

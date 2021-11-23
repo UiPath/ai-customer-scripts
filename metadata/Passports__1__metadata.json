@@ -20,5 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 1,
-  "contentUri": "https://<placeholder-url>/download/AIC/Passports/1/passports_package.zip"
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/Passports/1/passports_package.zip"
 }
