@@ -20,5 +20,5 @@
   "minAIFabricVersion": "v21.10",
   "languageVersion": 2,
   "version": 2,
-  "contentUri": "https://<placeholder-url>/download/AIC/ComputerVision/2/cv_server.zip"
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/ComputerVision/2/cv_server.zip"
 }
