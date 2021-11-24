@@ -19,6 +19,6 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
   "languageVersion": 3,
-  "version": 1,
-  "contentUri": "https://<placeholder-url>/publicmodels/AIC/IntelligentKeywordClassifier/1/IKC-du-svc-v21-7-18-main-4a0e8c.zip"
+  "version": 2,
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/IntelligentKeywordClassifier/2/IKC-du-svc-v21-7-18-main-4a0e8c.zip"
 }
