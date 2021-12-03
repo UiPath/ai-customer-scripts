@@ -18,7 +18,7 @@
   "projectDescription": "UiPath models to classify and extract information from images and pdfs.",
   "tenantName": "UiPath",
   "minAIFabricVersion": "v21.10",
-  "languageVersion": 2,
+  "languageVersion": 3,
   "version": 2,
   "contentUri": "https://<placeholder-url>/publicmodels/AIC/HandwritingRecognition/2/hwocr_aif_package.zip"
 }
