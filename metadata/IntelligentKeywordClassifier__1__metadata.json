@@ -1,5 +1,5 @@
 {
-  "changeLog": "Release v2020.9",
+  "changeLog": "v21-7-18",
   "cpu": 0,
   "description": "This Package provides the Endpoint required by the Intelligent Keyword Classifier activity. Please see more details in the Intelligent Keyword Classifier activity documentation here: https://docs.uipath.com/activities/docs/intelligent-keyword-classifier",
   "displayName": "IntelligentKeywordClassifier",
