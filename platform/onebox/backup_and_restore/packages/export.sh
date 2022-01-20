@@ -273,6 +273,7 @@ function fetch_identity_server_token_to_register_client() {
   readonly local tokenUrl=https://$IDENTITY_SERVER_ENDPOINT"/identity/api/Account/ClientAccessToken"
 
   dataLogin='{
+    "partitionName": "'$HOST_TENANT_NAME'",
     "tenant": "'$HOST_TENANT_NAME'",
     "usernameOrEmail": "'$HOST_TENANT_USER_ID_OR_EMAIL'",
     "password": "'$HOST_TENANT_PASSWORD'",
