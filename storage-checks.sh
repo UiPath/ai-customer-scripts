@@ -87,6 +87,7 @@ function initialize_variables() {
   export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
   export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
   export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
+  export AWS_DEFAULT_REGION="us-west-2"
   export BUCKET_1=$(cat $CREDENTIALS_FILE | jq -r 'select(.BUCKET_1 != null) | .BUCKET_1')
   export BUCKET_2=$(cat $CREDENTIALS_FILE | jq -r 'select(.BUCKET_2 != null) | .BUCKET_2')
   echoinfo "bucket1: $BUCKET_1, and bucket2: $BUCKET_2"

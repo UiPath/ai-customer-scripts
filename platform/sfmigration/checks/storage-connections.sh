@@ -13,7 +13,7 @@ validate_storage_conn() {
   export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE_STORAGE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
   export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE_STORAGE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
   export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE_STORAGE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
-
+  export AWS_DEFAULT_REGION="us-west-2"
   result=$(aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl ls)
 
   if [ $? -ne 0 ];

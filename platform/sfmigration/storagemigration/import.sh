@@ -41,6 +41,7 @@ function initialize_variables() {
   export AWS_ENDPOINT=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ENDPOINT != null) | .AWS_ENDPOINT')
   export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_ACCESS_KEY_ID != null) | .AWS_ACCESS_KEY_ID')
   export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_FILE | jq -r 'select(.AWS_SECRET_ACCESS_KEY != null) | .AWS_SECRET_ACCESS_KEY')
+  export AWS_DEFAULT_REGION="us-west-2"
   readonly DATA_FOLDER_NAME="ceph"
   readonly DATA_FOLDER_PATH=${BASE_PATH}/${DATA_FOLDER_NAME}/
 }
