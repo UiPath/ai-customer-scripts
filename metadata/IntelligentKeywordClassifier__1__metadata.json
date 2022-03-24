@@ -1,7 +1,7 @@
 {
   "changeLog": "v21-7-18",
   "cpu": 0,
-  "description": "This Package provides the Endpoint required by the Intelligent Keyword Classifier activity. Please see more details in the Intelligent Keyword Classifier activity documentation here: https://docs.uipath.com/activities/docs/intelligent-keyword-classifier",
+  "description": "[DEPRECATED] This Package provides the Endpoint required by the Intelligent Keyword Classifier activity. Please see more details in the Intelligent Keyword Classifier activity documentation here: https://docs.uipath.com/activities/docs/intelligent-keyword-classifier",
   "displayName": "IntelligentKeywordClassifier",
   "gpu": 0,
   "inputDescription": "ML Skills deployed using this package are queried for the Intelligent Keyword Classifier Activity. To learn how to use the Intelligent Keyword Classifier, visit its documentation: https://docs.uipath.com/activities/docs/intelligent-keyword-classifier .",

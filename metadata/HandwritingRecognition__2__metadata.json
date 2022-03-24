@@ -1,7 +1,7 @@
 {
   "changeLog": "Model: 21.4.0",
   "cpu": 0,
-  "description": "This Package provides the Handwriting recognition capability required by the Intelligent Form Extractor Package. Deploying this ML Package is required prior to deploying the Intelligent Form Extractor Package. For detailed instructions about the steps required to correctly configure and deploy the Intelligent Form Extractor, see the Out-of-the-box Packages documentation for AI Center here: https://docs.uipath.com/ai-fabric/docs/uipath-document-understanding",
+  "description": "[DEPRECATED] This Package provides the Handwriting recognition capability required by the Intelligent Form Extractor Package. Deploying this ML Package is required prior to deploying the Intelligent Form Extractor Package. For detailed instructions about the steps required to correctly configure and deploy the Intelligent Form Extractor, see the Out-of-the-box Packages documentation for AI Center here: https://docs.uipath.com/ai-fabric/docs/uipath-document-understanding",
   "displayName": "HandwritingRecognition",
   "gpu": 0,
   "inputDescription": "ML Skills deployed using this package are queried directly by Intelligent Form Extractor Package also hosted in AI Center. For document types, languages supported and other information about the Intelligent Form Extractor product please refer to the documentation here: https://docs.uipath.com/activities/docs/intelligent-form-extractor.",
