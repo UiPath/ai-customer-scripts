@@ -19,6 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v21.10",
     "languageVersion": 0,
-    "version": 1,
+    "version": 2,
     "contentUri": "https://<placeholder-url>/publicmodels/AIC/TaskMining/2/task_mining.zip"
 }
