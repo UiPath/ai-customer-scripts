@@ -1,5 +1,5 @@
 {
-  "changeLog": "Model: 22.4.0",
+  "changeLog": "",
   "cpu": 1,
   "description": "Generic Machine Learning package for document classification. Use this package to create custom document classification Machine Learning models.",
   "displayName": "DocumentClassifier",
@@ -20,5 +20,6 @@
   "minAIFabricVersion": "22.4",
   "languageVersion": 4,
   "version": 5,
+  "customVersion": "22.4.0",
   "contentUri": "https://<placeholder-url>/publicmodels/AIC/DocumentClassifier/22.4.0/document_type_text_classifier_package.zip"
 }
