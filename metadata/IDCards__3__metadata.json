@@ -1,5 +1,5 @@
 {
-  "changeLog": "Model: 22.4.0",
+  "changeLog": "",
   "cpu": 1,
   "description": "Machine Learning model(available in Preview) for extracting commonly occurring data points from ID-Cards, including header fields and line items. Please see more details including supported languages in the ML Packages section of the Document Understanding Guide: https://docs.uipath.com/document-understanding/docs/ml-packages",
   "displayName": "IDCards",
@@ -20,5 +20,6 @@
   "minAIFabricVersion": "22.4",
   "languageVersion": 4,
   "version": 3,
+  "customVersion": "22.4.0",
   "contentUri": "https://<placeholder-url>/publicmodels/AIC/IDCards/22.4.0/id_cards_package.zip"
 }
