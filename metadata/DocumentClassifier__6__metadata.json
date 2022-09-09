@@ -21,6 +21,6 @@
 	"languageVersion": 4,
 	"version": 6,
 	"customVersion": "22.10.0",
-	"imagePath": "du-classifier:22.10.0-sf",
+	"imagePath": "du-classifier:22.10.0-sf-rc1",
 	"parametersFileJSON": "{\"params\": [{\"name\": \"auto_retraining\",\"type\": [\"PIPELINE\"],\"value\": \"False\",\"help\": \"Enable this option when the Pipeline you are creating is a scheduled automatic pipeline, synchronized with automatic exports from Data Manager.\",\"options\": [\"True\",\"False\"]}],\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"120\",\"periodSeconds\": \"10\",\"timeoutSeconds\": \"2\",\"successThreshold\": \"1\",\"failureThreshold\": \"60\"}]}"
 }
