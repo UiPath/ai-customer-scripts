@@ -64,10 +64,10 @@ function validate_input() {
 
 function initialize_object_store_variables() {
 
-	STORAGE_ACCESS_KEY=$(kubectl -n uipath get secret ceph-object-store-secret -o json | jq '.data.OBJECT_STORAGE_ACCESSKEY' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
-	OBJECT_GATEWAY_EXTERNAL_HOST=$(kubectl -n uipath get secret ceph-object-store-secret -o json | jq '.data.OBJECT_STORAGE_EXTERNAL_HOST' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
-	OBJECT_GATEWAY_EXTERNAL_PORT=$(kubectl -n uipath get secret ceph-object-store-secret -o json | jq '.data.OBJECT_STORAGE_EXTERNAL_PORT' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
-	STORAGE_SECRET_KEY=$(kubectl -n uipath get secret ceph-object-store-secret -o json | jq '.data.OBJECT_STORAGE_SECRETKEY' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
+	STORAGE_ACCESS_KEY=$(kubectl -n uipath get secret aicenter-service-rook-ceph-secret -o json | jq '.data.OBJECT_STORAGE_ACCESSKEY' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
+	OBJECT_GATEWAY_EXTERNAL_HOST=$(kubectl -n uipath get secret aicenter-service-rook-ceph-secret -o json | jq '.data.OBJECT_STORAGE_EXTERNAL_HOST' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
+	OBJECT_GATEWAY_EXTERNAL_PORT=$(kubectl -n uipath get secret aicenter-service-rook-ceph-secret -o json | jq '.data.OBJECT_STORAGE_EXTERNAL_PORT' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
+	STORAGE_SECRET_KEY=$(kubectl -n uipath get secret aicenter-service-rook-ceph-secret -o json | jq '.data.OBJECT_STORAGE_SECRETKEY' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
 
 	readonly AWS_HOST=$OBJECT_GATEWAY_EXTERNAL_HOST
 	readonly AWS_ENDPOINT="https://${OBJECT_GATEWAY_EXTERNAL_HOST}:${OBJECT_GATEWAY_EXTERNAL_PORT}"
@@ -123,7 +123,7 @@ function delete_version_zip_file() {
     if [ -z "$zipFile" ]; then
       exit 1
     fi
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api delete-object --bucket "$account_id/$tenantId/$projectId/$ML_PACKAGE_ID/$ml_package_version_id/ " --key $zipFile
+  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api delete-object --bucket "ml-model-files" --key $account_id/$tenantId/$projectId/$ML_PACKAGE_ID/$ml_package_version_id/$zipFile
 }
 
 
