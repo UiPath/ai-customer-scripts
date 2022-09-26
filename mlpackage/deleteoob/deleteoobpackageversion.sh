@@ -54,7 +54,7 @@ function validate_input() {
   readonly DB_PASSWORD="$(cat $INPUT_FILE | jq -r 'select(.dbPassword != null) | .dbPassword')"
 
 
-  if [[ -z $DB_CONN || -z $DB_NAME || -z $DB_USER || -z $DB_PASSWORD || -z OOB_PACKAGE_NAME || -z OOB_PACKAGE_VERSION ]]; then
+  if [[ -z $DB_CONN || -z $DB_NAME || -z $DB_USER || -z $DB_PASSWORD || -z $OOB_PACKAGE_NAME || -z $OOB_PACKAGE_VERSION ]]; then
     echo "$red $(date) Input is invalid or missing, Please check ... Exiting $default"
     exit 1
   fi
@@ -86,31 +86,44 @@ function configure_aws() {
 function delete_ml_package_version() {
 
   readonly ML_PACKAGE_ID=$(sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; select id from ai_pkgmanager.ml_packages where name = '$OOB_PACKAGE_NAME'")
-
+  if [ -z "$ML_PACKAGE_ID" ]; then
+    echo "$red $(date) Input oobPackageName is invalid, Please check ... Exiting $default"
+    exit 1
+  fi
   ML_PACKAGE_VERSION_DETAILS=$(sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; select id, account_id, tenant_id, project_id, content_uri from ai_pkgmanager.ml_package_versions where ml_package_id = '$ML_PACKAGE_ID' and version = $OOB_PACKAGE_VERSION")
+  if [ -z "$ML_PACKAGE_VERSION_DETAILS" ]; then
+    echo "$red $(date) Input oobPackageVersion is invalid, Please check ... Exiting $default"
+    exit 1
+  fi
+
   ml_package_version_details=(${ML_PACKAGE_VERSION_DETAILS// / })
   ml_package_version_id=${ml_package_version_details[0]}
-  echo ml_package_version_id
   account_id=${ml_package_version_details[1]}
-  echo $account_id
   tenantId=${ml_package_version_details[2]}
-  echo $tenantId
   projectId=${ml_package_version_details[3]}
-  echo $projectId
   contentUri=${ml_package_version_details[4]}
-  echo $contentUri
-  zipFileDetailArr=(${contentUri//"/"/ })
-  len=${#zipFileDetailArr[@]}
-  zipFile=${zipFileDetailArr[len-1]}
-  echo $zipFile
+  if [ -z "$contentUri" ]; then
+      zipFile=""
+  else
+    zipFileDetailArr=(${contentUri//"/"/ })
+    len=${#zipFileDetailArr[@]}
+    zipFile=${zipFileDetailArr[len-1]}
+  fi
 
-  sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; delete from ai_pkgmanager.ml_package_versions where id = $ml_package_version_id"
+  readonly delete_version=$(sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; delete from ai_pkgmanager.ml_package_versions where id = '$ml_package_version_id'")
 
+  readonly CHECK_OTHER_VERSIONS=$(sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; select id from ai_pkgmanager.ml_package_versions where ml_package_id = '$ML_PACKAGE_ID'")
+  if [ -z "$CHECK_OTHER_VERSIONS" ]; then
+      sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; delete from ai_pkgmanager.ml_packages where id = '$ML_PACKAGE_ID'"
+  fi
+  echo "$green $(date) Successfully deleted OOB package version $default $delete_version"
 }
 
 function delete_version_zip_file() {
-
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api delete-object --bucket my-bucket --key test.txt
+    if [ -z "$zipFile" ]; then
+      exit 1
+    fi
+  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api delete-object --bucket "$account_id/$tenantId/$projectId/$ML_PACKAGE_ID/$ml_package_version_id/ " --key $zipFile
 }
 
 
