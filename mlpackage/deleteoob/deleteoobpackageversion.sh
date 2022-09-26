@@ -107,7 +107,9 @@ function delete_ml_package_version() {
   else
     zipFileDetailArr=(${contentUri//"/"/ })
     len=${#zipFileDetailArr[@]}
-    zipFile=${zipFileDetailArr[len-1]}
+    zipFileNameDetails=${zipFileDetailArr[len-1]}
+    zipFileNameDetailsArr=(${zipFileNameDetails//"?"/ })
+    zipFile=${zipFileNameDetailsArr[0]}
   fi
 
   readonly delete_version=$(sqlcmd -S tcp:$DB_CONN -d $DB_NAME -U $DB_USER -P $DB_PASSWORD  -h -1 -W -Q  "set nocount on; delete from ai_pkgmanager.ml_package_versions where id = '$ml_package_version_id'")
@@ -123,7 +125,11 @@ function delete_version_zip_file() {
     if [ -z "$zipFile" ]; then
       exit 1
     fi
-  aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api delete-object --bucket "ml-model-files" --key $account_id/$tenantId/$projectId/$ML_PACKAGE_ID/$ml_package_version_id/$zipFile
+   file_to_delete=$(echo "$account_id/$tenantId/$projectId/""$ML_PACKAGE_ID/$ml_package_version_id/" | tr '[:upper:]' '[:lower:]')${zipFile}
+   echo "file to delete : $file_to_delete"
+   aws --endpoint-url $AWS_ENDPOINT --no-verify-ssl s3api delete-object --bucket "ml-model-files" --key $file_to_delete
+
+   echo "$green $(date) Successfully deleted package version from bucket $default "
 }
 
 
