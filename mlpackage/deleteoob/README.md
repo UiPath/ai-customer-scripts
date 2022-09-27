@@ -18,15 +18,6 @@ The Machine where delete script runs needs the following:
 * Run deleteoobpackageversion.sh file.
 * This will delete OOB package from DB
 
-Sample for Input.json file:
-{
-"dbConnection": "sfdev3014441-a0d04dcc-sql.database.windows.net",
-"dbName": "AutomationSuite_AICenter",
-"dbUser":  "testadmin",
-"dbPassword": "045wLRuQDJvLYXTCUp17KOoj53DxV3Cw",
-"oobPackageName" : "LightTextClassification",
-"oobPackageVersion" : 3
-}
 
 
 
