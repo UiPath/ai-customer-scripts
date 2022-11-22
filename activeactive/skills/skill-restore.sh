@@ -60,7 +60,7 @@ function restore_skill() {
 
   kubectl apply -f $backupDir
 
-  echo -e "$green $(date) Backup completed"
+  echo -e "$green $(date) Backup completed \n"
 }
 
 validate_setup
