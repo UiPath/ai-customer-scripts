@@ -8,6 +8,11 @@ default=$(tput sgr0)
 
 echo "$green Enter backup dir path:"
 read backupDir
+echo "$green Enter skill id:"
+read skillId
+
+uuidArray=(${skillId//-/ })
+uuid=${uuidArray[0]}
 
 echo -e "$green $(date) Backup started \n"
 
@@ -60,7 +65,17 @@ function create_tenant_secret() {
 
 function restore_skill() {
 
-  kubectl apply -f $backupDir
+  kubectl apply -f $backupDir/$uuid-secret.yaml
+  kubectl apply -f $backupDir/$uuid-configmap.yaml
+  kubectl apply -f $backupDir/$uuid-deployment.yaml
+  kubectl apply -f $backupDir/$uuid-service.yaml
+  if [ -f "$backupDir/$uuid-hpa.yaml" ]; then
+  kubectl apply -f $backupDir/$uuid-hpa.yaml
+  fi
+  if [ -f "$backupDir/$uuid-pdb.yaml" ]; then
+  kubectl apply -f $backupDir/$uuid-pdb.yaml
+  fi
+  kubectl apply -f $backupDir/$uuid-virtual-service.yaml
 
   echo -e "$green $(date) Backup completed \n"
   echo $default
