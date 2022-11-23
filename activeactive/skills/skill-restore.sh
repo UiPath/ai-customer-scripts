@@ -49,11 +49,13 @@ function create_tenant_secret() {
   sleep 5
   echo -e "$green Calling create tenant secret API \n"
   curl --silent --fail -i -k --show-error -X POST 'http://localhost:80/ai-deployer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"
-
+  echo -e "$yellow Waiting for tenant secret creation to complete  \n"
+  sleep 5
   PORT_FWS_PROCESS_ID=$(netstat -tulpn | grep 80 | grep kubectl | awk -F "[ /]+" '{print $7}')
   kill -9 $PORT_FWS_PROCESS_ID
 
   echo -e "$green Tenant Secret creation complete. Restoring backup dir \n"
+  echo $default
 }
 
 function restore_skill() {
@@ -61,6 +63,7 @@ function restore_skill() {
   kubectl apply -f $backupDir
 
   echo -e "$green $(date) Backup completed \n"
+  echo $default
 }
 
 validate_setup

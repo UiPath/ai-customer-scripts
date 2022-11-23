@@ -90,7 +90,7 @@ function backup_hpa() {
 
   getHpa=`kubectl get hpa -n uipath | grep $skillId`
   if [ -z "$getHpa" ]; then
-     echo "$red $(date) No HPA found for Skill id : $skillId"
+     echo "$yellow $(date) No HPA found for Skill id : $skillId"
   else
     hpaArray=(${getHpa// / })
     hpaFile=${hpaArray[0]}
@@ -103,7 +103,7 @@ function backup_pdb() {
 
   getPdb=`kubectl get pdb -n uipath | grep $skillId`
   if [ -z "$getPdb" ]; then
-     echo "$red $(date) No PDB found for Skill id : $skillId"
+     echo "$yellow $(date) No PDB found for Skill id : $skillId"
   else
     pdbArray=(${getPdb// / })
     pdbFile=${pdbArray[0]}
