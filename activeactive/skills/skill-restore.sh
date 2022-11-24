@@ -6,6 +6,8 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
+PORT_FRWD=80
+
 echo "$green Enter backup dir path:"
 read backupDir
 echo "$green Enter skill id:"
@@ -40,8 +42,17 @@ function create_tenant_secret() {
   echo -e "$green Starting port forwarding for ai-deployer to create tenant secret \n"
 
   IDENTITY_SERVER_ENDPOINT=$(kubectl -n uipath get deployment ai-app-deployment -o json | jq -r '.spec.template.spec.containers[0].env[] | select(.name == "IDENTITY_SERVER_ENDPOINT").value')'/connect/token'
+  if [[ -z $IDENTITY_SERVER_ENDPOINT ]]; then
+    echo "$red $(date) IDENTITY_SERVER_ENDPOINT is invalid or missing, Please check ... Exiting $default"
+    exit 1
+  fi
+
   S2S_CLIENT_ID=$(kubectl -n uipath get secret identity-client-aifabric -o json | jq '.data."Aicenter.Recovery.S2S.ClientId"' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
   S2S_CLIENT_SECRET=$(kubectl -n uipath get secret identity-client-aifabric -o json | jq '.data."Aicenter.Recovery.S2S.ClientSecret"' | sed -e 's/^"//' -e 's/"$//' | base64 -d)
+  if [[ -z $S2S_CLIENT_ID || -z $S2S_CLIENT_SECRET ]]; then
+    echo "$red $(date) S2S_CLIENT_ID or S2S_CLIENT_SECRET is invalid or missing, Please check ... Exiting $default"
+    exit 1
+  fi
 
   ACCESS_TOKEN=$(curl --location --request POST $IDENTITY_SERVER_ENDPOINT \
   --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -49,8 +60,12 @@ function create_tenant_secret() {
   --data-urlencode 'client_secret='$S2S_CLIENT_SECRET \
   --data-urlencode 'grant_type=client_credentials' \
   --data-urlencode 'audience=AiFabricRecovery' | jq '.access_token' | sed -e 's/^"//' -e 's/"$//')
+  if [[ -z $ACCESS_TOKEN ]]; then
+    echo "$red $(date) ACCESS_TOKEN is invalid or missing, Please check ... Exiting $default"
+    exit 1
+  fi
 
-  kubectl -n uipath port-forward service/ai-deployer-svc 80:80 --address 0.0.0.0 &
+  kubectl -n uipath port-forward service/ai-deployer-svc $PORT_FRWD:$PORT_FRWD --address 0.0.0.0 &
   sleep 5
   echo -e "$green Calling create tenant secret API \n"
   curl --silent --fail -i -k --show-error -X POST 'http://localhost:80/ai-deployer/v1/system/namespace/recover' -H 'authorization: Bearer '"$ACCESS_TOKEN"

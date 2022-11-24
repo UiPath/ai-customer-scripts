@@ -19,9 +19,9 @@ mkdir $uuid-skill-backup
 
 function backup_deployment() {
 
-  getDeployment=`kubectl get deployment -n uipath | grep $skillId`
+  getDeployment=`kubectl get deployment -n uipath | grep -i $skillId`
     if [ -z "$getDeployment" ]; then
-        echo "$red $(date) Skill id is invalid, Please check ... Exiting $default"
+        echo "$red $(date) No deployment present with provided skill id, Please check ... Exiting $default"
         exit 1
      else
        deploymentArray=(${getDeployment// / })
@@ -34,7 +34,7 @@ function backup_deployment() {
 
 function backup_service() {
 
-  getService=`kubectl get svc -n uipath | grep $skillId`
+  getService=`kubectl get svc -n uipath | grep -i $skillId`
   if [ -z "$getService" ]; then
      echo "$red $(date) No SVC found for Skill id : $skillId"
   else
@@ -48,7 +48,7 @@ function backup_service() {
 
 function backup_virtual_service() {
 
-  getVirtualService=`kubectl get virtualservices -n uipath | grep $skillId`
+  getVirtualService=`kubectl get virtualservices -n uipath | grep -i $skillId`
   if [ -z "$getVirtualService" ]; then
      echo "$red $(date) No Virtual Service found for Skill id : $skillId"
   else
@@ -61,7 +61,7 @@ function backup_virtual_service() {
 
 function backup_skill_secret() {
 
-  getSkillSecret=`kubectl get secret -n uipath | grep $skillId`
+  getSkillSecret=`kubectl get secret -n uipath | grep -i $skillId`
   if [ -z "$getSkillSecret" ]; then
      echo "$red $(date) No Secret found for Skill id : $skillId"
   else
@@ -75,7 +75,7 @@ function backup_skill_secret() {
 
 function backup_configmap() {
 
-  getConfigmap=`kubectl get configmap -n uipath | grep $skillId`
+  getConfigmap=`kubectl get configmap -n uipath | grep -i $skillId`
   if [ -z "$getConfigmap" ]; then
      echo "$red $(date) No Configmap found for Skill id : $skillId"
   else
@@ -88,7 +88,7 @@ function backup_configmap() {
 
 function backup_hpa() {
 
-  getHpa=`kubectl get hpa -n uipath | grep $skillId`
+  getHpa=`kubectl get hpa -n uipath | grep -i $skillId`
   if [ -z "$getHpa" ]; then
      echo "$yellow $(date) No HPA found for Skill id : $skillId"
   else
@@ -101,7 +101,7 @@ function backup_hpa() {
 
 function backup_pdb() {
 
-  getPdb=`kubectl get pdb -n uipath | grep $skillId`
+  getPdb=`kubectl get pdb -n uipath | grep -i $skillId`
   if [ -z "$getPdb" ]; then
      echo "$yellow $(date) No PDB found for Skill id : $skillId"
   else

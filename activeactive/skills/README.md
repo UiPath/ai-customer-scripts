@@ -1,7 +1,17 @@
 # Script for manual backup and restore of skills in OnPrem
 
+## Purpose
 With skills being present in more than one cluster in Active-Active setup, there is a need to manually backup and 
 restore skills when needed.
+
+## Requirements
+The Machine where script runs needs the following:
+* Minimum AIC version 22.10
+* jq, curl, netstat to be installed.
+* User logged in with permission to run the script and access to above tools
+
+### NOTE
+* Please note port forwarding will be done by the script to create tenant secret on secondary cluster
 
 ## Steps to restore skills on secondary
 
