@@ -7,7 +7,7 @@ restore skills when needed.
 ## Requirements
 The Machine where script runs needs the following:
 * Minimum AIC version 22.10
-* jq, curl, netstat to be installed.
+* jq, curl to be installed.
 * User logged in with permission to run the script and access to above tools
 
 ### NOTE
