@@ -17,7 +17,7 @@
     "projectName": "Tabular Data",
     "projectDescription": "Models for analyzing tabular data including classification and regression ML Packages",
     "tenantName": "Open-Source Packages",
-    "minAIFabricVersion": "v22.40",
+    "minAIFabricVersion": "v21.10",
     "version": 1,
     "customVersion": "22.12.0",
     "contentUri": "https://<placeholder-url>/publicmodels/AIC/TPOTAutoMLRegression/22.12/TPOTAutoMLRegression.zip"
