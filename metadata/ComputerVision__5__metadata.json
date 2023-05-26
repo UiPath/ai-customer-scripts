@@ -1,5 +1,5 @@
 {
-  "changeLog": "Release v2023.04.1",
+  "changeLog": "Release v2023.04.2",
   "cpu": 0,
   "description": "Backend server for the Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "displayName": "ComputerVision",
