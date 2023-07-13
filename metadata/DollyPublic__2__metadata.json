@@ -20,7 +20,7 @@
   "minAIFabricVersion":  "22.10",
   "languageVersion":  0,
   "version":  2,
-  "customVersion":  "23.6.1",
+  "customVersion":  "23.6.2",
   "contentUri": "https://<placeholder-url>/publicmodels/AIC/DollyPublic/2/dolly.zip",
   "parametersFileJSON":  "",
   "settings":  []
