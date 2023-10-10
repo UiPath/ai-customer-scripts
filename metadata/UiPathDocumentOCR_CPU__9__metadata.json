@@ -21,7 +21,7 @@
     "languageVersion":  4,
     "version":  9,
     "customVersion":  "22.10.7",
-    "imagePath":  "du-doc-ocr-cpu:v22.10.8-rc41",
+    "imagePath":  "du-doc-ocr-cpu:v22.10.8-rc36",
     "parametersFileJSON":  "{\"params\": [],\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"30\",\"periodSeconds\": \"10\",\"timeoutSeconds\": \"5\",\"successThreshold\": \"1\",\"failureThreshold\": \"60\"},{\"probe\": \"readiness\",\"initialDelaySeconds\": \"30\",\"periodSeconds\": \"15\",\"timeoutSeconds\": \"45\",\"successThreshold\": \"1\",\"failureThreshold\": \"2\"},{\"probe\": \"liveness\",\"initialDelaySeconds\": \"30\",\"periodSeconds\": \"60\",\"timeoutSeconds\": \"45\",\"successThreshold\": \"1\",\"failureThreshold\": \"3\"}]}"
 }
 
