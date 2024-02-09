@@ -1,7 +1,7 @@
 {
   "changeLog": "Release v2022.10.10",
   "cpu": 0,
-  "description": "Backend server for the Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
+  "description": "Backend server for the AI Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "displayName": "ComputerVision",
   "gpu": 1,
   "inputDescription": "Please use the Computer Vision Activities included in the UIAutomation package. For more information please visit the official documentation. https://docs.uipath.com/activities/other/latest/ui-automation/computer-vision-activities ",
@@ -15,7 +15,7 @@
   "retrainable": false,
   "stagingUri": "[staging-uri]",
   "projectName": "UiPath Computer Vision",
-  "projectDescription": "Backend server for the Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
+  "projectDescription": "Backend server for the AI Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "tenantName": "UiPath",
   "minAIFabricVersion": "22.10",
   "languageVersion": 3,
