@@ -1,5 +1,5 @@
 {
-  "changeLog": "Release v2023.10.2",
+  "changeLog": "Release v2023.04.4",
   "cpu": 0,
   "description": "Backend server for the AI Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "displayName": "ComputerVision",
@@ -19,8 +19,8 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "22.10",
   "languageVersion": 3,
-  "version": 7,
-  "customVersion": "23.10.2",
-  "imagePath": "cv2310:23.10.5.3",
+  "version": 5,
+  "customVersion": "23.04.4",
+  "imagePath": "cv2304:23.4.10.4",
   "parametersFileJSON":  "{\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"0\",\"periodSeconds\": \"1\",\"timeoutSeconds\": \"1\",\"successThreshold\": \"1\",\"failureThreshold\": \"200\"}]}"
 }
