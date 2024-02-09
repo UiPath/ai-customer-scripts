@@ -4,7 +4,7 @@
   "description": "Backend server for the Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "displayName": "ComputerVision",
   "gpu": 1,
-  "inputDescription": "Please use the Computer Vision Activities included in the UIAutomation package. For more information please visit the official documentation.",
+  "inputDescription": "Please use the Computer Vision Activities included in the UIAutomation package. For more information please visit the official documentation. https://docs.uipath.com/activities/other/latest/ui-automation/computer-vision-activities ",
   "inputType": "JSON",
   "memory": 0,
   "mlPackageLanguage": "PYTHON36_CV",
@@ -20,7 +20,7 @@
   "minAIFabricVersion": "22.10",
   "languageVersion": 3,
   "version": 4,
-  "customVersion": "22.10.1",
+  "customVersion": "22.10.10",
   "imagePath": "cv2210:22.10.7.1",
   "parametersFileJSON":  "{\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"0\",\"periodSeconds\": \"1\",\"timeoutSeconds\": \"1\",\"successThreshold\": \"1\",\"failureThreshold\": \"200\"}]}"
 }
