@@ -1,5 +1,5 @@
 {
-  "changeLog": "Release v2023.04.6",
+  "changeLog": "Release v2022.10.12",
   "cpu": 0,
   "description": "Backend server for the AI Computer Vision solution that detects User Interface Elements from a provided Application screenshot",
   "displayName": "ComputerVision",
@@ -9,7 +9,7 @@
   "memory": 0,
   "mlPackageLanguage": "PYTHON36_CV",
   "name": "ComputerVision",
-  "outputDescription": "Please use the Computer Vision Activities included in the UIAutomation package. For more information please visit the official documentation. https://docs.uipath.com/activities/other/latest/ui-automation/computer-vision-activities ",
+  "outputDescription": "Please use the Computer Vision Activities included in the UIAutomation package. For more information please visit the official documentation.",
   "processorType": "GPU",
   "projectId": "[project-id]",
   "retrainable": false,
@@ -19,8 +19,8 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "22.10",
   "languageVersion": 3,
-  "version": 9,
-  "customVersion": "23.04.6",
-  "imagePath": "cv2304:23.4.10.5",
+  "version": 22100702,
+  "customVersion": "22.10.10",
+  "imagePath": "cv2210:22.10.7.2",
   "parametersFileJSON":  "{\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"0\",\"periodSeconds\": \"1\",\"timeoutSeconds\": \"1\",\"successThreshold\": \"1\",\"failureThreshold\": \"200\"}]}"
 }
