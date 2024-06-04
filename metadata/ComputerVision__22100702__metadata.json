@@ -20,7 +20,7 @@
   "minAIFabricVersion": "22.10",
   "languageVersion": 3,
   "version": 22100702,
-  "customVersion": "22.10.10",
+  "customVersion": "22.10.12",
   "imagePath": "cv2210:22.10.7.2",
   "parametersFileJSON":  "{\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"0\",\"periodSeconds\": \"1\",\"timeoutSeconds\": \"1\",\"successThreshold\": \"1\",\"failureThreshold\": \"200\"}]}"
 }
