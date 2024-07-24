@@ -3,13 +3,13 @@ $folderPath = $PSScriptRoot + "/metadata"
 
 echo $folderPath
 
-$oldCustomVersion = '23.10.2'
+$oldCustomVersion = '23.4.7'
 # Set the new custom version number
-$newCustomVersion = '23.10.3'
+$newCustomVersion = '23.4.8'
 
 # Set the text to be replaced and the replacement text
-$oldText = 'du-semistructured:v23.10.2-rc22'
-$newText = 'du-semistructured:v23.10.3-rc04'
+$oldText = 'du-semistructured:v23.4.7-rc35'
+$newText = 'du-semistructured:v23.4.7-rc64'
 
 # Get a list of all files in the folder that match the specified format
 $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$" }
