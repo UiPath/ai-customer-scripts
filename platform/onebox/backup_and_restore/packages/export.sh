@@ -193,7 +193,7 @@ function download_ml_package() {
   fetch_ml_package_versions_by_ml_package_id $ml_package_id $project_id
 
   # Fetch ML package version fron list of versions
-  ml_package_version=$(echo "$mlpackage_versions_of_ml_package" | jq '.data.dataList[] | select((.version != null) and (.trainingVersion != null) and (.version=='$major_ml_package_version' and .trainingVersion=='$minor_ml_package_version')) | select(.status == ("UNDEPLOYED", "DEPLOYED", "DEPLOYING"))')
+  ml_package_version=$(echo "$mlpackage_versions_of_ml_package" | jq '.data.dataList[] | select((.version != null) and (.trainingVersion != null) and (.version=="'$major_ml_package_version'" and .trainingVersion=="'$minor_ml_package_version'")) | select(.status == ("UNDEPLOYED", "DEPLOYED", "DEPLOYING"))')
 
   if [ ! -z "$ml_package_version" ]; then
     echo "$(date) ML package verison $ML_PACKAGE_VERSION fetched successfully"
