@@ -9,7 +9,7 @@ $newCustomVersion = '23.4.8'
 
 # Set the text to be replaced and the replacement text
 $oldText = 'du-semistructured:v23.4.7-rc35'
-$newText = 'du-semistructured:v23.4.7-rc64'
+$newText = 'du-semistructured:v23.4-rc02'
 
 # Get a list of all files in the folder that match the specified format
 $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$" }

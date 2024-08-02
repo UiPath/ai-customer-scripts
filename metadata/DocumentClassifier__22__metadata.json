@@ -21,7 +21,7 @@
     "languageVersion":  4,
     "version":  22,
     "customVersion":  "22.10.13",
-    "imagePath":  "du-ml-document-type-text-classifier:v22.10.12-rc33",
+    "imagePath":  "du-ml-document-type-text-classifier:v22.10-rc14",
     "parametersFileJSON":  "{\"params\": [{\"name\": \"auto_retraining\",\"type\": [\"PIPELINE\"],\"value\": \"False\",\"help\": \"Enable this option when the Pipeline you are creating is a scheduled automatic pipeline, synchronized with automatic exports from Data Manager.\",\"options\": [\"True\",\"False\"]}],\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"120\",\"periodSeconds\": \"10\",\"timeoutSeconds\": \"2\",\"successThreshold\": \"1\",\"failureThreshold\": \"60\"}]}"
 }
 
