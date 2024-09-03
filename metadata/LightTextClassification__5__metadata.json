@@ -11,7 +11,7 @@
     "inputType": "JSON",
     "displayName": "LightTextClassification",
     "memory": 0,
-    "mlPackageLanguage": "PYTHON38",
+    "mlPackageLanguage": "PYTHON39",
     "projectId": "[project-id]",
     "stagingUri": "[staging-uri]",
     "projectName": "UiPath Language Analysis",
