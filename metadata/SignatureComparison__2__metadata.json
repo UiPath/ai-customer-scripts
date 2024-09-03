@@ -18,7 +18,7 @@
     "projectDescription": "Curated Models from UiPath to analyze images",
     "tenantName": "UiPath",
     "minAIFabricVersion": "v21.10",
-    "version": 1,
+    "version": 2,
     "customVersion": "22.10.1",
     "contentUri": "https://<placeholder-url>/publicmodels/AIC/SignatureComparison/22.10.1/signature_comparison_package.zip"
 }
