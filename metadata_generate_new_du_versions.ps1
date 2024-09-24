@@ -1,15 +1,21 @@
+function Remove-BomFromFile($Path) {
+    $Content = Get-Content -Path $Path -Raw
+    $Utf8NoBomEncoding = New-Object -TypeName System.Text.UTF8Encoding -ArgumentList $False
+    [System.IO.File]::WriteAllLines($Path, $Content, $Utf8NoBomEncoding)
+}
+
 # Define the path to the folder containing the files
 $folderPath = $PSScriptRoot + "/metadata"
 
 echo $folderPath
 
-$oldCustomVersion = '23.4.7'
+$previousCustomVersion = '22.10.13'
 # Set the new custom version number
-$newCustomVersion = '23.4.8'
+$newCustomVersion = '22.10.14'
 
 # Set the text to be replaced and the replacement text
-$oldText = 'du-semistructured:v23.4.7-rc35'
-$newText = 'du-semistructured:v23.4-rc02'
+$targetImage = '' # leave empty to generate metadata for all the models. Possible non empty values: du-semistructured, du-doc-ocr, du-doc-ocr-cpu, du-ml-document-type-text-classifier
+$newTag = 'v22.10-09.23-rc02'
 
 # Get a list of all files in the folder that match the specified format
 $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$" }
@@ -39,7 +45,7 @@ foreach ($file in $fileList) {
     }
 
     $json = Get-Content $file.FullName | ConvertFrom-Json
-    if ($json.customVersion -eq $oldCustomVersion){
+    if ($json.customVersion -eq $previousCustomVersion){
         $previousFileVersion[$model] = $version
     }
 }
@@ -66,9 +72,14 @@ foreach ($file in $fileList) {
             $json.customVersion = $newCustomVersion
 
             # Replace the specified text with the new text
-            $json.imagePath = $json.imagePath -replace $oldText, $newText
+            $parts = $json.imagePath -split ':'
+            if ($targetImage -ne $null -and $targetImage -ne '' -and $targetImage -ne $parts[0]){
+                continue
+            }
 
-            $json | ConvertTo-Json -Depth 100 | Out-File $newFilePath
+            $json.imagePath = $parts[0] + ":" + $newTag
+
+            $json | ConvertTo-Json -Depth 100 | Set-Content $newFilePath -Encoding ASCII
 
             # Copy the file's last write time to the new file
             $newFile = Get-Item $newFilePath
