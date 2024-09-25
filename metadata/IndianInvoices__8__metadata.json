@@ -3,7 +3,7 @@
     "retrainable": true,
     "gpu": 1,
     "processorType": "GPU",
-    "description": "Machine Learning model(available in Preview) for extracting commonly occurring data points from Invoices from India, including header fields and line items. Please see more details including supported languages in the ML Packages section of the Document Understanding Guide: https://docs.uipath.com/document-understanding/docs/ml-packages",
+    "description": "Machine Learning model for extracting commonly occurring data points from Invoices from India, including header fields and line items. Please see more details including supported languages in the ML Packages section of the Document Understanding Guide: https://docs.uipath.com/document-understanding/docs/ml-packages",
     "inputDescription": "ML Skills deployed using this ML Package can be integrated into RPA workflows using the Machine Learning Extractor activity in the Official feed or the MLModel activity in Connect feed. File formats accepted include pdf, tiff, jpg or png files. The activities also require an API Key input which you need to obtain from your UiPath Automation Cloud account, in the Licenses -\u003e Other Services view.",
     "outputDescription": "Please refer to the documentation of the Activity used to query the ML Skill.",
     "changeLog": "Model: 21.10.10",

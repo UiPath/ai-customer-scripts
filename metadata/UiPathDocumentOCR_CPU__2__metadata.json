@@ -1,7 +1,7 @@
 {
   "changeLog": "",
   "cpu": 0,
-  "description": "Machine Learning model(available in Preview) for extracting text and checkboxes/radio buttons from Documents. Please see more details including supported languages and link to Activities guide in the Document Understanding Guide here: https://docs.uipath.com/document-understanding/v2021.4/docs/ml-packages#uipath-document-ocr. For alternative deployment methods in high-volume scenarios see also this page: https://docs.uipath.com/document-understanding/v2021.4/docs/ocr-services",
+  "description": "Machine Learning model for extracting text and checkboxes/radio buttons from Documents. Please see more details including supported languages and link to Activities guide in the Document Understanding Guide here: https://docs.uipath.com/document-understanding/v2021.4/docs/ml-packages#uipath-document-ocr. For alternative deployment methods in high-volume scenarios see also this page: https://docs.uipath.com/document-understanding/v2021.4/docs/ocr-services",
   "displayName": "UiPathDocumentOCR_CPU",
   "gpu": 0,
   "inputDescription": "ML Skills deployed using this ML Package can be integrated into RPA workflows using the UiPath Document OCR activity from OCR.Activities pack in the Official feed. File formats accepted include pdf, tiff, jpg or png files.",
