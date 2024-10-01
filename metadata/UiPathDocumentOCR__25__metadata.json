@@ -21,6 +21,6 @@
     "languageVersion":  4,
     "version":  25,
     "customVersion":  "22.10.14",
-    "imagePath":  "du-doc-ocr:v22.10-09.23-rc02",
+    "imagePath":  "du-doc-ocr:v22.10-09.27-rc04",
     "parametersFileJSON":  "{\"params\": [],\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"30\",\"periodSeconds\": \"10\",\"timeoutSeconds\": \"5\",\"successThreshold\": \"1\",\"failureThreshold\": \"60\"},{\"probe\": \"readiness\",\"initialDelaySeconds\": \"30\",\"periodSeconds\": \"15\",\"timeoutSeconds\": \"45\",\"successThreshold\": \"1\",\"failureThreshold\": \"2\"},{\"probe\": \"liveness\",\"initialDelaySeconds\": \"30\",\"periodSeconds\": \"60\",\"timeoutSeconds\": \"45\",\"successThreshold\": \"1\",\"failureThreshold\": \"3\"}]}"
 }
