@@ -15,7 +15,7 @@ $newCustomVersion = '23.10.10'
 
 # Set the text to be replaced and the replacement text
 $targetImage = '' # leave empty to generate metadata for all the models. Possible non empty values: du-semistructured, du-doc-ocr, du-doc-ocr-cpu, du-ml-document-type-text-classifier
-$newTag = 'v23.10-05.19-rc03'
+$newTag = 'v23.10-05.23-rc02'
 
 # Get a list of all files in the folder that match the specified format
 $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$" }
