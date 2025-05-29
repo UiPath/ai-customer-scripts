@@ -1,3 +1,17 @@
+param(
+    [Parameter()]
+    [String] $targetImage = '',
+
+    [Parameter(Mandatory)]
+    [String] $newCustomVersion,
+
+    [Parameter(Mandatory)]
+    [String] $previousCustomVersion,
+
+    [Parameter(Mandatory)]
+    [String] $newTag
+)
+
 function Remove-BomFromFile($Path) {
     $Content = Get-Content -Path $Path -Raw
     $Utf8NoBomEncoding = New-Object -TypeName System.Text.UTF8Encoding -ArgumentList $False
@@ -7,15 +21,7 @@ function Remove-BomFromFile($Path) {
 # Define the path to the folder containing the files
 $folderPath = $PSScriptRoot + "/metadata"
 
-echo $folderPath
-
-$previousCustomVersion = '23.10.9'
-# Set the new custom version number
-$newCustomVersion = '23.10.10'
-
-# Set the text to be replaced and the replacement text
-$targetImage = '' # leave empty to generate metadata for all the models. Possible non empty values: du-semistructured, du-doc-ocr, du-doc-ocr-cpu, du-ml-document-type-text-classifier
-$newTag = 'v23.10-05.23-rc02'
+Write-Host "folderPath: $folderPath"
 
 # Get a list of all files in the folder that match the specified format
 $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$" }
@@ -24,12 +30,12 @@ $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z
 $maxModelVersions = @{}
 $previousFileVersion = @{}
 
-Write-Host $fileList
+Write-Host "fileList: $fileList"
 
 # Loop through each file and determine if it has a higher version number than any previously processed file for the same model
 foreach ($file in $fileList) {
     $fileName = $file.Name
-    Write-Host $fileName
+    Write-Host "Processing $fileName"
     $match = [regex]::Match($fileName, "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$")
     $model = $match.Groups[1].Value
     $version = [int]$match.Groups[2].Value
@@ -66,7 +72,7 @@ foreach ($file in $fileList) {
         $json = Get-Content $file.FullName | ConvertFrom-Json
 
         if ($json.mlPackageLanguage -like '*DU' -and $json.imagePath){
-            Write-Host $model
+            #Write-Host "model: $model"
 
             $json.version = $newVersion
             $json.customVersion = $newCustomVersion
@@ -84,6 +90,8 @@ foreach ($file in $fileList) {
             # Copy the file's last write time to the new file
             $newFile = Get-Item $newFilePath
             $newFile.LastWriteTime = $file.LastWriteTime
+
+            Write-Host "newFilePath: $newFilePath"
         }
     }
 }
