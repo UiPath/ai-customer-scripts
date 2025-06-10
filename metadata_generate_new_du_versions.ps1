@@ -64,7 +64,6 @@ foreach ($file in $fileList) {
     $version = [int]$match.Groups[2].Value
 
     if ($version -eq $previousFileVersion[$model]) {
-
         if ($json.customVersion -eq $newCustomVersion) {
             Write-Host "Metadata with custom version $newCustomVersion exists. Updating it instead of creating a new one."
             $newFilePath = $file.FullName #setting the newFilePath to the same file to update it
@@ -72,9 +71,9 @@ foreach ($file in $fileList) {
             $newFileName = $fileName
         } else {
             Write-Host "Metadata with custom version $newCustomVersion does not exist. Creating a new one."
+            $newFileName = "$model" + "__" + "$newVersion" + "__metadata.json"
             $newFilePath = Join-Path $folderPath $newFileName
             $newVersion = $maxModelVersions[$model] + 1
-            $newFileName = "$model" + "__" + "$newVersion" + "__metadata.json"
         }
         
         # Read the JSON file, increment the version number, and update the custom version field
