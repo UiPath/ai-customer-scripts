@@ -86,8 +86,14 @@ foreach ($file in $fileList) {
             # Replace the specified text with the new text
             $parts = $json.imagePath -split ':'
             if ($targetImage -ne $null -and $targetImage -ne '' -and $targetImage -ne $parts[0]){
+                Write-Host "No update needed for file $fileName because targetImage does not match imagePath: $($parts[0])"
                 continue
             }
+            if ($parts[1] -eq $newTag) {
+                Write-Host "No update needed for file $fileName because imagePath already has the tag: $newTag"
+                continue
+            }
+
             Write-Host "Updating imagePath from $($parts[1]) to: $newTag"
 
             $json.imagePath = $parts[0] + ":" + $newTag
