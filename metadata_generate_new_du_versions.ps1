@@ -58,6 +58,7 @@ foreach ($file in $fileList) {
 
 # Loop through each file again and create a copy of the file with the previous version number for each model
 foreach ($file in $fileList) {
+    $json = Get-Content $file.FullName | ConvertFrom-Json
     $fileName = $file.Name
     $match = [regex]::Match($fileName, "^([a-zA-Z0-9_]+)__([0-9]+)__metadata\.json$")
     $model = $match.Groups[1].Value
@@ -75,9 +76,6 @@ foreach ($file in $fileList) {
             $newFileName = "$model" + "__" + "$newVersion" + "__metadata.json"
             $newFilePath = Join-Path $folderPath $newFileName
         }
-        
-        # Read the JSON file, increment the version number, and update the custom version field
-        $json = Get-Content $file.FullName | ConvertFrom-Json
 
         if ($json.mlPackageLanguage -like '*DU' -and $json.imagePath){
             #Write-Host "model: $model"
