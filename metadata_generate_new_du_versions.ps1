@@ -88,7 +88,7 @@ foreach ($file in $fileList) {
             if ($targetImage -ne $null -and $targetImage -ne '' -and $targetImage -ne $parts[0]){
                 continue
             }
-            Write-Host "Updating imagePath from $($parts[2]) to: $newTag"
+            Write-Host "Updating imagePath from $($parts[1]) to: $newTag"
 
             $json.imagePath = $parts[0] + ":" + $newTag
 
