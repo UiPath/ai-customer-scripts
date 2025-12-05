@@ -19,6 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v24.10",
     "version": 8,
-    "customVersion":  "25.9.0",
-    "contentUri": "https://<placeholder-url>/publicmodels/AIC/LightTextClassification/25.9.0/bow_text_classifier_package.zip"
+    "customVersion":  "25.12.0",
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/LightTextClassification/25.12.0/bow_text_classifier_package.zip"
 }

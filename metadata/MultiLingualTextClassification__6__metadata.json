@@ -19,6 +19,6 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "v24.10",
     "version": 6,
-    "customVersion":  "25.9.0",
-    "contentUri": "https://<placeholder-url>/publicmodels/AIC/MultiLingualTextClassification/25.9.0/bert_text_classifier_package.zip"
+    "customVersion":  "25.12.0",
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/MultiLingualTextClassification/25.12.0/bert_text_classifier_package.zip"
 }
