@@ -19,7 +19,7 @@
     "tenantName": "UiPath",
     "minAIFabricVersion": "22.10",
     "languageVersion": 3,
-    "version": 125100002,
+    "version": 225100002,
     "customVersion": "25.10.1",
     "imagePath": "cv2510:25.10.0.2",
     "parametersFileJSON":  "{\"probes\": [{\"probe\": \"startup\",\"initialDelaySeconds\": \"0\",\"periodSeconds\": \"1\",\"timeoutSeconds\": \"1\",\"successThreshold\": \"1\",\"failureThreshold\": \"600\"}]}"
