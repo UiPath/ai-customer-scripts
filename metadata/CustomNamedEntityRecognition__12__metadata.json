@@ -19,5 +19,5 @@
   "tenantName": "UiPath",
   "minAIFabricVersion": "v22.4",
   "version": 12,
-  "contentUri": "http://host.docker.internal:8089/build/ner_package.zip"
+  "contentUri": "https://<placeholder-url>/publicmodels/AIC/CustomNamedEntityRecognition/12/ner_package.zip"
 }

@@ -20,5 +20,5 @@
     "minAIFabricVersion": "23.4",
     "languageVersion": 0,
     "version": 23,
-    "contentUri": "http://host.docker.internal:8089/build/task_mining.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/TaskMining/23/task_mining.zip"
 }

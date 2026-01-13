@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "version": 3,
     "customVersion": "25.0.1",
-    "contentUri": "http://host.docker.internal:8089/build/signature_comparison_package.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/SignatureComparison/25.0.1/signature_comparison_package.zip"
 }

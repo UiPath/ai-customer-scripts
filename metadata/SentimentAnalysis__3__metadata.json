@@ -20,5 +20,5 @@
     "minAIFabricVersion": "v21.10",
     "version": 3,
     "customVersion": "25.0.1",
-    "contentUri": "http://host.docker.internal:8089/build/SentimentAnalysis.zip"
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/SentimentAnalysis/25.0.1/SentimentAnalysis.zip"
 }
