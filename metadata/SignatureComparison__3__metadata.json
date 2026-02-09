@@ -6,7 +6,7 @@
     "description": "The UiPath signature comparison model is used to determine the similarity between a pair of signature and suggest if the signatures are from the same author.",
     "inputDescription": "A pair of signature images in a list. Files formats accepted are png, and jpeg.",
     "outputDescription": "Similarity score (between 0 and 1) and a preliminary determination if the signatures are from the same author or different authors based on a defined threshold in a Json format.",
-    "changeLog": "",
+    "changeLog": "Move to Python3.12. Available starting from AS v2024.10.8 and v2025.10.2.",
     "cpu": 1,
     "inputType": "FILE_LIST",
     "displayName": "SignatureComparison",
@@ -17,8 +17,8 @@
     "projectName": "UiPath Image Analysis",
     "projectDescription": "Curated Models from UiPath to analyze images",
     "tenantName": "UiPath",
-    "minAIFabricVersion": "v21.10",
+    "minAIFabricVersion": "24.10",
     "version": 3,
-    "customVersion": "25.0.1",
-    "contentUri": "https://<placeholder-url>/publicmodels/AIC/SignatureComparison/25.0.1/signature_comparison_package.zip"
+    "customVersion": "26.3.0",
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/SignatureComparison/26.3.0/signature_comparison_package.zip"
 }

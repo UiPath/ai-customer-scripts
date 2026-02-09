@@ -6,7 +6,7 @@
     "description": "Task Mining Model package meant to process and produce the data containing detected tasks.",
     "inputDescription": "Dataset that contains files captured and uploaded by Task Mining Desktop application (or uploaded via Task Mining Uploader tool).",
     "outputDescription": "Definition of the tasks that can be visualized in Task Mining Admin Console. Data will be imported into Admin Console Discovered Tasks section automatically some time after the package is finished.",
-    "changeLog": "Internal Version 1.1.15",
+    "changeLog": "Move to Python3.12. Available starting from AS v2024.10.8 and v2025.10.2.",
     "cpu": 0,
     "inputType": "JSON",
     "displayName": "TMAnalyzerModel",
@@ -17,7 +17,7 @@
     "projectName": "UiPath Task Mining",
     "projectDescription": "UiPath Task Mining models to analyze captured data",
     "tenantName": "UiPath",
-    "minAIFabricVersion": "23.4",
+    "minAIFabricVersion": "24.10",
     "languageVersion": 0,
     "version": 23,
     "contentUri": "https://<placeholder-url>/publicmodels/AIC/TaskMining/23/task_mining.zip"

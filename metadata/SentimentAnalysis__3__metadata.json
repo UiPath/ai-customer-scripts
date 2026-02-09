@@ -6,7 +6,7 @@
     "description": "This model was open sourced by Facebook Research. It predicts the sentiment of a text in English Language. Possible predictions are one of \"Very Negative\", \"Negative\", \"Neutral\", \"Positive\", \"Very Positive\". The model was trained on amazon product review data thus, the model predictions may have some unexpected results for different data distributions. A common use case is to route unstructured language content (e.g. emails) to an appropriate responder based on the sentiment of the text. The model implementation is open sourced by the license here: https://github.com/facebookresearch/fastText/blob/master/LICENSE",
     "inputDescription": "Text to be analyzed.For example:\"I am dissatisfied with this service\"",
     "outputDescription": "JSON with class name and confidence on that class prediction (between 0-1). Class prediction can be one of: \"Very Negative\", \"Negative\", \"Neutral\", \"Positive\", \"Very Positive\". For example: {\"sentiment\": \"Very Negative\", \"confidence\": 0.97}",
-    "changeLog": "Use Python 3.12",
+    "changeLog": "Move to Python3.12. Available starting from AS v2024.10.8 and v2025.10.2.",
     "cpu": 1,
     "inputType": "JSON",
     "displayName": "SentimentAnalysis",
@@ -17,8 +17,8 @@
     "projectName": "Language Analysis",
     "projectDescription": "Models for analyzing text including language detection, sentiment analysis, and named-entity recognition.",
     "tenantName": "Open-Source Packages",
-    "minAIFabricVersion": "v21.10",
+    "minAIFabricVersion": "24.10",
     "version": 3,
-    "customVersion": "25.0.1",
-    "contentUri": "https://<placeholder-url>/publicmodels/AIC/SentimentAnalysis/25.0.1/SentimentAnalysis.zip"
+    "customVersion": "26.3.0",
+    "contentUri": "https://<placeholder-url>/publicmodels/AIC/SentimentAnalysis/26.3.0/SentimentAnalysis.zip"
 }
