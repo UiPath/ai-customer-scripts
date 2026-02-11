@@ -18,7 +18,6 @@
     "projectDescription": "UiPath Task Mining models to analyze captured data",
     "tenantName": "UiPath",
     "minAIFabricVersion": "24.10",
-    "languageVersion": 0,
     "version": 23,
     "contentUri": "https://<placeholder-url>/publicmodels/AIC/TaskMining/23/task_mining.zip"
 }
