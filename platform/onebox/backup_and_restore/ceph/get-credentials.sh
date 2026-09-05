@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : '
-This scipt will generate json file for creds to be used with import export
+This script will generate json file for creds to be used with import export
 Script will generate file storage-creds.json
 Run it from the VM running aifabric.
 Use it as it is [insecure] or transfer to some credsManager and then change backup/restore scripts to fetch from credsmanager instead of json file
