@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : '
-This scipt will import all data stored at a path to blob storage in target environments.
+This script will import all data stored at a path to blob storage in target environments.
 # $1 - json file with credentials, change the script to work with own credential manager
 # $2 - path to import from
 Script will look for folders like path/ceph/bucket1 path/ceph/bucket2 each containing data from 1 bucket and create bucket and upload
@@ -60,7 +60,7 @@ function upload_blob() {
   # sync folder to bucket
   echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
   aws s3 --endpoint-url ${AWS_ENDPOINT} --no-verify-ssl --only-show-errors sync ${FOLDER}${DIR_NAME}/ s3://${BUCKET_NAME}
-  echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
+  echo "$green $(date) Finished sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
 function update_cors_policy() {
@@ -96,7 +96,7 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
+# Validate required modules exist in target setup
 function validate_setup() {
   validate_dependency "aws s3" "aws --version"
   validate_dependency s3cmd "s3cmd --version"

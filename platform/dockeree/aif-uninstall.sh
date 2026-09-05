@@ -1,6 +1,6 @@
 echo "Starting AIFabric De-Provisioning... Please ignore some of the 'No Resources found' errors, as they are harmless."
 
-echo "Instlling Helm on the machine"
+echo "Installing Helm on the machine"
 curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash -s -- --version v3.1.3
 
 echo "Uninstalling AIFabric Services"
@@ -49,7 +49,7 @@ chmod +x ./bin/istioctl
 kubectl delete namespace istio-system
 
 # Kots-Admin Uninstall
-echo "Unistalling Kots-Admin from the Cluster"
+echo "Uninstalling Kots-Admin from the Cluster"
 kubectl delete ns aif-core
 
 # Ceph uninstall

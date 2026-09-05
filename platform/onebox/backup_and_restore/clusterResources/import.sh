@@ -9,7 +9,7 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 default=$(tput sgr0)
 
-echo "$green $(date) Starting export of user namespaces and pipeline related cron jobs $default"
+echo "$green $(date) Starting import of user namespaces and pipeline related cron jobs $default"
 
 readonly CLUSTER_RESOURCES_EXPORT_FILE=$1
 readonly CORE_SERVICE_NAMESPACE=aifabric
@@ -34,7 +34,7 @@ function validate_file_path() {
   fi
 }
 
-# Validate required modules exits in target setup
+# Validate required modules exist in target setup
 function validate_setup() {
   validate_dependency velero "velero version"
   echo "$(date) Successfully validated required dependencies"
@@ -64,7 +64,7 @@ function restore_namespace() {
   # Restore namespaces
   velero restore create --from-backup $NAMESPACES_BACKUP_NAME
 
-  echo "$(date) Successfully restore all user namespaces from backup $NAMESPACES_BACKUP_NAME"
+  echo "$(date) Successfully restored all user namespaces from backup $NAMESPACES_BACKUP_NAME"
 }
 
 # Restore cronjobs
@@ -73,7 +73,7 @@ function restore_cronjobs() {
 
   # Restore namespaces
   velero restore create --from-backup $CRONJOBS_BACKUP_NAME
-  echo "$(date) Successfully restore all cronjob from backup $CRONJOBS_BACKUP_NAME"
+  echo "$(date) Successfully restored all cronjob from backup $CRONJOBS_BACKUP_NAME"
 }
 
 # Patch secrets in namespaces

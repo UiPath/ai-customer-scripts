@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : '
-This script will export user oriented cluster resources from one enviornmnet to another envrionment
+This script will export user oriented cluster resources from one environment to another environment
 [Script Version -> 21.4]'
 
 red=$(tput setaf 1)
@@ -23,7 +23,7 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
+# Validate required modules exist in target setup
 function validate_setup() {
   validate_dependency velero "velero version"
   echo "$(date) Successfully validated required dependencies"
