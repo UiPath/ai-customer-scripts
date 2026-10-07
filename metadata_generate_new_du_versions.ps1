@@ -5,8 +5,12 @@ param(
     [Parameter(Mandatory)]
     [String] $newCustomVersion,
 
-    [Parameter(Mandatory)]
-    [String] $previousCustomVersion,
+    # customVersion of the metadata to use as template for the new version. Leave empty when an
+    # AS line is released for the first time (nothing of that line exists yet): the highest
+    # existing customVersion of each model is then used as the template.
+    [Parameter()]
+    [AllowEmptyString()]
+    [String] $previousCustomVersion = '',
 
     [Parameter(Mandatory)]
     [String] $newTag
@@ -29,6 +33,7 @@ $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z
 # Create a hashtable to store the highest version number for each model
 $maxModelVersions = @{}
 $previousFileVersion = @{}
+$highestCustomVersion = @{}
 
 Write-Host "fileList: $fileList"
 
@@ -53,6 +58,22 @@ foreach ($file in $fileList) {
     $json = Get-Content $file.FullName | ConvertFrom-Json
     if ($json.customVersion -eq $previousCustomVersion){
         $previousFileVersion[$model] = $version
+    }
+
+    # Track the highest customVersion per model (numeric compare: 25.10.4 > 24.10.10) as fallback template
+    $parsedCustomVersion = $null
+    if ([version]::TryParse([string]$json.customVersion, [ref]$parsedCustomVersion)) {
+        if (-not $highestCustomVersion.ContainsKey($model) -or $parsedCustomVersion -gt $highestCustomVersion[$model].parsed) {
+            $highestCustomVersion[$model] = @{ parsed = $parsedCustomVersion; fileVersion = $version; customVersion = [string]$json.customVersion }
+        }
+    }
+}
+
+if ([string]::IsNullOrEmpty($previousCustomVersion)) {
+    Write-Host "No previousCustomVersion given (first release of a new AS line); using each model's highest existing customVersion as template"
+    foreach ($model in $highestCustomVersion.Keys) {
+        $previousFileVersion[$model] = $highestCustomVersion[$model].fileVersion
+        Write-Host "  $model -> $($highestCustomVersion[$model].customVersion) (file version $($highestCustomVersion[$model].fileVersion))"
     }
 }
 
