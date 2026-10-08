@@ -6,8 +6,9 @@ param(
     [String] $newCustomVersion,
 
     # customVersion of the metadata to use as template for the new version. Leave empty when an
-    # AS line is released for the first time (nothing of that line exists yet): the highest
-    # existing customVersion of each model is then used as the template.
+    # AS line is released for the first time (nothing of that line exists yet): the template is
+    # then each model's highest customVersion from a line OLDER than newCustomVersion's line, so a
+    # new release is never seeded from a newer one.
     [Parameter()]
     [AllowEmptyString()]
     [String] $previousCustomVersion = '',
@@ -33,7 +34,14 @@ $fileList = Get-ChildItem $folderPath | Where-Object { $_.Name -match "^([a-zA-Z
 # Create a hashtable to store the highest version number for each model
 $maxModelVersions = @{}
 $previousFileVersion = @{}
-$highestCustomVersion = @{}
+$highestInLine = @{}
+$highestEarlierLine = @{}
+
+$parsedNewCustomVersion = $null
+if (-not [version]::TryParse($newCustomVersion, [ref]$parsedNewCustomVersion)) {
+    throw "newCustomVersion '$newCustomVersion' is not a dotted version (expected <major>.<minor>.<patch>)"
+}
+$newLine = [version]"$($parsedNewCustomVersion.Major).$($parsedNewCustomVersion.Minor)"
 
 Write-Host "fileList: $fileList"
 
@@ -60,20 +68,31 @@ foreach ($file in $fileList) {
         $previousFileVersion[$model] = $version
     }
 
-    # Track the highest customVersion per model (numeric compare: 25.10.4 > 24.10.10) as fallback template
+    # Fallback template tracking (numeric compare: 25.10.4 > 24.10.10): only files from a line
+    # OLDER than newCustomVersion's line (<major>.<minor>) are candidates.
     $parsedCustomVersion = $null
     if ([version]::TryParse([string]$json.customVersion, [ref]$parsedCustomVersion)) {
-        if (-not $highestCustomVersion.ContainsKey($model) -or $parsedCustomVersion -gt $highestCustomVersion[$model].parsed) {
-            $highestCustomVersion[$model] = @{ parsed = $parsedCustomVersion; fileVersion = $version; customVersion = [string]$json.customVersion }
+        $lineOfFile = [version]"$($parsedCustomVersion.Major).$($parsedCustomVersion.Minor)"
+        $entry = @{ parsed = $parsedCustomVersion; fileVersion = $version; customVersion = [string]$json.customVersion }
+        if ($lineOfFile -eq $newLine) {
+            if (-not $highestInLine.ContainsKey($model) -or $parsedCustomVersion -gt $highestInLine[$model].parsed) {
+                $highestInLine[$model] = $entry
+            }
+        }
+        elseif ($lineOfFile -lt $newLine) {
+            if (-not $highestEarlierLine.ContainsKey($model) -or $parsedCustomVersion -gt $highestEarlierLine[$model].parsed) {
+                $highestEarlierLine[$model] = $entry
+            }
         }
     }
 }
 
 if ([string]::IsNullOrEmpty($previousCustomVersion)) {
-    Write-Host "No previousCustomVersion given (first release of a new AS line); using each model's highest existing customVersion as template"
-    foreach ($model in $highestCustomVersion.Keys) {
-        $previousFileVersion[$model] = $highestCustomVersion[$model].fileVersion
-        Write-Host "  $model -> $($highestCustomVersion[$model].customVersion) (file version $($highestCustomVersion[$model].fileVersion))"
+    Write-Host "No previousCustomVersion given; template per model = highest customVersion of line $newLine, else highest customVersion of an earlier line"
+    foreach ($model in ($highestInLine.Keys + $highestEarlierLine.Keys | Select-Object -Unique)) {
+        $chosen = if ($highestInLine.ContainsKey($model)) { $highestInLine[$model] } else { $highestEarlierLine[$model] }
+        $previousFileVersion[$model] = $chosen.fileVersion
+        Write-Host "  $model -> $($chosen.customVersion) (file version $($chosen.fileVersion))"
     }
 }
 
