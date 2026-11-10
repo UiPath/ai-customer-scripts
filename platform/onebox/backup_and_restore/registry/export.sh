@@ -26,7 +26,7 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
+# Validate required modules exist in target setup
 function validate_setup() {
   validate_dependency curl "curl --version"
   validate_dependency jq "jq --version"

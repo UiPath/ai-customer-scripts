@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : '
-This scipt will export all data stored in blob storage from target environments.
+This script will export all data stored in blob storage from target environments.
 # $1 - json file with credentials, change the script to work with own credential manager
 # $2 - path to export
 Script will generate folders like path/ceph/bucket1 path/ceph/bucket2 each containing data from 1 bucket
@@ -38,7 +38,7 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
+# Validate required modules exist in target setup
 function validate_setup() {
   validate_dependency "aws s3" "aws --version"
   validate_dependency "jq" "jq --version"
@@ -72,7 +72,7 @@ function download_blob() {
   echo "$green $(date) Starting sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
   mkdir -p ${FOLDER}${BUCKET_NAME}
   aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME} ${FOLDER}${BUCKET_NAME} --delete
-  echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
+  echo "$green $(date) Finished sync of object storage to local disk for bucket ${BUCKET_NAME} $default"
 }
 
 function download_blob_old() {
@@ -97,7 +97,7 @@ function download_blob_old() {
     # sync all
     aws s3 --endpoint-url $AWS_ENDPOINT --no-verify-ssl sync s3://${BUCKET_NAME}/${PREFIX} ${FOLDER}${BUCKET_NAME}/${PREFIX} --delete
   fi
-  echo "$green $(date) Finsihed sync of object storage to local disk for bucket ${BUCKET_NAME} and prefix ${PREFIX} $default"
+  echo "$green $(date) Finished sync of object storage to local disk for bucket ${BUCKET_NAME} and prefix ${PREFIX} $default"
 }
 
 function sync_buckets() {

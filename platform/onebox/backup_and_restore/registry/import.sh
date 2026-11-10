@@ -14,8 +14,8 @@ default=$(tput sgr0)
 readonly REGISTRY_IMPORT_FILE=$1
 readonly IMPORT_PATH=$2/registry
 
-# Validate dependecny module
-# $1 - Name of the dependecny module
+# Validate dependency module
+# $1 - Name of the dependency module
 # $2 - Command to validate module
 function validate_dependency() {
   eval $2
@@ -26,7 +26,7 @@ function validate_dependency() {
   fi
 }
 
-# Validate required modules exits in target setup
+# Validate required modules exist in target setup
 function validate_setup() {
   validate_dependency curl "curl --version"
   validate_dependency jq "jq --version"

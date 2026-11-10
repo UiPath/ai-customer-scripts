@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : '
-This scipt provides methods to fetch access token and register and de-register clients from identity server
+This script provides methods to fetch access token and register and de-register clients from identity server
 The following arguments are to be set by calling script so that they are available to is.sh
 # $1 - identityServerEndPoint: End point where identity server is hosted
 # $2 - hostTenantName: Host Tenant name registered in identity server
@@ -17,7 +17,7 @@ default=$(tput sgr0)
 
 # Fetch admin token from identity server end point using host tenant
 function internal_fetch_identity_server_token_to_register_client() {
-  echo "$(date) Fetching identity server client registeration token"
+  echo "$(date) Fetching identity server client registration token"
 
   # Generate required endpoints
   readonly local antif=https://$IDENTITY_SERVER_ENDPOINT"/identity/api/antiforgery/generate"
@@ -45,7 +45,7 @@ function internal_fetch_identity_server_token_to_register_client() {
   # Authentication -> POST to $login_url with the token in header "X-CSRF-Token: $token".
   curl --silent --fail --show-error -k -H "X-XSRF-TOKEN: $token" -c $cookie_file_new -b $cookie_file_new -d "$dataLogin" --request POST "$login" -H "Content-Type: application/json"
 
-  # Fetch Acces token
+  # Fetch Access token
   CLIENT_INSTALLTION_TOKEN=$(curl --silent --fail --show-error -k -H "X-XSRF-TOKEN: $token" -b $cookie_file_new "$tokenUrl" -H "Content-Type: application/json")
 
   if [ -z "$CLIENT_INSTALLTION_TOKEN" ]; then
@@ -54,7 +54,7 @@ function internal_fetch_identity_server_token_to_register_client() {
   fi
 }
 
-# Fetch access token to call backens server
+# Fetch access token to call backend server
 function internal_fetch_identity_server_access_token() {
   echo "$(date) Getting access token for client $IS_AIFABRIC_CLIENT_NAME from $IDENTITY_SERVER_ENDPOINT"
 
